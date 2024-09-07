@@ -37,7 +37,7 @@ export const authOptions: NextAuthOptions = {
                         }
                     });
                     if (existingUser) {
-                        const passwordMatch = await bcrypt.compare(existingUser.password, validatedCredentials.password);
+                        const passwordMatch = await bcrypt.compare(validatedCredentials.password, existingUser.password);
                         if (passwordMatch) {
                             return {
                                 id: existingUser.id,
@@ -80,9 +80,14 @@ export const authOptions: NextAuthOptions = {
     ],
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
+        jwt: ({ token }) => {
+            // This function is for debugging and we can look at what is being encoded in jwt 
+            console.log(token)
+            return token
+        },
         session: ({ session, token }: { session: Session, token: JWT }) => {
-            if (session.user.id) {
-                session.user.id = token.sub ?? ""
+            if (session && session.user) {
+            session.user.id = token.sub ?? ""
             }
             return session;
         }

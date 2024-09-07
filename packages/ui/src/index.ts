@@ -1,1 +1,4 @@
 export * from "./shad/ui/button";
+export * from "./shad/ui/dropdown-menu";
+export * from "./shad/ui/theme-provider";
+export * from "./shad/ui/mode-toggle";

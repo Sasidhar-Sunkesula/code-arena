@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { Appbar } from "../components/app-bar";
+import AppBar from "@/components/app-bar";
 import { authOptions } from "@/lib/auth";
 
 async function getUser() {
@@ -11,8 +11,7 @@ export default async function Home() {
   return (
     <div>
       hi there
-      <Appbar />
-      {JSON.stringify(user)}
+      <AppBar />
     </div>
-  );
+  ); 
 }
