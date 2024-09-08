@@ -1,16 +1,16 @@
 import { getServerSession } from "next-auth";
-import AppBar from "@/components/app-bar";
+import AppBar from "@/components/AppBar";
 import { authOptions } from "@/lib/auth";
+import { HeroSection } from "@/components/HeroSection";
+import { OpenContests } from "@/components/OpenContests";
 
-async function getUser() {
-  const user = await getServerSession(authOptions);
-  return user;
-}
 export default async function Home() {
-  const user = await getUser();
+  const session = await getServerSession(authOptions);
   return (
     <div>
-      <AppBar />
+      <AppBar session={session} />
+      <HeroSection />
+      <OpenContests />
     </div>
-  ); 
+  );
 }

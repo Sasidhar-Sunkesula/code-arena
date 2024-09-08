@@ -14,12 +14,13 @@ datasource db {
 }
 
 model User {
-  id                String    @id @default(cuid())
-  createdAt         DateTime  @default(now())
-  email             String    @unique
+  id                String       @id @default(cuid())
+  createdAt         DateTime     @default(now())
+  email             String       @unique
   name              String
   password          String
-  attemptedContests Contest[] @relation("UserContests")
+  attemptedContests Contest[]    @relation("UserContests")
+  submissions       Submission[]
 }
 
 model TestCase {
@@ -36,6 +37,7 @@ model Problem {
   difficultyLevel DifficultyLevel
   testcases       TestCase[]
   contests        Contest[]       @relation("ContestProblems")
+  submissions     Submission[]
 }
 
 model Contest {
@@ -46,6 +48,19 @@ model Contest {
   closesOn     DateTime
   problems     Problem[]    @relation("ContestProblems")
   users        User[]       @relation("UserContests")
+  submissions  Submission[]
+}
+
+model Submission {
+  status    ProblemStatus
+  userId    String
+  problemId Int
+  contestId Int?
+  user      User          @relation(fields: [userId], references: [id])
+  problem   Problem       @relation(fields: [problemId], references: [id])
+  contest   Contest?      @relation(fields: [contestId], references: [id])
+
+  @@id([userId, problemId])
 }
 
 enum ContestLevel {
@@ -58,4 +73,9 @@ enum DifficultyLevel {
   EASY   @map("Easy")
   MEDIUM @map("Medium")
   HARD   @map("Hard")
+}
+
+enum ProblemStatus {
+  UNSOLVED @map("Unsolved")
+  SOLVED   @map("Solved")
 }
