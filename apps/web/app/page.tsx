@@ -10,7 +10,6 @@ export default async function Home() {
   const user = await getUser();
   return (
     <div>
-      hi there
       <AppBar />
     </div>
   ); 

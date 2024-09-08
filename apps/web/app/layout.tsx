@@ -13,7 +13,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "No Code",
+  title: "NoCode",
   description: "Online Coding Practice Platform",
 };
 
