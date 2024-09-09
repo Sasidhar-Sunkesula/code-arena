@@ -1,15 +1,16 @@
-import { Button } from "@repo/ui/shad"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@repo/ui/shad"
 import { CalendarIcon, HashIcon, LayersIcon } from "lucide-react"
+import { ButtonClient } from "./ButtonClient"
 
 interface ContestCardProps {
-    name: string
-    noOfProblems: number
-    level: string
-    closesOn: Date
+    name: string;
+    noOfProblems: number;
+    level: string;
+    closesOn: Date;
+    linkTo: string;
 }
 
-export function ContestCard({ name, noOfProblems, level, closesOn }: ContestCardProps) {
+export function ContestCard({ name, noOfProblems, level, closesOn, linkTo }: ContestCardProps) {
     return (
         <Card>
             <CardHeader>
@@ -30,7 +31,7 @@ export function ContestCard({ name, noOfProblems, level, closesOn }: ContestCard
                 </div>
             </CardContent>
             <CardFooter>
-                <Button className="w-full">Participate</Button>
+                <ButtonClient linkTo={linkTo} />
             </CardFooter>
         </Card>
     )

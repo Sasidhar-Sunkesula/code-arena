@@ -14,12 +14,12 @@ datasource db {
 }
 
 model User {
-  id                String       @id @default(cuid())
-  createdAt         DateTime     @default(now())
-  email             String       @unique
+  id                String        @id @default(cuid())
+  createdAt         DateTime      @default(now())
+  email             String        @unique
   name              String
   password          String
-  attemptedContests Contest[]    @relation("UserContests")
+  attemptedContests UserContest[]
   submissions       Submission[]
 }
 
@@ -32,26 +32,48 @@ model TestCase {
 }
 
 model Problem {
-  id              Int             @id @default(autoincrement())
+  id              Int              @id @default(autoincrement())
   name            String
   content         String
   difficultyLevel DifficultyLevel
   testcases       TestCase[]
-  contests        Contest[]       @relation("ContestProblems")
+  contests        ContestProblem[]
   submissions     Submission[]
 }
 
 model Contest {
-  id           Int          @id @default(autoincrement())
+  id           Int              @id @default(autoincrement())
   name         String
   noOfProblems Int
   level        ContestLevel
   closesOn     DateTime
-  problems     Problem[]    @relation("ContestProblems")
-  users        User[]       @relation("UserContests")
+  problems     ContestProblem[]
+  users        UserContest[]
   submissions  Submission[]
 }
 
+model UserContest {
+  userId    String
+  contestId Int
+  user      User    @relation(fields: [userId], references: [id])
+  contest   Contest @relation(fields: [contestId], references: [id])
+
+  @@id([userId, contestId])
+}
+
+model ContestProblem {
+  problemId Int
+  contestId Int
+  problem   Problem @relation(fields: [problemId], references: [id])
+  contest   Contest @relation(fields: [contestId], references: [id])
+
+  @@id([problemId, contestId])
+}
+
+// A User can participate in multiple Contests, and a Contest can have multiple Users
+// participating. This many-to-many relationship is facilitated by the 
+// Submission model. This Submission model is a join table that contains foreign keys
+// referencing the primary keys of the two tables.
 model Submission {
   status    ProblemStatus
   userId    String

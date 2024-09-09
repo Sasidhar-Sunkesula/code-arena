@@ -2,20 +2,16 @@ import prisma from "./client";
 
 async function main() {
     // Create Users
-    const user1 = await prisma.user.upsert({
-        where: { email: 'user1@example.com' },
-        update: {},
-        create: {
+    const user1 = await prisma.user.create({
+        data: {
             email: 'user1@example.com',
             name: 'User One',
             password: 'password1',
         },
     });
 
-    const user2 = await prisma.user.upsert({
-        where: { email: 'user2@example.com' },
-        update: {},
-        create: {
+    const user2 = await prisma.user.create({
+        data: {
             email: 'user2@example.com',
             name: 'User Two',
             password: 'password2',
@@ -70,52 +66,32 @@ This is the content of problem two. Solve the problem by multiplying two numbers
     });
 
     // Create TestCases with Multi-line Strings
-    await prisma.testCase.upsert({
-        where: { id: 1 },
-        update: {
-            input: '1 2\n3 4',
-            expectedOutput: '3\n7',
-        },
-        create: {
+    await prisma.testCase.create({
+        data: {
             input: '1 2\n3 4',
             expectedOutput: '3\n7',
             problemId: problem1.id,
         },
     });
 
-    await prisma.testCase.upsert({
-        where: { id: 2 },
-        update: {
-            input: '5 6\n7 8',
-            expectedOutput: '11\n15',
-        },
-        create: {
+    await prisma.testCase.create({
+        data: {
             input: '5 6\n7 8',
             expectedOutput: '11\n15',
             problemId: problem1.id,
         },
     });
 
-    await prisma.testCase.upsert({
-        where: { id: 3 },
-        update: {
-            input: '2 3\n4 5',
-            expectedOutput: '6\n20',
-        },
-        create: {
+    await prisma.testCase.create({
+        data: {
             input: '2 3\n4 5',
             expectedOutput: '6\n20',
             problemId: problem2.id,
         },
     });
 
-    await prisma.testCase.upsert({
-        where: { id: 4 },
-        update: {
-            input: '6 7\n8 9',
-            expectedOutput: '42\n72',
-        },
-        create: {
+    await prisma.testCase.create({
+        data: {
             input: '6 7\n8 9',
             expectedOutput: '42\n72',
             problemId: problem2.id,
@@ -130,22 +106,23 @@ This is the content of problem two. Solve the problem by multiplying two numbers
             level: 'BEGINNER',
             closesOn: new Date('2023-12-31'),
             problems: {
-                connect: [{ id: problem1.id }, { id: problem2.id }],
+                create: [
+                    { problem: { connect: { id: problem1.id } } },
+                    { problem: { connect: { id: problem2.id } } },
+                ],
             },
             users: {
-                connect: [{ id: user1.id }, { id: user2.id }],
+                create: [
+                    { user: { connect: { id: user1.id } } },
+                    { user: { connect: { id: user2.id } } },
+                ],
             },
         },
     });
 
     // Create Submissions
-    await prisma.submission.upsert({
-        where: { userId_problemId: { userId: user1.id, problemId: problem1.id } },
-        update: {
-            status: 'UNSOLVED',
-            contestId: contest1.id,
-        },
-        create: {
+    await prisma.submission.create({
+        data: {
             status: 'UNSOLVED',
             userId: user1.id,
             problemId: problem1.id,
@@ -153,13 +130,8 @@ This is the content of problem two. Solve the problem by multiplying two numbers
         },
     });
 
-    await prisma.submission.upsert({
-        where: { userId_problemId: { userId: user2.id, problemId: problem1.id } },
-        update: {
-            status: 'SOLVED',
-            contestId: contest1.id,
-        },
-        create: {
+    await prisma.submission.create({
+        data: {
             status: 'SOLVED',
             userId: user2.id,
             problemId: problem1.id,
@@ -167,13 +139,8 @@ This is the content of problem two. Solve the problem by multiplying two numbers
         },
     });
 
-    await prisma.submission.upsert({
-        where: { userId_problemId: { userId: user1.id, problemId: problem2.id } },
-        update: {
-            status: 'UNSOLVED',
-            contestId: contest1.id,
-        },
-        create: {
+    await prisma.submission.create({
+        data: {
             status: 'UNSOLVED',
             userId: user1.id,
             problemId: problem2.id,
