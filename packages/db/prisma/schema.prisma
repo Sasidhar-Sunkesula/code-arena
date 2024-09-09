@@ -24,10 +24,11 @@ model User {
 }
 
 model TestCase {
-  id        Int     @id @default(autoincrement())
-  content   String
-  problemId Int
-  problem   Problem @relation(fields: [problemId], references: [id])
+  id             Int     @id @default(autoincrement())
+  input          String
+  expectedOutput String
+  problemId      Int
+  problem        Problem @relation(fields: [problemId], references: [id])
 }
 
 model Problem {

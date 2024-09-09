@@ -2,10 +2,10 @@
   "name": "@repo/db",
   "version": "1.0.0",
   "exports": {
-    "./client": "./src/client.ts"
+    "./client": "./prisma/client.ts"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "seed": "ts-node prisma/seed.ts"
   },
   "keywords": [],
   "author": "",

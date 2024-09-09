@@ -4,12 +4,12 @@ import { CalendarIcon, HashIcon, LayersIcon } from "lucide-react"
 
 interface ContestCardProps {
     name: string
-    problemCount: number
+    noOfProblems: number
     level: string
-    closesOn: string
+    closesOn: Date
 }
 
-export function ContestCard({ name, problemCount, level, closesOn }: ContestCardProps) {
+export function ContestCard({ name, noOfProblems, level, closesOn }: ContestCardProps) {
     return (
         <Card>
             <CardHeader>
@@ -18,7 +18,7 @@ export function ContestCard({ name, problemCount, level, closesOn }: ContestCard
             <CardContent className="space-y-2">
                 <div className="flex items-center">
                     <HashIcon className="mr-2 h-4 w-4" />
-                    <span>{problemCount} Problems</span>
+                    <span>{noOfProblems} Problems</span>
                 </div>
                 <div className="flex items-center">
                     <LayersIcon className="mr-2 h-4 w-4" />
@@ -26,7 +26,7 @@ export function ContestCard({ name, problemCount, level, closesOn }: ContestCard
                 </div>
                 <div className="flex items-center">
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    <span>Closes on: {closesOn}</span>
+                    <span>Closes on: {closesOn.toUTCString()}</span>
                 </div>
             </CardContent>
             <CardFooter>
