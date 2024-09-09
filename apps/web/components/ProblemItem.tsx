@@ -4,15 +4,15 @@ import { Badge } from "@repo/ui/shad"
 
 interface ProblemItemProps {
     name: string
-    level: "Easy" | "Medium" | "Hard"
-    status: "Solved" | "Attempted"
+    difficultyLevel: "EASY" | "MEDIUM" | "HARD"
+    // status: "Solved" | "Attempted"
 }
 
-export function ProblemItem({ name, level, status }: ProblemItemProps) {
+export function ProblemItem({ name, difficultyLevel, status }: ProblemItemProps) {
     const levelColor = {
-        Easy: "bg-green-500",
-        Medium: "bg-yellow-500",
-        Hard: "bg-red-500",
+        EASY: "bg-green-500",
+        MEDIUM: "bg-yellow-500",
+        HARD: "bg-red-500",
     }
 
     const statusColor = {
@@ -26,9 +26,9 @@ export function ProblemItem({ name, level, status }: ProblemItemProps) {
             <CardContent className="p-4">
                 <div className="flex justify-between items-center">
                     <h3 className="text-lg font-semibold">{name}</h3>
-                    <Badge className={`${levelColor[level]} text-white`}>{level}</Badge>
+                    <Badge className={`${levelColor[difficultyLevel]} text-white`}>{difficultyLevel}</Badge>
                 </div>
-                <Badge className={`mt-2 ${statusColor[status]}`}>{status}</Badge>
+                {/* <Badge className={`mt-2 ${statusColor[status]}`}>{status}</Badge> */}
             </CardContent>
             <CardFooter className="p-4 pt-0">
                 <Button className="w-full">Solve</Button>

@@ -3,8 +3,7 @@ import { ProblemItem } from "./ProblemItem"
 interface Problem {
     id: number
     name: string
-    level: "Easy" | "Medium" | "Hard"
-    status: "Solved" | "Attempted"
+    difficultyLevel: "EASY" | "MEDIUM" | "HARD"
 }
 
 interface ProblemListProps {

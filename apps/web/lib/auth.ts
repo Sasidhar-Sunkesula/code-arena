@@ -82,7 +82,7 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         jwt: ({ token }) => {
             // This function is for debugging and we can look at what is being encoded in jwt 
-            console.log(token)
+            // console.log(token)
             return token
         },
         session: ({ session, token }: { session: Session, token: JWT }) => {

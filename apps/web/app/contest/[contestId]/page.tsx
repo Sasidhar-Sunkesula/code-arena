@@ -3,41 +3,52 @@ import { ContestDetails } from "@/components/ContestDetails"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation";
+import prisma from "@repo/db/client";
 
 export default async function ContestInfo({ params }: { params: { contestId: string } }) {
+    const contestId = parseInt(params.contestId);
     const session = await getServerSession(authOptions);
     if (!session?.user) {
         return redirect("/api/auth/signin")
     }
-    const contestData = {
-        name: "Weekly Algorithm Challenge",
-        problemCount: 5,
-        endTime: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
-        problems: [
-            { id: 1, name: "Two Sum", level: "Easy", status: "Solved" },
-            { id: 2, name: "Merge Intervals", level: "Medium", status: "Attempted" },
-            { id: 3, name: "Binary Tree Level Order Traversal", level: "Medium", status: "Not Started" },
-            { id: 4, name: "Trapping Rain Water", level: "Hard", status: "Not Started" },
-            { id: 5, name: "Longest Palindromic Substring", level: "Medium", status: "Not Started" },
-        ],
-    }
+    const contestData = await prisma.contest.findUnique({
+        where: {
+            id: contestId
+        },
+        include: {
+            problems: {
+                include: {
+                    problem: {
+                        select: {
+                            id: true,
+                            name: true,
+                            difficultyLevel: true
+                        }
+                    }
+                }
+            }
+        }
+    })
+    console.log("data", contestData);
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-6">{contestData.name}</h1>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="md:col-span-2">
-                    <ProblemList problems={contestData.problems} />
-                </div>
-                <div>
-                    <ContestDetails
-                        name={contestData.name}
-                        problemCount={contestData.problemCount}
-                        endTime={contestData.endTime}
-                        problems={contestData.problems}
-                    />
+        !contestData
+            ? <div className="font-bold text-destructive">Contest with id - {contestId} not found</div>
+            : <div className="container mx-auto px-4 py-8">
+                <h1 className="text-3xl font-bold mb-6">{contestData.name}</h1>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="md:col-span-2">
+                        <ProblemList problems={contestData.problems.map((problemData) => problemData.problem)} />
+                    </div>
+                    <div>
+                        <ContestDetails
+                            name={contestData.name}
+                            problemCount={contestData.noOfProblems}
+                            endTime={contestData.closesOn}
+                            problems={contestData.problems}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
     )
 }
