@@ -30,5 +30,5 @@ export function Timer({ endTime }: TimerProps) {
         return () => clearInterval(timer)
     }, [endTime])
 
-    return <p>{timeLeft}</p>
+    return <p className="text-destructive font-medium">{timeLeft}</p>
 }

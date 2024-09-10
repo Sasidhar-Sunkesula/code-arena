@@ -6,11 +6,11 @@ interface ContestDetailsProps {
     name: string
     problemCount: number
     endTime: Date
-    problems: { status: string }[]
+    problems: { status: "SOLVED" | "UNSOLVED" }[]
 }
 
 export function ContestDetails({ name, problemCount, endTime, problems }: ContestDetailsProps) {
-    const solvedProblems = problems.filter((problem) => problem.status === "Solved").length
+    const solvedProblems = problems.filter((problem) => problem.status === "SOLVED").length
     const completionPercentage = (solvedProblems / problemCount) * 100
 
     return (

@@ -26,10 +26,18 @@ export default async function ContestInfo({ params }: { params: { contestId: str
                         }
                     }
                 }
+            },
+            submissions: {
+                where: {
+                    userId: session.user.id,
+                    status: "SOLVED"
+                },
+                select: {
+                    status: true
+                }
             }
         }
     })
-    console.log("data", contestData);
 
     return (
         !contestData
@@ -45,7 +53,7 @@ export default async function ContestInfo({ params }: { params: { contestId: str
                             name={contestData.name}
                             problemCount={contestData.noOfProblems}
                             endTime={contestData.closesOn}
-                            problems={contestData.problems}
+                            problems={contestData.submissions}
                         />
                     </div>
                 </div>

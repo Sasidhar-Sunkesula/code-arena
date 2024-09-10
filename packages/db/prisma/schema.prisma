@@ -52,6 +52,7 @@ model Contest {
   submissions  Submission[]
 }
 
+// Join table
 model UserContest {
   userId    String
   contestId Int
@@ -61,6 +62,7 @@ model UserContest {
   @@id([userId, contestId])
 }
 
+// Join table
 model ContestProblem {
   problemId Int
   contestId Int
