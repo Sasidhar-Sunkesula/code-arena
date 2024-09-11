@@ -33,7 +33,8 @@ export default async function ContestInfo({ params }: { params: { contestId: str
                     status: "SOLVED"
                 },
                 select: {
-                    status: true
+                    status: true,
+                    problemId: true
                 }
             }
         }
@@ -46,14 +47,17 @@ export default async function ContestInfo({ params }: { params: { contestId: str
                 <h1 className="text-3xl font-bold mb-6">{contestData.name}</h1>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div className="md:col-span-2">
-                        <ProblemList problems={contestData.problems.map((problemData) => problemData.problem)} />
+                        <ProblemList
+                            problems={contestData.problems.map((problemData) => problemData.problem)}
+                            submissions={contestData.submissions}
+                        />
                     </div>
                     <div>
                         <ContestDetails
                             name={contestData.name}
                             problemCount={contestData.noOfProblems}
                             endTime={contestData.closesOn}
-                            problems={contestData.submissions}
+                            submissions={contestData.submissions}
                         />
                     </div>
                 </div>

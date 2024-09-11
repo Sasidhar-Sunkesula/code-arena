@@ -5,17 +5,21 @@ interface Problem {
     name: string
     difficultyLevel: "EASY" | "MEDIUM" | "HARD"
 }
-
+interface Submissions {
+    status: "SOLVED" | "UNSOLVED",
+    problemId: number
+}
 interface ProblemListProps {
-    problems: Problem[]
+    problems: Problem[],
+    submissions: Submissions[]
 }
 
-export function ProblemList({ problems }: ProblemListProps) {
+export function ProblemList({ problems, submissions }: ProblemListProps) {
     return (
         <div className="space-y-4">
             <h2 className="text-2xl font-semibold mb-4">Problems</h2>
-            {problems.map((problem) => (
-                <ProblemItem key={problem.id} {...problem} />
+            {problems.map((problem, index) => (
+                <ProblemItem key={problem.id} {...problem} status={submissions[index]?.status || "UNSOLVED"} />
             ))}
         </div>
     )
