@@ -13,7 +13,7 @@ interface ProblemItemProps {
 export function ProblemItem({ id, name, difficultyLevel, status }: ProblemItemProps) {
     const levelColor = {
         EASY: "bg-green-500",
-        MEDIUM: "bg-yellow-500",
+        MEDIUM: "bg-yellow-600",
         HARD: "bg-red-500",
     }
 

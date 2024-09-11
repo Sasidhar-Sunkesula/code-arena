@@ -31,7 +31,7 @@ export function ContestCard({ name, noOfProblems, level, closesOn, linkTo }: Con
                 </div>
             </CardContent>
             <CardFooter>
-                <ButtonClient linkTo={linkTo} text="Participate" />
+                <ButtonClient linkTo={linkTo} text="Participate" className="w-full" />
             </CardFooter>
         </Card>
     )

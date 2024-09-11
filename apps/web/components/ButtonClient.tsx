@@ -1,9 +1,13 @@
 import { Button } from "@repo/ui/shad"
 import Link from "next/link"
-
-export function ButtonClient({ linkTo, text, onClick }: { linkTo: string, text: string, onClick?: () => void }) {
+interface ButtonClientProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    linkTo: string;
+    text: string;
+    onClick?: () => void
+}
+export function ButtonClient({ linkTo, text, onClick, ...props }: ButtonClientProps) {
     return (
-        <Button onClick={onClick} asChild className="w-full">
+        <Button onClick={onClick} asChild {...props}>
             <Link href={linkTo}>{text}</Link>
         </Button>
     )

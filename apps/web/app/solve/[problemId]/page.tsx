@@ -21,14 +21,16 @@ export default async function ProblemSolvingPage({ params }: { params: { problem
     !problemData
       ? <div className="font-bold text-destructive">Contest with id - {problemId} not found</div>
       : <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-3">{problemData.name}</h1>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="bg-card rounded-lg prose prose-stone dark:prose-invert">
+            <h1 className="text-3xl font-bold mb-3">{problemData.name}</h1>
             <MarkdownRenderer content={problemData.content} />
           </div>
           <div className="space-y-4">
             <CodeEditor />
-            <ButtonClient text="Submit" linkTo="#" />
+            <div className="flex justify-end">
+              <ButtonClient text="Submit" linkTo="#" />
+            </div>
           </div>
         </div>
       </div>

@@ -156,7 +156,7 @@ async function main() {
             id: 1
         }, data: {
             content: `## Description
-Find the sum of two given elements. Both the numbers will always be 0 or positive.
+Find the sum of two given elements. Both the numbers will always be 0 or posve.
 
 ### Test case 1
 
