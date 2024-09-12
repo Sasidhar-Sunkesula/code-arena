@@ -15,6 +15,13 @@ export default async function ProblemSolvingPage({ params }: { params: { problem
   const problemData = await prisma.problem.findUnique({
     where: {
       id: problemId
+    },
+    include: {
+      boilerPlate: {
+        include: {
+          language: true
+        }
+      }
     }
   })
   return (
@@ -27,7 +34,7 @@ export default async function ProblemSolvingPage({ params }: { params: { problem
             <MarkdownRenderer content={problemData.content} />
           </div>
           <div className="space-y-4">
-            <CodeEditor />
+            <CodeEditor boilerPlates={problemData.boilerPlate} />
             <div className="flex justify-end">
               <ButtonClient text="Submit" linkTo="#" />
             </div>

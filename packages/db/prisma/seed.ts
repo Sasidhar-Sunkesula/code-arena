@@ -1,12 +1,15 @@
 import prisma from "./client";
+import bcrypt from "bcrypt";
 
 async function main() {
     // Create Users
+    const salt = await bcrypt.genSalt(10);
+    const hash1 = await bcrypt.hash("sasidhar6", salt)
     const user1 = await prisma.user.create({
         data: {
-            email: 'user11@example.com',
+            email: 'www.sasidharsunkesula579@gmail.com',
             name: 'User One',
-            password: 'password1',
+            password: hash1,
         },
     });
 
@@ -23,7 +26,7 @@ async function main() {
         data: {
             name: 'Sum of two numbers',
             content: `## Description
-            Find the sum of two given elements. Both the numbers will always be 0 or posve.
+            Find the sum of two given elements. Both the numbers will always be 0 or positive.
             
             ### Test case 1
             
@@ -57,8 +60,6 @@ async function main() {
         data: {
             name: 'Problem Two',
             content: `
-# Problem Two
-
 ## Description
 This is the content of problem two. Solve the problem by multiplying two numbers.
 
@@ -117,7 +118,7 @@ This is the content of problem two. Solve the problem by multiplying two numbers
     // Create Contests
     const contest1 = await prisma.contest.create({
         data: {
-            name: 'Contest One',
+            name: 'Basic Booster',
             noOfProblems: 2,
             level: 'BEGINNER',
             closesOn: new Date('2024-09-15'),
@@ -139,7 +140,7 @@ This is the content of problem two. Solve the problem by multiplying two numbers
     // Create Submissions
     await prisma.submission.create({
         data: {
-            status: 'UNSOLVED',
+            status: 'SOLVED',
             userId: user1.id,
             languageId: language.id,
             submittedCode: `function sum(a, b) {\n
@@ -152,7 +153,7 @@ This is the content of problem two. Solve the problem by multiplying two numbers
 
     await prisma.submission.create({
         data: {
-            status: 'SOLVED',
+            status: 'UNSOLVED',
             userId: user2.id,
             languageId: language.id,
             submittedCode: `function sum(a, b) {\n
@@ -164,7 +165,7 @@ This is the content of problem two. Solve the problem by multiplying two numbers
     })
     console.log('Seed data created successfully!');
 }
-async function main2() {
+async function deleteAll() {
     // Delete all records from each table in the correct order
     await prisma.userContest.deleteMany({});
     await prisma.contestProblem.deleteMany({});
@@ -178,7 +179,63 @@ async function main2() {
 
     console.log('All data deleted');
 }
-main()
+async function updateProblem() {
+    const problem = await prisma.problem.findFirst({
+        where: {
+            name: "Sum of two numbers"
+        }
+    })
+    await prisma.problem.update({
+        where: {
+            id: problem?.id,
+        },
+        data: {
+            content: `
+## Description
+Find the sum of two given elements. Both the numbers will always be 0 or positive.
+    
+### Sample Input 1
+    
+#### Input
+\`\`\`
+1, 2
+\`\`\`
+    
+#### Output
+\`\`\`
+3
+\`\`\`
+    
+### Sample Input 2
+    
+#### Input
+\`\`\`
+1, 100
+\`\`\`
+    
+#### Output
+\`\`\`
+101
+\`\`\`
+            `,
+        },
+    });
+
+    console.log('Problem content updated successfully:');
+}
+async function addBoilerPlates() {
+    const boilerPlate = await prisma.boilerPlate.update({
+        where: {
+            id: 2
+        }, data: {
+            boilerPlateCode: `def sum(a,b):
+# Implementation goes here
+return result`
+        }
+    })
+    console.log("bpc updated");
+}
+addBoilerPlates()
     .catch((e) => {
         console.error(e);
         process.exit(1);

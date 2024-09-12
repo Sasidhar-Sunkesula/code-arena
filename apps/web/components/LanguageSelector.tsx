@@ -7,8 +7,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@repo/ui/shad"
+import { Language } from "./CodeEditor"
 interface LanguageSelectorProps {
-    languages: string[]
+    languages: Language[]
     selectedLanguage: string
     setSelectedLanguage: React.Dispatch<React.SetStateAction<string>>
 }
@@ -20,8 +21,8 @@ export function LanguageSelector({ selectedLanguage, setSelectedLanguage, langua
             </SelectTrigger>
             <SelectContent>
                 {languages.map((lang) => (
-                    <SelectItem key={lang} value={lang}>
-                        {lang}
+                    <SelectItem key={lang.id} value={lang.monacoName}>
+                        {lang.displayName}
                     </SelectItem>
                 ))}
             </SelectContent>
