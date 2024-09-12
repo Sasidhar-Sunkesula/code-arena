@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { LanguageSelector } from './LanguageSelector'
 
@@ -26,8 +26,7 @@ export function CodeEditor() {
                 value={code}
                 onChange={(value) => setCode(value || '')}
                 theme="vs-dark"
-                defaultLanguage="javascript"
-                loading = "Editor is loading..."
+                loading="Editor is loading..."
                 options={{
                     minimap: { enabled: false },
                     fontSize: 16,

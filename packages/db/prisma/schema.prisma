@@ -35,6 +35,7 @@ model Problem {
   id              Int              @id @default(autoincrement())
   name            String
   content         String
+  boilerPlate     BoilerPlate[]
   difficultyLevel DifficultyLevel
   testcases       TestCase[]
   contests        ContestProblem[]
@@ -77,15 +78,35 @@ model ContestProblem {
 // Submission model. This Submission model is a join table that contains foreign keys
 // referencing the primary keys of the two tables.
 model Submission {
-  status    ProblemStatus
-  userId    String
-  problemId Int
-  contestId Int?
-  user      User          @relation(fields: [userId], references: [id])
-  problem   Problem       @relation(fields: [problemId], references: [id])
-  contest   Contest?      @relation(fields: [contestId], references: [id])
+  status        ProblemStatus
+  submittedCode String
+  languageId    Int
+  userId        String
+  problemId     Int
+  contestId     Int?
+  language      Language      @relation(fields: [languageId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
+  problem       Problem       @relation(fields: [problemId], references: [id])
+  contest       Contest?      @relation(fields: [contestId], references: [id])
 
   @@id([userId, problemId])
+}
+
+model BoilerPlate {
+  id              Int      @id @default(autoincrement())
+  boilerPlateCode String
+  languageId      Int      @unique
+  problemId       Int
+  language        Language @relation(fields: [languageId], references: [id])
+  Problem         Problem  @relation(fields: [problemId], references: [id])
+}
+
+model Language {
+  id          Int          @id @default(autoincrement())
+  displayName String
+  monacoName  String
+  boilerPlate BoilerPlate?
+  submissions Submission[]
 }
 
 enum ContestLevel {
