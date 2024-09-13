@@ -5,6 +5,8 @@ import prisma from "@repo/db/client"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation";
+import { submitCode } from "@/app/actions/submitCode"
+import { CodeSubmitButton } from "@/components/CodeSubmitButton"
 
 export default async function ProblemSolvingPage({ params }: { params: { problemId: string } }) {
   const problemId = parseInt(params.problemId);
@@ -36,7 +38,7 @@ export default async function ProblemSolvingPage({ params }: { params: { problem
           <div className="space-y-4">
             <CodeEditor boilerPlates={problemData.boilerPlate} />
             <div className="flex justify-end">
-              <ButtonClient text="Submit" linkTo="#" />
+              <CodeSubmitButton text="Submit" linkTo="#" />
             </div>
           </div>
         </div>
