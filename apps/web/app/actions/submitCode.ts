@@ -7,7 +7,7 @@ export async function submitCode() {
     const session = await getServerSession(authOptions)
     if (!session?.user) {
         return {
-            msg: "Unauthenticated request"
+            msg: "You must be logged in to submit a problem"
         }
     }
     try {

@@ -5,7 +5,8 @@
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
     "NEXTAUTH_SECRET",
-    "JUDGE0_URL"
+    "JUDGE0_URL",
+    "NEXT_PUBLIC_BASE_URL"
   ],
   "globalDependencies": [
     "**/.env.*local",

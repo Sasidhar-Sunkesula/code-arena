@@ -6,8 +6,9 @@ import { LanguageSelector } from './LanguageSelector'
 
 export interface Language {
     id: number;
-    displayName: string;
-    monacoName: string
+    judge0Name: string;
+    monacoName: string;
+    judge0Id: number;
 }
 interface BoilerPlate {
     id: number;
@@ -18,10 +19,7 @@ export function CodeEditor({ boilerPlates }: { boilerPlates: BoilerPlate[] }) {
     const [selectedLanguage, setSelectedLanguage] = useState(boilerPlates[0]?.language.monacoName || "")
     const initialCode = boilerPlates.find((item) => item.language.monacoName === selectedLanguage)?.boilerPlateCode || ""
     const [code, setCode] = useState<string>(initialCode)
-    const handleSubmit = () => {
-        console.log("Submitting code:", code)
-        // Here you would typically send the code to your backend for evaluation
-    }
+
     useEffect(() => {
         setCode(initialCode)
     }, [initialCode])

@@ -1,11 +1,9 @@
 import { MarkdownRenderer } from "@/components/MarkdownRenderer"
 import { CodeEditor } from "@/components/CodeEditor"
-import { ButtonClient } from "@/components/ButtonClient"
 import prisma from "@repo/db/client"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation";
-import { submitCode } from "@/app/actions/submitCode"
 import { CodeSubmitButton } from "@/components/CodeSubmitButton"
 
 export default async function ProblemSolvingPage({ params }: { params: { problemId: string } }) {

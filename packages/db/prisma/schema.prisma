@@ -103,7 +103,8 @@ model BoilerPlate {
 
 model Language {
   id          Int          @id @default(autoincrement())
-  displayName String
+  judge0Name  String
+  judge0Id    Int
   monacoName  String
   boilerPlate BoilerPlate?
   submissions Submission[]

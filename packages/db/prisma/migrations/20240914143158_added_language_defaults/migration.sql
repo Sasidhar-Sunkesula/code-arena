@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Language" ALTER COLUMN "judge0Id" DROP DEFAULT,
+ALTER COLUMN "judge0Name" DROP DEFAULT;
