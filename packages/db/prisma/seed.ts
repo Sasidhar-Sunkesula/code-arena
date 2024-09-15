@@ -139,7 +139,7 @@ This is the content of problem two. Solve the problem by multiplying two numbers
     // implementation goes here\n
 }`,
             problemId: problem1.id,
-            createdAt: Date.now().toString(),
+            createdAt: new Date(),
             memory: 2000,
             runTime: 2000,
             testCasesPassed: 1,
@@ -219,7 +219,7 @@ return result`
     })
     console.log("bpc updated");
 }
-deleteAll()
+main()
     .catch((e) => {
         console.error(e);
         process.exit(1);

@@ -83,9 +83,9 @@ model Submission {
   submittedCode   String
   languageId      Int
   createdAt       DateTime
-  runTime         Float
-  memory          Float
-  testCasesPassed Int
+  runTime         Float?
+  memory          Float?
+  testCasesPassed Int?
   output          String?
   error           String?
   userId          String
@@ -118,15 +118,15 @@ model Language {
 }
 
 enum ContestLevel {
-  BEGINNER     @map("Beginner")
-  INTERMEDIATE @map("Intermediate")
-  ADVANCED     @map("Advanced")
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
 }
 
 enum DifficultyLevel {
-  EASY   @map("Easy")
-  MEDIUM @map("Medium")
-  HARD   @map("Hard")
+  EASY
+  MEDIUM
+  HARD
 }
 
 enum SubmissionStatus {

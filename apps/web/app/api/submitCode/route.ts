@@ -6,72 +6,102 @@ import { z, ZodError } from "zod";
 
 const submitCodeSchema = z.object({
     problemId: z.number({ message: "Problem Id is missing" }),
-    fullCode: z.string({ message: "Code should not be empty" }),
-    languageId: z.number({ message: "Language Id is required" })
+    submittedCode: z.string({ message: "Code should not be empty" }),
+    languageId: z.number({ message: "Language Id is required" }),
+    contestId: z.number().optional()
 })
 interface BatchItem {
     language_id: number,
     source_code: string,
     stdin: string,
-    expected_output: string
+    expected_output: string,
+    callback_url: string
 }
 export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
-    // if (!session?.user) {
-    //     return NextResponse.json({
-    //         msg: "You must be logged in to submit a problem"
-    //     }, {
-    //         status: 401
-    //     })
-    // }
+    if (!session?.user) {
+        return NextResponse.json({
+            msg: "You must be logged in to submit a problem"
+        }, {
+            status: 401
+        })
+    }
     try {
         const validatedInput = submitCodeSchema.parse(await req.json());
-        const { problemId, fullCode, languageId } = validatedInput;
         const testCases = await prisma.testCase.findMany({
             where: {
-                problemId: problemId
+                problemId: validatedInput.problemId
             }
         })
         if (!testCases || testCases.length === 0) {
             throw new Error("Incorrect problemId, unable to find the test cases");
         }
+        const selectedLanguage = await prisma.language.findUnique({
+            where: {
+                id: validatedInput.languageId
+            }
+        });
+        if (!selectedLanguage) {
+            throw new Error("Error in finding the selected language from the db")
+        }
+        const newSubmission = await prisma.submission.create({
+            data: {
+                status: "PENDING",
+                submittedCode: validatedInput.submittedCode,
+                languageId: validatedInput.languageId,
+                createdAt: new Date(),
+                userId: session.user.id,
+                problemId: validatedInput.problemId,
+                contestId: validatedInput?.contestId
+            }
+        })
+        if (!newSubmission) {
+            throw new Error("Error in creating the submission record")
+        }
+        const callbackUrl = `http://host.docker.internal:3000/api/judge0Callback/${newSubmission.id}`;
         const inputForJudge: BatchItem[] = testCases.map((testCase) => ({
-            language_id: languageId,
-            source_code: fullCode,
+            language_id: selectedLanguage.judge0Id,
+            source_code: validatedInput.submittedCode,
             stdin: testCase.input,
-            expected_output: testCase.expectedOutput
+            expected_output: testCase.expectedOutput,
+            callback_url: callbackUrl
         }));
-        const callbackUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/judge0-callback?submissionId=${submissionId}`;
-        const batchSubmissionResponse = await fetch(`${process.env.JUDGE0_URL}/submissions/batch?base64_encoded=false`, {
+        const batchSubmissionResponse = await fetch(`http://localhost:2358/submissions/batch?base64_encoded=false`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                submissions: inputForJudge,
-                callback_url: callbackUrl
+                submissions: inputForJudge
             })
         });
-        const batchSubmissionTokens = await batchSubmissionResponse.json();
-        return NextResponse.json(batchSubmissionTokens)
+        if (!batchSubmissionResponse.ok) {
+            throw new Error("Could not reach judge0 server")
+        }
+        return NextResponse.json({
+            submissionId: newSubmission.id,
+            tokens: await batchSubmissionResponse.json()
+        }, {
+            status: 201
+        })
     } catch (error) {
         if (error instanceof ZodError) {
             return NextResponse.json({
                 msg: error.errors
             }, {
-                status: 401
+                status: 400
             })
         } else if (error instanceof Error) {
             return NextResponse.json({
                 msg: error.message
             }, {
-                status: 401
+                status: 500
             })
         }
         return NextResponse.json({
             msg: "An unknown error occurred"
         }, {
-            status: 401
+            status: 500
         })
     }
 }
