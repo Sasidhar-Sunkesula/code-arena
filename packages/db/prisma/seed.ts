@@ -11,15 +11,7 @@ async function main() {
             name: 'User One',
             password: hash1,
         },
-    });
-
-    const user2 = await prisma.user.create({
-        data: {
-            email: 'user22@example.com',
-            name: 'User Two',
-            password: 'password2',
-        },
-    });
+    })
 
     // Create Problems with Markdown Content
     const problem1 = await prisma.problem.create({
@@ -111,8 +103,9 @@ This is the content of problem two. Solve the problem by multiplying two numbers
     });
     const language = await prisma.language.create({
         data: {
-            displayName: "JavaScript",
-            monacoName: "javascript"
+            judge0Name: "Python",
+            monacoName: "python",
+            judge0Id: 71
         }
     })
     // Create Contests
@@ -131,7 +124,6 @@ This is the content of problem two. Solve the problem by multiplying two numbers
             users: {
                 create: [
                     { user: { connect: { id: user1.id } } },
-                    { user: { connect: { id: user2.id } } },
                 ],
             },
         },
@@ -140,29 +132,21 @@ This is the content of problem two. Solve the problem by multiplying two numbers
     // Create Submissions
     await prisma.submission.create({
         data: {
-            status: 'SOLVED',
+            status: 'ACCEPTED',
             userId: user1.id,
             languageId: language.id,
             submittedCode: `function sum(a, b) {\n
     // implementation goes here\n
 }`,
             problemId: problem1.id,
+            createdAt: Date.now().toString(),
+            memory: 2000,
+            runTime: 2000,
+            testCasesPassed: 1,
             contestId: contest1.id,
         },
     });
 
-    await prisma.submission.create({
-        data: {
-            status: 'UNSOLVED',
-            userId: user2.id,
-            languageId: language.id,
-            submittedCode: `function sum(a, b) {\n
-            // implementation goes here\n
-        }`,
-            problemId: problem1.id,
-            contestId: contest1.id,
-        },
-    })
     console.log('Seed data created successfully!');
 }
 async function deleteAll() {
@@ -235,7 +219,7 @@ return result`
     })
     console.log("bpc updated");
 }
-addBoilerPlates()
+deleteAll()
     .catch((e) => {
         console.error(e);
         process.exit(1);

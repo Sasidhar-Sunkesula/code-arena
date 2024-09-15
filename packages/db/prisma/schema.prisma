@@ -78,18 +78,25 @@ model ContestProblem {
 // Submission model. This Submission model is a join table that contains foreign keys
 // referencing the primary keys of the two tables.
 model Submission {
-  status        ProblemStatus
-  submittedCode String
-  languageId    Int
-  userId        String
-  problemId     Int
-  contestId     Int?
-  language      Language      @relation(fields: [languageId], references: [id])
-  user          User          @relation(fields: [userId], references: [id])
-  problem       Problem       @relation(fields: [problemId], references: [id])
-  contest       Contest?      @relation(fields: [contestId], references: [id])
+  id              Int              @id @default(autoincrement())
+  status          SubmissionStatus
+  submittedCode   String
+  languageId      Int
+  createdAt       DateTime
+  runTime         Float
+  memory          Float
+  testCasesPassed Int
+  output          String?
+  error           String?
+  userId          String
+  problemId       Int
+  contestId       Int?
+  language        Language         @relation(fields: [languageId], references: [id])
+  user            User             @relation(fields: [userId], references: [id])
+  problem         Problem          @relation(fields: [problemId], references: [id])
+  contest         Contest?         @relation(fields: [contestId], references: [id])
 
-  @@id([userId, problemId])
+  @@index([userId, problemId])
 }
 
 model BoilerPlate {
@@ -122,7 +129,8 @@ enum DifficultyLevel {
   HARD   @map("Hard")
 }
 
-enum ProblemStatus {
-  UNSOLVED @map("Unsolved")
-  SOLVED   @map("Solved")
+enum SubmissionStatus {
+  REJECTED
+  ACCEPTED
+  PENDING
 }
