@@ -79,7 +79,7 @@ model ContestProblem {
 // referencing the primary keys of the two tables.
 model Submission {
   id              Int              @id @default(autoincrement())
-  status          SubmissionStatus 
+  status          SubmissionStatus
   submittedCode   String
   languageId      Int
   createdAt       DateTime
@@ -130,18 +130,18 @@ enum DifficultyLevel {
 }
 
 enum SubmissionStatus {
-  InQueue
-  Processing
-  Accepted
-  WrongAnswer
-  TimeLimitExceeded
-  CompilationError
-  RuntimeErrorSIGSEGV
-  RuntimeErrorSIGXFSZ
-  RuntimeErrorSIGFPE
-  RuntimeErrorSIGABRT
-  RuntimeErrorNZEC
-  RuntimeErrorOther
-  InternalError
-  ExecFormatError
+  InQueue             @map("In Queue")
+  Processing          @map("Processing")
+  Accepted            @map("Accepted")
+  WrongAnswer         @map("Wrong Answer")
+  TimeLimitExceeded   @map("Time Limit Exceeded")
+  CompilationError    @map("Compilation Error")
+  RuntimeErrorSIGSEGV @map("Runtime Error (SIGSEGV)")
+  RuntimeErrorSIGXFSZ @map("Runtime Error (SIGXFSZ)")
+  RuntimeErrorSIGFPE  @map("Runtime Error (SIGFPE)")
+  RuntimeErrorSIGABRT @map("Runtime Error (SIGABRT)")
+  RuntimeErrorNZEC    @map("Runtime Error (NZEC)")
+  RuntimeErrorOther   @map("Runtime Error (Other)")
+  InternalError       @map("Internal Error")
+  ExecFormatError     @map("Exec Format Error")
 }
