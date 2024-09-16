@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
         }
         const newSubmission = await prisma.submission.create({
             data: {
-                status: "PENDING",
+                status: "InQueue",
                 submittedCode: validatedInput.submittedCode,
                 languageId: validatedInput.languageId,
                 createdAt: new Date(),
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
             expected_output: testCase.expectedOutput,
             callback_url: callbackUrl
         }));
-        const batchSubmissionResponse = await fetch(`http://localhost:2358/submissions/batch?base64_encoded=false`, {
+        const batchSubmissionResponse = await fetch(`${process.env.JUDGE0_URL}/submissions/batch?base64_encoded=false`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -79,8 +79,7 @@ export async function POST(req: NextRequest) {
             throw new Error("Could not reach judge0 server")
         }
         return NextResponse.json({
-            submissionId: newSubmission.id,
-            tokens: await batchSubmissionResponse.json()
+            submissionId: newSubmission.id
         }, {
             status: 201
         })

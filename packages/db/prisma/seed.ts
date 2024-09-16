@@ -132,7 +132,7 @@ This is the content of problem two. Solve the problem by multiplying two numbers
     // Create Submissions
     await prisma.submission.create({
         data: {
-            status: 'ACCEPTED',
+            status: 'Accepted',
             userId: user1.id,
             languageId: language.id,
             submittedCode: `function sum(a, b) {\n

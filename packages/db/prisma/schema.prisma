@@ -79,7 +79,7 @@ model ContestProblem {
 // referencing the primary keys of the two tables.
 model Submission {
   id              Int              @id @default(autoincrement())
-  status          SubmissionStatus
+  status          SubmissionStatus 
   submittedCode   String
   languageId      Int
   createdAt       DateTime
@@ -130,7 +130,18 @@ enum DifficultyLevel {
 }
 
 enum SubmissionStatus {
-  REJECTED
-  ACCEPTED
-  PENDING
+  InQueue
+  Processing
+  Accepted
+  WrongAnswer
+  TimeLimitExceeded
+  CompilationError
+  RuntimeErrorSIGSEGV
+  RuntimeErrorSIGXFSZ
+  RuntimeErrorSIGFPE
+  RuntimeErrorSIGABRT
+  RuntimeErrorNZEC
+  RuntimeErrorOther
+  InternalError
+  ExecFormatError
 }
