@@ -1,16 +1,17 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@repo/ui/shad"
 import { CalendarIcon, HashIcon, LayersIcon } from "lucide-react"
 import { ButtonClient } from "./ButtonClient"
+import { ContestLevel } from "@prisma/client";
 
 interface ContestCardProps {
+    id: number;
     name: string;
     noOfProblems: number;
-    level: string;
+    level: ContestLevel;
     closesOn: Date;
-    linkTo: string;
 }
 
-export function ContestCard({ name, noOfProblems, level, closesOn, linkTo }: ContestCardProps) {
+export function ContestCard({ id, name, noOfProblems, level, closesOn }: ContestCardProps) {
     return (
         <Card>
             <CardHeader>
@@ -31,7 +32,7 @@ export function ContestCard({ name, noOfProblems, level, closesOn, linkTo }: Con
                 </div>
             </CardContent>
             <CardFooter>
-                <ButtonClient linkTo={linkTo} text="Participate" className="w-full" />
+                <ButtonClient linkTo={`/contest/${id}`} text="Participate" className="w-full" />
             </CardFooter>
         </Card>
     )

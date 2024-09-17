@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
                 submittedCode: validatedInput.submittedCode,
                 languageId: validatedInput.languageId,
                 createdAt: new Date(),
-                userId: session.user.id,
+                userId: "cm150eiog0000p7y1jwdrfcoe",
                 problemId: validatedInput.problemId,
                 contestId: validatedInput?.contestId
             }

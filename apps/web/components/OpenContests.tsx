@@ -8,7 +8,7 @@ export async function OpenContests() {
       <h2 className="text-3xl font-bold mb-6">Open Contests</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {contests.map((contest) => (
-          <ContestCard key={contest.id} {...contest} linkTo={`/contest/${contest.id}`} />
+          <ContestCard key={contest.id} {...contest} />
         ))}
       </div>
     </section>

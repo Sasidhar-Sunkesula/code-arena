@@ -22,23 +22,23 @@ export default async function ContestInfo({ params }: { params: { contestId: str
                         select: {
                             id: true,
                             name: true,
-                            difficultyLevel: true
+                            difficultyLevel: true,
                         }
                     }
-                }
+                },
             },
             submissions: {
                 where: {
                     userId: session.user.id,
-                    status: "SOLVED"
+                    status: "Accepted"
                 },
                 select: {
                     status: true,
-                    problemId: true
                 }
             }
         }
     })
+    console.dir(contestData, { depth: null });
 
     return (
         !contestData

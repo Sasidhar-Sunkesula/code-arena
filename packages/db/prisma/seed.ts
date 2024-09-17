@@ -16,35 +16,36 @@ async function main() {
     // Create Problems with Markdown Content
     const problem1 = await prisma.problem.create({
         data: {
-            name: 'Sum of two numbers',
-            content: `## Description
-            Find the sum of two given elements. Both the numbers will always be 0 or positive.
-            
-            ### Test case 1
-            
-            #### Input
-            \`\`\`
-            1, 2
-            \`\`\`
-            
-            #### Output
-            \`\`\`
-            3
-            \`\`\`
-            
-            ### Test case 2
-            
-            #### Input
-            \`\`\`
-            1, 100
-            \`\`\`
-            
-            #### Output
-            \`\`\`
-            101
-            \`\`\`
-                        `,
-            difficultyLevel: 'EASY',
+            name: "Sum of two numbers",
+            content: `
+## Description
+Find the sum of two given elements. Both the numbers will always be 0 or positive.
+    
+### Sample Input 1
+    
+#### Input
+\`\`\`
+1, 2
+\`\`\`
+    
+#### Output
+\`\`\`
+3
+\`\`\`
+    
+### Sample Input 2
+    
+#### Input
+\`\`\`
+1, 100
+\`\`\`
+    
+#### Output
+\`\`\`
+101
+\`\`\`
+            `,
+            difficultyLevel: "EASY"
         },
     });
 
@@ -163,55 +164,11 @@ async function deleteAll() {
 
     console.log('All data deleted');
 }
-async function updateProblem() {
-    const problem = await prisma.problem.findFirst({
-        where: {
-            name: "Sum of two numbers"
-        }
-    })
-    await prisma.problem.update({
-        where: {
-            id: problem?.id,
-        },
+async function addBoilerPlate() {
+    await prisma.boilerPlate.create({
         data: {
-            content: `
-## Description
-Find the sum of two given elements. Both the numbers will always be 0 or positive.
-    
-### Sample Input 1
-    
-#### Input
-\`\`\`
-1, 2
-\`\`\`
-    
-#### Output
-\`\`\`
-3
-\`\`\`
-    
-### Sample Input 2
-    
-#### Input
-\`\`\`
-1, 100
-\`\`\`
-    
-#### Output
-\`\`\`
-101
-\`\`\`
-            `,
-        },
-    });
-
-    console.log('Problem content updated successfully:');
-}
-async function addBoilerPlates() {
-    const boilerPlate = await prisma.boilerPlate.update({
-        where: {
-            id: 2
-        }, data: {
+            languageId: 2,
+            problemId: 1,
             boilerPlateCode: `def sum(a,b):
 # Implementation goes here
 return result`

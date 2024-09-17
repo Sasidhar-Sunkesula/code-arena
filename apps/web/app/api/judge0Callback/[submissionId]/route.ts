@@ -36,11 +36,6 @@ function mapStatusDescriptionToEnum(description: string): SubmissionStatus {
             throw new Error(`Unknown status description: ${description}`);
     }
 }
-
-function isProblemAccepted(status: SubmissionStatus): boolean {
-    return status === SubmissionStatus.Accepted;
-}
-
 interface Status {
     id: number,
     description: string

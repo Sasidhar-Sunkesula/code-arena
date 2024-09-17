@@ -1,16 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/shad"
 import { Progress } from "@repo/ui/shad"
 import { Timer } from "@/components/Timer"
+import { SubmissionStatus } from "@prisma/client";
 
 interface ContestDetailsProps {
-    name: string
-    problemCount: number
-    endTime: Date
-    submissions: { status: "SOLVED" | "UNSOLVED" }[]
+    name: string;
+    problemCount: number;
+    endTime: Date;
+    submissions: { status: SubmissionStatus }[];
 }
 
 export function ContestDetails({ name, problemCount, endTime, submissions }: ContestDetailsProps) {
-    const solvedProblems = submissions.filter((submission) => submission.status === "SOLVED").length
+    const solvedProblems = submissions.filter((submission) => submission.status === "Accepted").length
     const completionPercentage = (solvedProblems / problemCount) * 100
 
     return (
