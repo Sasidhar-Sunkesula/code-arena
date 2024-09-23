@@ -9,9 +9,10 @@ interface ProblemItemProps {
     name: string;
     difficultyLevel: DifficultyLevel;
     status: SubmissionStatus;
+    contestId: number;
 }
 
-export function ProblemItem({ id, name, difficultyLevel, status }: ProblemItemProps) {
+export function ProblemItem({ id, name, difficultyLevel, status, contestId }: ProblemItemProps) {
     const levelColor = {
         EASY: "bg-green-500",
         MEDIUM: "bg-yellow-600",
@@ -32,7 +33,7 @@ export function ProblemItem({ id, name, difficultyLevel, status }: ProblemItemPr
                 </div>
             </CardContent>
             <CardFooter className="p-4 pt-0">
-                <ButtonClient linkTo={`/solve/${id}`} text="Solve" />
+                <ButtonClient linkTo={`/solve/${id}?contestId=${contestId}`} text="Solve" />
             </CardFooter>
         </Card>
     )

@@ -61,16 +61,58 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
         const decodedStderr = body.stderr ? Buffer.from(body.stderr, 'base64').toString('utf-8') : null;
         // Map status description to enum
         const statusEnum = mapStatusDescriptionToEnum(body.status.description)
-        await prisma.submission.update({
-            where: { id: submissionId },
+        // Insert a new test case result
+        await prisma.testCaseResult.create({
             data: {
-                status: statusEnum,
-                error: decodedStderr,
+                submissionId: submissionId,
+                stdout: decodedStdout,
+                stderr: decodedStderr,
+                time: parseFloat(body.time),
                 memory: body.memory,
-                output: decodedStdout,
-                runTime: parseFloat(body.time)
+                status: statusEnum
             }
         });
+        // Fetch the submission to get the problemId
+        const submission = await prisma.submission.findUnique({
+            where: { id: submissionId },
+            select: { problemId: true }
+        });
+
+        if (!submission) {
+            throw new Error("Submission not found")
+        }
+
+        const problemId = submission.problemId;
+        // Fetch all test case results for the submission
+        const testCaseResults = await prisma.testCaseResult.findMany({
+            where: { submissionId: submissionId }
+        });
+        // Check if all test case results have been received
+        const totalTestCases = await prisma.testCase.count({
+            where: { problemId: problemId }
+        });
+        if (testCaseResults.length === totalTestCases) {
+            // Calculate average memory and runtime
+            const totalMemory = testCaseResults.reduce((sum, result) => sum + result.memory, 0);
+            const totalTime = testCaseResults.reduce((sum, result) => sum + result.time, 0);
+            const averageMemory = totalMemory / testCaseResults.length;
+            const averageTime = totalTime / testCaseResults.length;
+
+            // Determine overall status
+            const overallStatus = testCaseResults.every(result => result.status === SubmissionStatus.Accepted)
+                ? SubmissionStatus.Accepted
+                : SubmissionStatus.WrongAnswer;
+
+            // Update the submission with the calculated values
+            await prisma.submission.update({
+                where: { id: submissionId },
+                data: {
+                    status: overallStatus,
+                    memory: averageMemory,
+                    runTime: averageTime
+                }
+            });
+        }
         return NextResponse.json({
             msg: "Success"
         }, {

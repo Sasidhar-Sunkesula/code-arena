@@ -49,6 +49,7 @@ export default async function ContestInfo({ params }: { params: { contestId: str
                         <ProblemList
                             problems={contestData.problems.map((problemData) => problemData.problem)}
                             submissions={contestData.submissions}
+                            contestId={contestId}
                         />
                     </div>
                     <div>

@@ -86,8 +86,6 @@ model Submission {
   runTime         Float?
   memory          Float?
   testCasesPassed Int?
-  output          String?
-  error           String?
   userId          String
   problemId       Int
   contestId       Int?
@@ -95,8 +93,22 @@ model Submission {
   user            User             @relation(fields: [userId], references: [id])
   problem         Problem          @relation(fields: [problemId], references: [id])
   contest         Contest?         @relation(fields: [contestId], references: [id])
+  testCaseResults TestCaseResult[]
 
   @@index([userId, problemId])
+}
+
+model TestCaseResult {
+  id           Int              @id @default(autoincrement())
+  submissionId Int
+  stdout       String?
+  stderr       String?
+  time         Float
+  memory       Float
+  status       SubmissionStatus
+  submission   Submission       @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@index([submissionId])
 }
 
 model BoilerPlate {

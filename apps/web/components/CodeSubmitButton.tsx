@@ -2,7 +2,7 @@
 
 import { SubmitCodeSchema } from "@/app/api/submitCode/route";
 import { Button } from "@repo/ui/shad";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast, { Toaster } from 'react-hot-toast';
 
 interface ButtonClientProps {
@@ -16,6 +16,7 @@ interface ButtonClientProps {
 export function CodeSubmitButton({ text, fullCode, languageId, problemId, contestId }: ButtonClientProps) {
     const [loading, setLoading] = useState(false);
     const [submissionPending, setSubmissionPending] = useState(false);
+    const [submissionId, setSubmissionId] = useState<number | null>(null);
     async function submitCode() {
         try {
             const requestBody: SubmitCodeSchema = {
@@ -36,18 +37,32 @@ export function CodeSubmitButton({ text, fullCode, languageId, problemId, contes
                 throw new Error("Unable to create a submission at this moment")
             }
             const submissionData: { submissionId: number } = await submissionResponse.json();
+            setSubmissionId(submissionData.submissionId);
             setSubmissionPending(true);
-            const resultResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/checkStatus/${submissionData.submissionId}`)
-            const submissionResult = await resultResponse.json();
-            console.log(submissionResult);
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "An error occurred while submitting")
         } finally {
             setLoading(false);
-            setSubmissionPending(false);
         }
     }
+    useEffect(() => {
+        if (submissionPending && submissionId) {
+            const intervalId = setInterval(async () => {
+                const resultResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/checkStatus/${submissionId}`);
+                const submissionResult = await resultResponse.json();
+                console.log(submissionResult);
 
+                // Check if the condition to stop polling is met
+                if (submissionResult.msg !== "PENDING") {
+                    clearInterval(intervalId);
+                    setSubmissionPending(false);
+                }
+            }, 1000);
+
+            // Cleanup interval on component unmount
+            return () => clearInterval(intervalId);
+        }
+    }, [submissionPending, submissionId])
     return (
         <>
             <Toaster />
