@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation";
 
-export default async function ProblemSolvingPage({ params }: { params: { problemId: string } }) {
+export default async function ProblemSolvingPage({ params, searchParams }: { params: { problemId: string }, searchParams: { contestId: string | undefined } }) {
   const problemId = parseInt(params.problemId);
   const session = await getServerSession(authOptions);
   if (!session?.user) {
@@ -23,8 +23,7 @@ export default async function ProblemSolvingPage({ params }: { params: { problem
       }
     }
   })
-  console.log(JSON.stringify(problemData, null, 2));
-  
+
   return (
     !problemData
       ? <div className="font-bold text-destructive">Contest with id - {problemId} not found</div>
@@ -35,7 +34,7 @@ export default async function ProblemSolvingPage({ params }: { params: { problem
             <MarkdownRenderer content={problemData.content} />
           </div>
           <div className="space-y-4">
-            <CodeEditor boilerPlates={problemData.boilerPlate} />
+            <CodeEditor boilerPlates={problemData.boilerPlate} contestId={searchParams?.contestId} />
           </div>
         </div>
       </div>

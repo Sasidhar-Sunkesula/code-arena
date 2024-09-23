@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { LanguageSelector } from './LanguageSelector'
 import { CodeSubmitButton } from "@/components/CodeSubmitButton"
-
+import toast, { Toaster } from 'react-hot-toast';
 export interface Language {
     id: number;
     judge0Name: string;
@@ -18,16 +18,17 @@ interface BoilerPlate {
     problemId: number;
     language: Language
 }
-export function CodeEditor({ boilerPlates }: { boilerPlates: BoilerPlate[] }) {
+export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPlate[], contestId?: string }) {
     const [selectedLanguage, setSelectedLanguage] = useState(boilerPlates[0]?.language.monacoName || "")
-    const initialCode = boilerPlates.find((item) => item.language.monacoName === selectedLanguage)?.boilerPlateCode || ""
-    const [fullCode, setFullCode] = useState<string>(initialCode)
+    const boilerPlate = boilerPlates.find((item) => item.language.monacoName === selectedLanguage)
+    const [fullCode, setFullCode] = useState<string>(boilerPlate?.boilerPlateCode || "")
 
     useEffect(() => {
-        setFullCode(initialCode)
-    }, [initialCode])
+        setFullCode(boilerPlate?.boilerPlateCode || "")
+    }, [boilerPlate])
     return (
         <>
+            <Toaster />
             <LanguageSelector
                 languages={boilerPlates.map((item) => item.language)}
                 selectedLanguage={selectedLanguage}
@@ -50,9 +51,15 @@ export function CodeEditor({ boilerPlates }: { boilerPlates: BoilerPlate[] }) {
                     selectOnLineNumbers: true
                 }}
             />
-            <div className="flex justify-end">
-                <CodeSubmitButton text="Submit" fullCode={fullCode} />
-            </div>
+            {
+                boilerPlate?.languageId || boilerPlate?.problemId
+                    ?
+                    <div className="flex justify-end">
+                        <CodeSubmitButton text="Submit" contestId={contestId} problemId={boilerPlate.problemId} languageId={boilerPlate.languageId} fullCode={fullCode} />
+                    </div>
+                    :
+                    toast.error("Language not found, problem cannot be submitted")
+            }
         </>
     )
 }

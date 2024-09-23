@@ -10,6 +10,7 @@ const submitCodeSchema = z.object({
     languageId: z.number({ message: "Language Id is required" }),
     contestId: z.number().optional()
 })
+export type SubmitCodeSchema = z.infer<typeof submitCodeSchema>;
 interface BatchItem {
     language_id: number,
     source_code: string,
