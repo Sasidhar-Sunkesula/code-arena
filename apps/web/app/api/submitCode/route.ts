@@ -48,14 +48,14 @@ export async function POST(req: NextRequest) {
             data: {
                 status: "InQueue",
                 submittedCode: validatedInput.submittedCode,
-                languageId: validatedInput.languageId,
+                languageId: selectedLanguage.id,
                 createdAt: new Date(),
-                userId: "cm150eiog0000p7y1jwdrfcoe",
+                userId: session.user.id,
                 problemId: validatedInput.problemId,
                 contestId: validatedInput?.contestId
             }
         })
-        if (!newSubmission) {
+        if (!newSubmission.id) {
             throw new Error("Error in creating the submission record")
         }
         const callbackUrl = `http://host.docker.internal:3000/api/judge0Callback/${newSubmission.id}`;

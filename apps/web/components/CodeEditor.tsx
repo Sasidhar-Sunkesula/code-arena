@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { LanguageSelector } from './LanguageSelector'
+import { CodeSubmitButton } from "@/components/CodeSubmitButton"
 
 export interface Language {
     id: number;
@@ -13,15 +14,17 @@ export interface Language {
 interface BoilerPlate {
     id: number;
     boilerPlateCode: string;
+    languageId: number;
+    problemId: number;
     language: Language
 }
 export function CodeEditor({ boilerPlates }: { boilerPlates: BoilerPlate[] }) {
     const [selectedLanguage, setSelectedLanguage] = useState(boilerPlates[0]?.language.monacoName || "")
     const initialCode = boilerPlates.find((item) => item.language.monacoName === selectedLanguage)?.boilerPlateCode || ""
-    const [code, setCode] = useState<string>(initialCode)
+    const [fullCode, setFullCode] = useState<string>(initialCode)
 
     useEffect(() => {
-        setCode(initialCode)
+        setFullCode(initialCode)
     }, [initialCode])
     return (
         <>
@@ -33,8 +36,8 @@ export function CodeEditor({ boilerPlates }: { boilerPlates: BoilerPlate[] }) {
             <Editor
                 height={"60vh"}
                 language={selectedLanguage}
-                value={code}
-                onChange={(value) => setCode(value || '')}
+                value={fullCode}
+                onChange={(value) => setFullCode(value || '')}
                 theme="vs-dark"
                 loading="Editor is loading..."
                 options={{
@@ -47,6 +50,9 @@ export function CodeEditor({ boilerPlates }: { boilerPlates: BoilerPlate[] }) {
                     selectOnLineNumbers: true
                 }}
             />
+            <div className="flex justify-end">
+                <CodeSubmitButton text="Submit" fullCode={fullCode} />
+            </div>
         </>
     )
 }

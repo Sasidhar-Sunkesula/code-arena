@@ -165,18 +165,71 @@ async function deleteAll() {
     console.log('All data deleted');
 }
 async function addBoilerPlate() {
-    await prisma.boilerPlate.create({
+    await prisma.boilerPlate.update({
         data: {
-            languageId: 2,
-            problemId: 1,
-            boilerPlateCode: `def sum(a,b):
-# Implementation goes here
-return result`
+            boilerPlateCode: `function sum(a, b) {
+// Implement this function
+}
+// Read input from stdin (this part is handled by the boilerplate)
+const readline = require('readline');
+const rl = readline.createInterface({
+input: process.stdin,
+output: process.stdout,
+terminal: false
+});
+
+let input = [];
+rl.on('line', function(line) {
+input.push(line);
+if (input.length === 2) {
+const a = parseInt(input[0]);
+const b = parseInt(input[1]);
+console.log(sum(a, b)); // Call the user's function
+rl.close();
+}
+});
+`
+        }, where: {
+            id: 2
         }
     })
     console.log("bpc updated");
 }
-main()
+async function addTestCases(){
+    // Create TestCases with Multi-line Strings
+    await prisma.testCase.create({
+        data: {
+            input: '1\n2\n',
+            expectedOutput: '3\n',
+            problemId: 1,
+        },
+    });
+
+    await prisma.testCase.create({
+        data: {
+            input: '5\n6\n',
+            expectedOutput: '11\n',
+            problemId: 1,
+        },
+    });
+
+    await prisma.testCase.create({
+        data: {
+            input: '2\n3\n',
+            expectedOutput: '6\n',
+            problemId: 1,
+        },
+    });
+
+    await prisma.testCase.create({
+        data: {
+            input: '6\n7\n',
+            expectedOutput: '42\n',
+            problemId: 1,
+        },
+    });
+}
+addTestCases()
     .catch((e) => {
         console.error(e);
         process.exit(1);

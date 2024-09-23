@@ -4,7 +4,6 @@ import prisma from "@repo/db/client"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation";
-import { CodeSubmitButton } from "@/components/CodeSubmitButton"
 
 export default async function ProblemSolvingPage({ params }: { params: { problemId: string } }) {
   const problemId = parseInt(params.problemId);
@@ -24,6 +23,8 @@ export default async function ProblemSolvingPage({ params }: { params: { problem
       }
     }
   })
+  console.log(JSON.stringify(problemData, null, 2));
+  
   return (
     !problemData
       ? <div className="font-bold text-destructive">Contest with id - {problemId} not found</div>
@@ -35,9 +36,6 @@ export default async function ProblemSolvingPage({ params }: { params: { problem
           </div>
           <div className="space-y-4">
             <CodeEditor boilerPlates={problemData.boilerPlate} />
-            <div className="flex justify-end">
-              <CodeSubmitButton text="Submit" linkTo="#" />
-            </div>
           </div>
         </div>
       </div>

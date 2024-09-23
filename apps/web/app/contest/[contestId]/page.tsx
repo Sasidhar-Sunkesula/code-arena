@@ -38,7 +38,6 @@ export default async function ContestInfo({ params }: { params: { contestId: str
             }
         }
     })
-    console.dir(contestData, { depth: null });
 
     return (
         !contestData
