@@ -59,14 +59,16 @@ export async function POST(req: NextRequest) {
         if (!newSubmission.id) {
             throw new Error("Error in creating the submission record")
         }
-        const callbackUrl = `http://host.docker.internal:3000/api/judge0Callback/${newSubmission.id}`;
-        const inputForJudge: BatchItem[] = testCases.map((testCase) => ({
-            language_id: selectedLanguage.judge0Id,
-            source_code: validatedInput.submittedCode,
-            stdin: testCase.input,
-            expected_output: testCase.expectedOutput,
-            callback_url: callbackUrl
-        }));
+        const inputForJudge: BatchItem[] = testCases.map((testCase) => {
+            const callbackUrl = `http://host.docker.internal:3000/api/judge0Callback/${newSubmission.id}/${testCase.id}`;
+            return {
+                language_id: selectedLanguage.judge0Id,
+                source_code: validatedInput.submittedCode,
+                stdin: testCase.input,
+                expected_output: testCase.expectedOutput,
+                callback_url: callbackUrl
+            };
+        });
         const batchSubmissionResponse = await fetch(`${process.env.JUDGE0_URL}/submissions/batch?base64_encoded=false`, {
             method: "POST",
             headers: {

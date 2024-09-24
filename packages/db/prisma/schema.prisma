@@ -24,11 +24,12 @@ model User {
 }
 
 model TestCase {
-  id             Int     @id @default(autoincrement())
-  input          String
-  expectedOutput String
-  problemId      Int
-  problem        Problem @relation(fields: [problemId], references: [id])
+  id              Int              @id @default(autoincrement())
+  input           String
+  expectedOutput  String
+  problemId       Int
+  problem         Problem          @relation(fields: [problemId], references: [id])
+  testCaseResults TestCaseResult[]
 }
 
 model Problem {
@@ -101,14 +102,17 @@ model Submission {
 model TestCaseResult {
   id           Int              @id @default(autoincrement())
   submissionId Int
+  testCaseId   Int
   stdout       String?
   stderr       String?
   time         Float
   memory       Float
   status       SubmissionStatus
   submission   Submission       @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  testCase     TestCase         @relation(fields: [testCaseId], references: [id], onDelete: Cascade)
 
   @@index([submissionId])
+  @@index([testCaseId])
 }
 
 model BoilerPlate {

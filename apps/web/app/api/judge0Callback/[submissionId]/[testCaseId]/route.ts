@@ -49,11 +49,13 @@ interface Body {
     status: Status
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { submissionId: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: { submissionId: string, testCaseId: string } }) {
     const body: Body = await req.json();
     const submissionId = parseInt(params.submissionId);
-    if (!submissionId) {
-        return NextResponse.json({ error: "Invalid submission ID" }, { status: 400 });
+    const testCaseId = parseInt(params.testCaseId);
+
+    if (isNaN(submissionId) || isNaN(testCaseId)) {
+        return NextResponse.json({ error: "Invalid submission ID or test case ID" }, { status: 400 });
     }
     try {
         // Decode Base64 values
@@ -64,6 +66,7 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
         // Insert a new test case result
         await prisma.testCaseResult.create({
             data: {
+                testCaseId: testCaseId,
                 submissionId: submissionId,
                 stdout: decodedStdout,
                 stderr: decodedStderr,
