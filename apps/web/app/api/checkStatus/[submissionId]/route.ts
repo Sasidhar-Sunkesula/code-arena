@@ -15,19 +15,30 @@ export async function GET(req: NextRequest, { params }: { params: { submissionId
         const submissionResult = await prisma.submission.findUnique({
             where: {
                 id: submissionId
+            },
+            include: {
+                testCaseResults: true,
+                problem: {
+                    select: {
+                        testcases: true
+                    }
+                }
             }
-        })
+        });
+
         if (!submissionResult) {
-            throw new Error("Unable to find the submission")
+            throw new Error("Unable to find the submission");
         }
+
         if (submissionResult.status === "Processing" || submissionResult.status === "InQueue") {
             return NextResponse.json({
                 msg: "PENDING"
-            })
+            });
         }
+
         return NextResponse.json({
             data: submissionResult
-        })
+        });
     } catch (error) {
         if (error instanceof ZodError) {
             return NextResponse.json({

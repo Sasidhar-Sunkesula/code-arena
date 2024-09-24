@@ -103,13 +103,17 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
                 ? SubmissionStatus.Accepted
                 : SubmissionStatus.WrongAnswer;
 
+            // Count the number of test cases passed
+            const testCasesPassed = testCaseResults.filter(result => result.status === SubmissionStatus.Accepted).length;
+
             // Update the submission with the calculated values
             await prisma.submission.update({
                 where: { id: submissionId },
                 data: {
                     status: overallStatus,
                     memory: averageMemory,
-                    runTime: averageTime
+                    runTime: averageTime,
+                    testCasesPassed: testCasesPassed
                 }
             });
         }

@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
         }
         const newSubmission = await prisma.submission.create({
             data: {
-                status: "InQueue",
+                status: "Processing",
                 submittedCode: validatedInput.submittedCode,
                 languageId: selectedLanguage.id,
                 createdAt: new Date(),
