@@ -123,9 +123,10 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
         return NextResponse.json({
             msg: "Success"
         }, {
-            status: 204
+            status: 200
         })
     } catch (error) {
+        console.log((error as Error).message);
         return NextResponse.json({
             msg: error instanceof Error ? error.message : "Error in updating the status"
         }, {

@@ -18,9 +18,9 @@ interface ProblemListProps {
     contestId: number;
 }
 const levelColor = {
-    EASY: "bg-green-500",
-    MEDIUM: "bg-yellow-600",
-    HARD: "bg-red-500",
+    EASY: "text-green-500 bg-green-50 dark:bg-green-800",
+    MEDIUM: "text-yellow-500 bg-yellow-50 dark:bg-yellow-800",
+    HARD: "text-red-500 bg-red-50 dark:bg-red-800",
 }
 export function ProblemList({ problems, submissions, contestId }: ProblemListProps) {
     return (
@@ -46,7 +46,7 @@ export function ProblemList({ problems, submissions, contestId }: ProblemListPro
                                     <CheckCircle className="text-green-500 w-5" />}
                             </TableCell>
                             <TableCell>
-                                <Badge className={`${levelColor[problem.difficultyLevel]}text-white`}>{problem.difficultyLevel}</Badge>
+                                <Badge variant={"outline"} className={`${levelColor[problem.difficultyLevel]}`}>{problem.difficultyLevel}</Badge>
                             </TableCell>
                         </TableRow>
                     ))}

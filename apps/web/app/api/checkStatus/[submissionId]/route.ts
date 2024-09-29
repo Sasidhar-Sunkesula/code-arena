@@ -17,10 +17,9 @@ export async function GET(req: NextRequest, { params }: { params: { submissionId
                 id: submissionId
             },
             include: {
-                testCaseResults: true,
-                problem: {
-                    select: {
-                        testcases: true
+                testCaseResults: {
+                    include: {
+                        testCase: true
                     }
                 }
             }

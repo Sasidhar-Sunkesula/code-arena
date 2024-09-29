@@ -4,18 +4,22 @@ import { SubmitCodeSchema } from "@/app/api/submitCode/route";
 import { Button } from "@repo/ui/shad";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from 'react-hot-toast';
+import React from "react";
+import { SendHorizontal } from "lucide-react";
+import { SubmissionData } from "./CodeEditor";
 
-interface ButtonClientProps {
+type ButtonClientProps = {
     text: string;
     fullCode: string;
     problemId: number;
     contestId?: string;
     languageId: number;
+    submissionPending: boolean;
+    setSubmissionPending: React.Dispatch<React.SetStateAction<boolean>>;
+    setSubmissionResults: React.Dispatch<React.SetStateAction<SubmissionData | null>>
 }
 
-export function CodeSubmitButton({ text, fullCode, languageId, problemId, contestId }: ButtonClientProps) {
-    const [loading, setLoading] = useState(false);
-    const [submissionPending, setSubmissionPending] = useState(false);
+export function CodeSubmitButton({ text, fullCode, languageId, problemId, contestId, setSubmissionPending, submissionPending, setSubmissionResults }: ButtonClientProps) {
     const [submissionId, setSubmissionId] = useState<number | null>(null);
     async function submitCode() {
         try {
@@ -25,7 +29,7 @@ export function CodeSubmitButton({ text, fullCode, languageId, problemId, contes
                 languageId: languageId,
                 ...(contestId && !isNaN(parseInt(contestId)) ? { contestId: parseInt(contestId) } : {})
             };
-            setLoading(true);
+            setSubmissionPending(true);
             const submissionResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/submitCode`, {
                 method: "POST",
                 headers: {
@@ -38,24 +42,25 @@ export function CodeSubmitButton({ text, fullCode, languageId, problemId, contes
             }
             const submissionData: { submissionId: number } = await submissionResponse.json();
             setSubmissionId(submissionData.submissionId);
-            setSubmissionPending(true);
         } catch (error) {
+            setSubmissionPending(false);
             toast.error(error instanceof Error ? error.message : "An error occurred while submitting")
-        } finally {
-            setLoading(false);
         }
     }
     useEffect(() => {
         if (submissionPending && submissionId) {
             const intervalId = setInterval(async () => {
-                const resultResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/checkStatus/${submissionId}`);
-                const submissionResult = await resultResponse.json();
-                console.log(submissionResult);
-
-                // Check if the condition to stop polling is met
-                if (submissionResult.msg !== "PENDING") {
-                    clearInterval(intervalId);
-                    setSubmissionPending(false);
+                try {
+                    const resultResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/checkStatus/${submissionId}`);
+                    const submissionResult = await resultResponse.json();
+                    // Check if the condition to stop polling is met
+                    if (submissionResult?.msg !== "PENDING") {
+                        clearInterval(intervalId);
+                        setSubmissionPending(false);
+                        setSubmissionResults(submissionResult)
+                    }
+                } catch (error) {
+                    toast.error(error instanceof Error ? error.message : "Error while fetching results")
                 }
             }, 1000);
 
@@ -66,8 +71,8 @@ export function CodeSubmitButton({ text, fullCode, languageId, problemId, contes
     return (
         <>
             <Toaster />
-            <Button disabled={loading} onClick={submitCode}>
-                {loading ? "Submitting..." : submissionPending ? "Pending..." : text}
+            <Button disabled={submissionPending} onClick={submitCode}>
+                {submissionPending ? "Pending..." : text} <SendHorizontal className="w-4 ml-1" />
             </Button>
         </>
     );

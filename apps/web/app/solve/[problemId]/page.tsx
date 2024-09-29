@@ -33,7 +33,7 @@ export default async function ProblemSolvingPage({ params, searchParams }: { par
             <h1 className="text-3xl font-bold mb-3">{problemData.name}</h1>
             <MarkdownRenderer content={problemData.content} />
           </div>
-          <div className="space-y-4">
+          <div>
             <CodeEditor boilerPlates={problemData.boilerPlate} contestId={searchParams?.contestId} />
           </div>
         </div>

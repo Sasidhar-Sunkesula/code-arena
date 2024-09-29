@@ -5,6 +5,9 @@ import Editor from '@monaco-editor/react'
 import { LanguageSelector } from './LanguageSelector'
 import { CodeSubmitButton } from "@/components/CodeSubmitButton"
 import toast, { Toaster } from 'react-hot-toast';
+import { Loader2 } from 'lucide-react'
+import { TestCaseResult, Submission } from "@prisma/client";
+
 export interface Language {
     id: number;
     judge0Name: string;
@@ -18,24 +21,49 @@ interface BoilerPlate {
     problemId: number;
     language: Language
 }
+export type SubmissionData = Submission & {
+    testCaseResults: TestCaseResult[];
+}
 export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPlate[], contestId?: string }) {
     const [selectedLanguage, setSelectedLanguage] = useState(boilerPlates[0]?.language.monacoName || "")
     const boilerPlate = boilerPlates.find((item) => item.language.monacoName === selectedLanguage)
     const [fullCode, setFullCode] = useState<string>(boilerPlate?.boilerPlateCode || "")
+    const [submissionPending, setSubmissionPending] = useState(false);
+    const [submissionResults, setSubmissionResults] = useState<SubmissionData | null>(null);
 
     useEffect(() => {
         setFullCode(boilerPlate?.boilerPlateCode || "")
     }, [boilerPlate])
     return (
-        <>
+        <div className='space-y-3'>
             <Toaster />
-            <LanguageSelector
-                languages={boilerPlates.map((item) => item.language)}
-                selectedLanguage={selectedLanguage}
-                setSelectedLanguage={setSelectedLanguage}
-            />
+            <div className='flex items-center justify-between'>
+                <LanguageSelector
+                    languages={boilerPlates.map((item) => item.language)}
+                    selectedLanguage={selectedLanguage}
+                    setSelectedLanguage={setSelectedLanguage}
+                />
+                {
+                    boilerPlate?.languageId || boilerPlate?.problemId
+                        ?
+                        <div className="flex justify-end">
+                            <CodeSubmitButton
+                                text="Submit"
+                                contestId={contestId}
+                                problemId={boilerPlate.problemId}
+                                languageId={boilerPlate.languageId}
+                                fullCode={fullCode}
+                                submissionPending={submissionPending}
+                                setSubmissionPending={setSubmissionPending}
+                                setSubmissionResults={setSubmissionResults}
+                            />
+                        </div>
+                        :
+                        toast.error("Language not found, problem cannot be submitted")
+                }
+            </div>
             <Editor
-                height={"60vh"}
+                height={"50vh"}
                 language={selectedLanguage}
                 value={fullCode}
                 onChange={(value) => setFullCode(value || '')}
@@ -51,15 +79,13 @@ export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPl
                     selectOnLineNumbers: true
                 }}
             />
-            {
-                boilerPlate?.languageId || boilerPlate?.problemId
-                    ?
-                    <div className="flex justify-end">
-                        <CodeSubmitButton text="Submit" contestId={contestId} problemId={boilerPlate.problemId} languageId={boilerPlate.languageId} fullCode={fullCode} />
-                    </div>
-                    :
-                    toast.error("Language not found, problem cannot be submitted")
-            }
-        </>
+            <div>
+                {
+                    submissionPending
+                        ? <Loader2 className='animate-spin w-6' />
+                        : JSON.stringify(submissionResults)
+                }
+            </div>
+        </div>
     )
 }
