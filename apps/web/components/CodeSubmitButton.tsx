@@ -17,9 +17,20 @@ type ButtonClientProps = {
     submissionPending: boolean;
     setSubmissionPending: React.Dispatch<React.SetStateAction<boolean>>;
     setSubmissionResults: React.Dispatch<React.SetStateAction<SubmissionData | null>>
+    setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function CodeSubmitButton({ text, fullCode, languageId, problemId, contestId, setSubmissionPending, submissionPending, setSubmissionResults }: ButtonClientProps) {
+export function CodeSubmitButton(
+    { text,
+        fullCode,
+        languageId,
+        problemId,
+        contestId,
+        setSubmissionPending,
+        submissionPending,
+        setSubmissionResults,
+        setSubmitClicked
+    }: ButtonClientProps) {
     const [submissionId, setSubmissionId] = useState<number | null>(null);
     async function submitCode() {
         try {
@@ -29,6 +40,7 @@ export function CodeSubmitButton({ text, fullCode, languageId, problemId, contes
                 languageId: languageId,
                 ...(contestId && !isNaN(parseInt(contestId)) ? { contestId: parseInt(contestId) } : {})
             };
+            setSubmitClicked(true);
             setSubmissionPending(true);
             const submissionResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/submitCode`, {
                 method: "POST",
@@ -57,7 +69,7 @@ export function CodeSubmitButton({ text, fullCode, languageId, problemId, contes
                     if (submissionResult?.msg !== "PENDING") {
                         clearInterval(intervalId);
                         setSubmissionPending(false);
-                        setSubmissionResults(submissionResult)
+                        setSubmissionResults(submissionResult.data)
                     }
                 } catch (error) {
                     toast.error(error instanceof Error ? error.message : "Error while fetching results")

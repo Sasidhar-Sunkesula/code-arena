@@ -5,8 +5,8 @@ import Editor from '@monaco-editor/react'
 import { LanguageSelector } from './LanguageSelector'
 import { CodeSubmitButton } from "@/components/CodeSubmitButton"
 import toast, { Toaster } from 'react-hot-toast';
-import { Loader2 } from 'lucide-react'
-import { TestCaseResult, Submission } from "@prisma/client";
+import { TestCaseResult, Submission, TestCase } from "@prisma/client";
+import { ResultDisplay } from './ResultDisplay'
 
 export interface Language {
     id: number;
@@ -21,8 +21,11 @@ interface BoilerPlate {
     problemId: number;
     language: Language
 }
+type TestCaseWithResult = TestCaseResult & {
+    testCase: TestCase;
+};
 export type SubmissionData = Submission & {
-    testCaseResults: TestCaseResult[];
+    testCaseResults: TestCaseWithResult[]
 }
 export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPlate[], contestId?: string }) {
     const [selectedLanguage, setSelectedLanguage] = useState(boilerPlates[0]?.language.monacoName || "")
@@ -30,10 +33,11 @@ export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPl
     const [fullCode, setFullCode] = useState<string>(boilerPlate?.boilerPlateCode || "")
     const [submissionPending, setSubmissionPending] = useState(false);
     const [submissionResults, setSubmissionResults] = useState<SubmissionData | null>(null);
-
+    const [submitClicked, setSubmitClicked] = useState(false);
     useEffect(() => {
         setFullCode(boilerPlate?.boilerPlateCode || "")
     }, [boilerPlate])
+
     return (
         <div className='space-y-3'>
             <Toaster />
@@ -56,6 +60,7 @@ export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPl
                                 submissionPending={submissionPending}
                                 setSubmissionPending={setSubmissionPending}
                                 setSubmissionResults={setSubmissionResults}
+                                setSubmitClicked={setSubmitClicked}
                             />
                         </div>
                         :
@@ -79,13 +84,12 @@ export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPl
                     selectOnLineNumbers: true
                 }}
             />
-            <div>
-                {
-                    submissionPending
-                        ? <Loader2 className='animate-spin w-6' />
-                        : JSON.stringify(submissionResults)
-                }
-            </div>
+            {
+                submitClicked && <ResultDisplay
+                    submissionPending={submissionPending}
+                    submissionResults={submissionResults}
+                />
+            }
         </div>
     )
 }

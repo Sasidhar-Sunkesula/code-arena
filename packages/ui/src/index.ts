@@ -7,3 +7,4 @@ export * from "./shad/ui/badge";
 export * from "./shad/ui/progress";
 export * from "./shad/ui/select";
 export * from "./shad/ui/table";
+export * from "./shad/ui/tabs";
