@@ -10,7 +10,7 @@ interface ResultDisplayProps {
 }
 export function ResultDisplay({ submissionPending, submissionResults }: ResultDisplayProps) {
     return (
-        <div className='border rounded-lg px-4 pb-3 pt-2 shadow-md'>
+        <div className='border rounded-lg p-3 shadow-md'>
             {
                 submissionPending
                     ? <div className='flex min-h-40 justify-center items-center'>
