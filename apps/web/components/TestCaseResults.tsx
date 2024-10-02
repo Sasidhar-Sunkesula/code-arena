@@ -24,7 +24,7 @@ export function TestCaseResults({ submissionResults }: { submissionResults: Subm
                 <div className={`font-semibold text-xl ${submissionResults.status === "Accepted" ? "text-green-600" : "text-red-600"}`}>{submissionResults.status}</div>
                 <div className="flex items-center gap-x-4">
                     <div className="text-sm flex items-center gap-x-1">
-                        <Timer className="w-3" /> {(submissionResults.runTime ?? 0).toFixed(2)} sec
+                        <Timer className="w-3" /> {((submissionResults.runTime ?? 0) * 1000).toFixed(2)} ms
                     </div>
                     <div className="text-sm flex items-center gap-x-1">
                         <Cpu className="w-3" /> {((submissionResults.memory ?? 0) / 1024).toFixed(1)} MB

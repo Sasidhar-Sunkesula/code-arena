@@ -7,6 +7,9 @@ import { CodeSubmitButton } from "@/components/CodeSubmitButton"
 import toast, { Toaster } from 'react-hot-toast';
 import { TestCaseResult, Submission, TestCase } from "@prisma/client";
 import { ResultDisplay } from './ResultDisplay'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/shad'
+import { Loader2Icon } from 'lucide-react'
+import { ProblemSubmissions } from './ProblemSubmissions'
 
 export interface Language {
     id: number;
@@ -37,53 +40,75 @@ export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPl
     useEffect(() => {
         setFullCode(boilerPlate?.boilerPlateCode || "")
     }, [boilerPlate])
-
     return (
         <div className='space-y-3'>
             <Toaster />
-            <div className='flex items-center justify-between'>
+            <div className='flex items-center gap-x-3'>
+                <label className='font-medium text-sm'>Select a language:</label>
                 <LanguageSelector
                     languages={boilerPlates.map((item) => item.language)}
                     selectedLanguage={selectedLanguage}
                     setSelectedLanguage={setSelectedLanguage}
                 />
-                {
-                    boilerPlate?.languageId || boilerPlate?.problemId
-                        ?
-                        <div className="flex justify-end">
-                            <CodeSubmitButton
-                                text="Submit"
-                                contestId={contestId}
-                                problemId={boilerPlate.problemId}
-                                languageId={boilerPlate.languageId}
-                                fullCode={fullCode}
-                                submissionPending={submissionPending}
-                                setSubmissionPending={setSubmissionPending}
-                                setSubmissionResults={setSubmissionResults}
-                                setSubmitClicked={setSubmitClicked}
-                            />
-                        </div>
-                        :
-                        toast.error("Language not found, problem cannot be submitted")
-                }
             </div>
-            <Editor
-                height={"50vh"}
-                language={selectedLanguage}
-                value={fullCode}
-                onChange={(value) => setFullCode(value || '')}
-                theme="vs-dark"
-                loading="Editor is loading..."
-                options={{
-                    minimap: { enabled: false },
-                    fontSize: 16,
-                    lineNumbers: 'on',
-                    roundedSelection: false,
-                    scrollBeyondLastLine: false,
-                    automaticLayout: true,
-                    selectOnLineNumbers: true
-                }}
-            />
+            <Tabs defaultValue="editor" className='space-y-3'>
+                <TabsList className='w-[250px]'>
+                    <TabsTrigger value="editor" className='w-[125px]'>Editor</TabsTrigger>
+                    <TabsTrigger value="submissions" className='w-[125px]'>Submissions</TabsTrigger>
+                </TabsList>
+                <TabsContent value="editor">
+                    <Editor
+                        height={"50vh"}
+                        language={selectedLanguage}
+                        value={fullCode}
+                        onChange={(value) => setFullCode(value || '')}
+                        theme="vs-dark"
+                        loading={<Loader2Icon className='w-5 animate-spin' />}
+                        options={{
+                            minimap: { enabled: false },
+                            fontSize: 16,
+                            padding: {
+                                top: 6,
+                                bottom: 4
+                            },
+                            smoothScrolling: true,
+                            lineNumbers: 'on',
+                            roundedSelection: false,
+                            scrollBeyondLastLine: false,
+                            automaticLayout: true,
+                            selectOnLineNumbers: true
+                        }}
+                    />
+                </TabsContent>
+                <TabsContent value="submissions">
+                    {
+                        boilerPlate?.problemId &&
+                        <ProblemSubmissions
+                            problemId={boilerPlate?.problemId}
+                            contestId={(contestId && !isNaN(parseInt(contestId))) ? parseInt(contestId) : undefined}
+                        />
+                    }
+                </TabsContent>
+            </Tabs>
+            {
+                boilerPlate?.languageId || boilerPlate?.problemId
+                    ?
+                    <div className="flex justify-end">
+                        <CodeSubmitButton
+                            text="Submit"
+                            contestId={contestId}
+                            problemId={boilerPlate.problemId}
+                            languageId={boilerPlate.languageId}
+                            fullCode={fullCode}
+                            submissionPending={submissionPending}
+                            setSubmissionPending={setSubmissionPending}
+                            setSubmissionResults={setSubmissionResults}
+                            setSubmitClicked={setSubmitClicked}
+                        />
+                    </div>
+                    :
+                    toast.error("Language not found, problem cannot be submitted")
+            }
             {
                 submitClicked && <ResultDisplay
                     submissionPending={submissionPending}
