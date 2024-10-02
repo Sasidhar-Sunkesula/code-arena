@@ -50,7 +50,7 @@ export function ProblemSubmissions({ problemId, contestId }: { problemId: number
             {submissionList?.message ? (
                 <div>{submissionList.message}</div>
             ) : (
-                <div className="space-y-2">
+                <div className="space-y-2 md:h-[450px] overflow-y-auto">
                     {contestId && <p className="text-sm text-center">Submissions shown here are contest specific.</p>}
                     {submissionList?.submissions?.map((submission) => (
                         <SubmissionInfoCard

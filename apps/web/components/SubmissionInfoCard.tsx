@@ -1,6 +1,14 @@
 import { Button } from "@repo/ui/shad";
 import { Submission } from "./ProblemSubmissions";
 import { Cpu, Timer } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@repo/ui/shad";
 
 type SubmissionInfoProps = Omit<Submission, "id">;
 
@@ -9,15 +17,15 @@ const SubmissionInfoCard: React.FC<SubmissionInfoProps> = ({ status, submittedCo
         <div className="border-2 rounded-md py-2 px-4 flex items-center justify-between">
             <div className="space-y-1">
                 <div className="text-sm">
-                    <span className="font-medium">Status:</span>
+                    <span className="font-medium">Status : </span>
                     {status}
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium">Created At: </span>
+                    <span className="font-medium">Created At : </span>
                     {createdAt.toLocaleString('en-US', { year: '2-digit', month: '2-digit', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium">Test Cases Passed:</span>
+                    <span className="font-medium">Test Cases Passed : </span>
                     {testCasesPassed !== null ? (testCasesPassed + " / " + testCaseCount) : "NA"}
                 </div>
             </div>
@@ -31,7 +39,23 @@ const SubmissionInfoCard: React.FC<SubmissionInfoProps> = ({ status, submittedCo
                     {((memory ?? 0) / 1024).toFixed(1)} MB
                 </div>
             </div>
-            <Button>View Code</Button>
+            <Dialog>
+                <DialogTrigger>
+                    <Button>View Code</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-xl">
+                    <DialogHeader className="space-y-6">
+                        <DialogTitle>Submitted Code</DialogTitle>
+                        <DialogDescription className="p-2 dark:text-primary">
+                            <pre>
+                                <code>
+                                    {submittedCode}
+                                </code>
+                            </pre>
+                        </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

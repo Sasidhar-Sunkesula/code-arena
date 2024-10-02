@@ -1,19 +1,24 @@
 "use server"
 
-import { authOptions } from "@/lib/auth"
-import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
 import prisma from "@repo/db/client";
+
 export async function getSubmissions(problemId: number, contestId?: number) {
     const session = await getServerSession(authOptions);
     if (!session?.user || !session.user?.id) {
         return {
             message: "Unauthenticated request"
-        }
+        };
     }
+
     const submissions = await prisma.submission.findMany({
         where: {
             problemId: problemId,
             contestId: contestId
+        },
+        orderBy: {
+            createdAt: 'desc'
         },
         select: {
             id: true,
@@ -34,6 +39,7 @@ export async function getSubmissions(problemId: number, contestId?: number) {
             }
         }
     });
+
     const formattedSubmissions = submissions.map(submission => ({
         id: submission.id,
         status: submission.status,

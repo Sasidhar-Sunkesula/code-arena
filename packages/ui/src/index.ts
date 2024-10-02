@@ -8,3 +8,4 @@ export * from "./shad/ui/progress";
 export * from "./shad/ui/select";
 export * from "./shad/ui/table";
 export * from "./shad/ui/tabs";
+export * from "./shad/ui/dialog";
