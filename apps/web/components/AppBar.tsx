@@ -15,6 +15,7 @@ import Image from "next/image";
 import { Logo } from "./Logo";
 import { signIn, signOut } from "next-auth/react";
 import { Session } from "next-auth";
+import Link from "next/link";
 
 export default function AppBar({ session }: { session: Session | null }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,7 +25,9 @@ export default function AppBar({ session }: { session: Session | null }) {
                 <div className="flex items-center justify-between h-14">
                     <Logo />
                     <nav className="hidden md:flex space-x-4">
-                        <Button variant="ghost">Challenges</Button>
+                        <Link href={"/problems"}>
+                            <Button variant={"link"}>Problems</Button>
+                        </Link>
                         <Button variant="ghost">Leaderboard</Button>
                         <Button variant="ghost">Resources</Button>
                     </nav>

@@ -5,7 +5,7 @@ import { Button } from "@repo/ui/shad";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from 'react-hot-toast';
 import React from "react";
-import { SendHorizontal } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { SubmissionData } from "./CodeEditor";
 
 type ButtonClientProps = {
@@ -84,7 +84,7 @@ export function CodeSubmitButton(
         <>
             <Toaster />
             <Button disabled={submissionPending} onClick={submitCode}>
-                {submissionPending ? "Pending..." : text} <SendHorizontal className="w-4 ml-1" />
+                {submissionPending ? "Pending..." : text} <ArrowRight className="w-4 ml-1" />
             </Button>
         </>
     );

@@ -22,7 +22,7 @@ const SubmissionInfoCard: React.FC<SubmissionInfoProps> = ({ status, submittedCo
                 </div>
                 <div className="text-sm">
                     <span className="font-medium">Created At : </span>
-                    {createdAt.toLocaleString('en-US', { year: '2-digit', month: '2-digit', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    {createdAt.toLocaleString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
                 </div>
                 <div className="text-sm">
                     <span className="font-medium">Test Cases Passed : </span>

@@ -2,15 +2,11 @@ import { ProblemList } from "@/components/ProblemList"
 import { ContestDetails } from "@/components/ContestDetails"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { redirect } from "next/navigation";
 import prisma from "@repo/db/client";
 
 export default async function ContestInfo({ params }: { params: { contestId: string } }) {
     const contestId = parseInt(params.contestId);
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
-        return redirect("/api/auth/signin")
-    }
     const contestData = await prisma.contest.findUnique({
         where: {
             id: contestId
@@ -23,22 +19,34 @@ export default async function ContestInfo({ params }: { params: { contestId: str
                             id: true,
                             name: true,
                             difficultyLevel: true,
+                            _count: {
+                                select: {
+                                    submissions: true // Count total submissions for each problem
+                                }
+                            },
+                            submissions: session?.user?.id ? {
+                                where: {
+                                    userId: session.user.id
+                                },
+                                select: {
+                                    status: true
+                                }
+                            } : false // Include user submissions only if user is logged in
                         }
                     }
-                },
-            },
-            submissions: {
-                where: {
-                    userId: session.user.id,
-                    status: "Accepted"
-                },
-                select: {
-                    status: true,
                 }
             }
         }
-    })
-
+    });
+    // Flatten the submissions array and include problemId
+    const submissions = (session?.user?.id && contestData)
+        ? contestData.problems.flatMap((problemData) =>
+            problemData.problem.submissions.map((submission) => ({
+                ...submission,
+                problemId: problemData.problem.id
+            }))
+        )
+        : [];
     return (
         !contestData
             ? <div className="font-bold text-destructive">Contest with id - {contestId} not found</div>
@@ -48,8 +56,8 @@ export default async function ContestInfo({ params }: { params: { contestId: str
                     <div className="md:col-span-2">
                         <ProblemList
                             problems={contestData.problems.map((problemData) => problemData.problem)}
-                            submissions={contestData.submissions}
                             contestId={contestId}
+                            userId={session?.user?.id || null}
                         />
                     </div>
                     <div>
@@ -57,7 +65,7 @@ export default async function ContestInfo({ params }: { params: { contestId: str
                             name={contestData.name}
                             problemCount={contestData.noOfProblems}
                             endTime={contestData.closesOn}
-                            submissions={contestData.submissions}
+                            submissions={submissions}
                         />
                     </div>
                 </div>
