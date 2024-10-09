@@ -29,8 +29,15 @@ const levelColor = {
     MEDIUM: "text-yellow-500 bg-yellow-50 dark:bg-yellow-800",
     HARD: "text-red-500 bg-red-50 dark:bg-red-800",
 };
-
+const calculateAcceptanceRate = (submissions: Submission[], totalSubmissions: number) => {
+    const acceptedSubmissions = submissions.filter((submission) => submission.status === "Accepted").length;
+    const acceptanceRate = totalSubmissions > 0
+        ? (acceptedSubmissions / totalSubmissions * 100).toFixed(2) + ' %'
+        : 'NA';
+    return acceptanceRate
+}
 export function ProblemList({ problems, contestId, userId }: ProblemListProps) {
+
     return (
         <div className="space-y-4">
             <Table>
@@ -40,6 +47,7 @@ export function ProblemList({ problems, contestId, userId }: ProblemListProps) {
                         <TableHead>Status</TableHead>
                         <TableHead>Level</TableHead>
                         <TableHead>Submissions</TableHead>
+                        <TableHead>Acceptance Rate</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -71,6 +79,9 @@ export function ProblemList({ problems, contestId, userId }: ProblemListProps) {
                                 </TableCell>
                                 <TableCell>
                                     {problem._count.submissions}
+                                </TableCell>
+                                <TableCell>
+                                    {calculateAcceptanceRate(problem.submissions, problem._count.submissions)}
                                 </TableCell>
                             </TableRow>
                         );

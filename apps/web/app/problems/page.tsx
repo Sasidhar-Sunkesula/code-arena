@@ -36,7 +36,8 @@ export default async function ProblemList() {
     }));
 
     return (
-        <div className="px-3 py-4">
+        <div className="px-8 py-6 space-y-5">
+            <h2 className="text-left font-medium text-xl">Problem Catalog</h2>
             <ProblemListComponent
                 problems={optimizedProblemList}
                 contestId={null} // No contest in this case

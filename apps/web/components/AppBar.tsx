@@ -28,8 +28,10 @@ export default function AppBar({ session }: { session: Session | null }) {
                         <Link href={"/problems"}>
                             <Button variant={"link"}>Problems</Button>
                         </Link>
-                        <Button variant="ghost">Leaderboard</Button>
-                        <Button variant="ghost">Resources</Button>
+                        <Link href={"/contests"}>
+                            <Button variant={"link"}>Contests</Button>
+                        </Link>
+                        <Button variant="ghost">Contribute</Button>
                     </nav>
                     <div className="flex items-center space-x-4">
                         <ModeToggle />
