@@ -9,3 +9,4 @@ export * from "./shad/ui/select";
 export * from "./shad/ui/table";
 export * from "./shad/ui/tabs";
 export * from "./shad/ui/dialog";
+export * from "./shad/ui/navigation-menu";

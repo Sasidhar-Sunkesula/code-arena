@@ -8,9 +8,6 @@ import { redirect } from "next/navigation";
 export default async function ProblemSolvingPage({ params, searchParams }: { params: { problemId: string }, searchParams: { contestId: string | undefined } }) {
   const problemId = parseInt(params.problemId);
   const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return redirect("/api/auth/signin")
-  }
   const problemData = await prisma.problem.findUnique({
     where: {
       id: problemId

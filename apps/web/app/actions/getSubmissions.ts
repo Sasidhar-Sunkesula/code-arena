@@ -8,7 +8,7 @@ export async function getSubmissions(problemId: number, contestId?: number) {
     const session = await getServerSession(authOptions);
     if (!session?.user || !session.user?.id) {
         return {
-            message: "Unauthenticated request"
+            message: "Please login to view your submissions"
         };
     }
 

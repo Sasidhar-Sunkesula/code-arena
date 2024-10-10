@@ -1,12 +1,13 @@
 "use client"
 
 import { SubmitCodeSchema } from "@/app/api/submitCode/route";
-import { Button } from "@repo/ui/shad";
+import { Badge, Button } from "@repo/ui/shad";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from 'react-hot-toast';
 import React from "react";
 import { ArrowRight } from "lucide-react";
 import { SubmissionData } from "./CodeEditor";
+import { useSession } from "next-auth/react";
 
 type ButtonClientProps = {
     text: string;
@@ -20,18 +21,19 @@ type ButtonClientProps = {
     setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function CodeSubmitButton(
-    { text,
-        fullCode,
-        languageId,
-        problemId,
-        contestId,
-        setSubmissionPending,
-        submissionPending,
-        setSubmissionResults,
-        setSubmitClicked
-    }: ButtonClientProps) {
+export function CodeSubmitButton({
+    text,
+    fullCode,
+    languageId,
+    problemId,
+    contestId,
+    setSubmissionPending,
+    submissionPending,
+    setSubmissionResults,
+    setSubmitClicked
+}: ButtonClientProps) {
     const [submissionId, setSubmissionId] = useState<number | null>(null);
+    const session = useSession();
     async function submitCode() {
         try {
             const requestBody: SubmitCodeSchema = {
@@ -81,11 +83,12 @@ export function CodeSubmitButton(
         }
     }, [submissionPending, submissionId])
     return (
-        <>
+        <div className="flex items-center gap-3">
             <Toaster />
-            <Button disabled={submissionPending} onClick={submitCode}>
+            {!session.data?.user.id && <Badge className="text-sm">You must be logged in to submit a problem</Badge>}
+            <Button disabled={submissionPending || !session.data?.user.id} onClick={submitCode}>
                 {submissionPending ? "Pending..." : text} <ArrowRight className="w-4 ml-1" />
             </Button>
-        </>
+        </div>
     );
 }
