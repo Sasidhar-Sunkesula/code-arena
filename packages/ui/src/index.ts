@@ -10,3 +10,6 @@ export * from "./shad/ui/table";
 export * from "./shad/ui/tabs";
 export * from "./shad/ui/dialog";
 export * from "./shad/ui/navigation-menu";
+export * from "./shad/ui/label";
+export * from "./shad/ui/form";
+export * from "./shad/ui/input";
