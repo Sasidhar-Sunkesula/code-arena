@@ -8,8 +8,12 @@ interface ProblemDescriptionFormProps {
         problemName: string;
         userName: string;
         content: string;
-        boilerplateCodes?: Record<string, string> | undefined;
-    }> | undefined;
+        boilerplateCodes: Record<string, string>;
+        testCases: {
+            input: string;
+            expected_output: string;
+        }[];
+    }, any>
     description: string;
     setDescription: React.Dispatch<React.SetStateAction<string>>
 }

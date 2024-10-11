@@ -7,8 +7,12 @@ interface UserDetailsFormProps {
         problemName: string;
         userName: string;
         content: string;
-        boilerplateCodes?: Record<string, string> | undefined;
-    }> | undefined
+        boilerplateCodes: Record<string, string>;
+        testCases: {
+            input: string;
+            expected_output: string;
+        }[];
+    }, any>
 }
 
 export function UserDetailsForm({ control }: UserDetailsFormProps) {
