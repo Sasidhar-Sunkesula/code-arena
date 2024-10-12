@@ -1,5 +1,4 @@
-import { ContributionForm } from "@/components/ContributionForm";
-import { Stepper } from "@/components/Stepper";
+import { StepperWithForm } from "@/components/StepperWithForm";
 import { z } from "zod"
 
 const searchParamsSchema = z.object({
@@ -20,12 +19,7 @@ export default function Contribute({ searchParams }: { searchParams: { type: str
     return (
         <div className="px-8 py-6 space-y-5 w-full">
             <h2 className="text-xl font-medium underline">Contribute a {searchParams.type}</h2>
-            <div className="flex w-full gap-x-14 justify-between items-center">
-                <Stepper />
-                <div className="flex-grow max-w-7xl">
-                    <ContributionForm />
-                </div>
-            </div>
+            <StepperWithForm />
         </div>
     )
 }

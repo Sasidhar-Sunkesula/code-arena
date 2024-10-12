@@ -34,9 +34,11 @@ const formSchema = z.object({
 export interface BoilerplateCodes {
     [language: string]: string;
 }
-
-export function ContributionForm() {
-    const [step, setStep] = useState(1);
+interface ContributionFormProps {
+    step: number;
+    setStep: React.Dispatch<React.SetStateAction<number>>
+}
+export function ContributionForm({ step, setStep }: ContributionFormProps) {
     const [selectedLanguage, setSelectedLanguage] = useState("JavaScript");
     const [description, setDescription] = useState("");
     const [boilerplateCodes, setBoilerplateCodes] = useState<BoilerplateCodes>({
