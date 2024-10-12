@@ -11,6 +11,7 @@ import { BoilerplateCodeForm } from "./BoilerplateCodeForm"
 import { NavigationButtons } from "./NavigationButtons"
 import { TestCasesForm } from "./TestCasesForm"
 import { formSchema } from "@repo/common/zod"
+import { DifficultyLevel } from "@repo/common/types"
 
 export interface BoilerplateCodes {
     [language: string]: string;
@@ -35,7 +36,8 @@ export function ContributionForm({ step, setStep }: ContributionFormProps) {
             problemName: "",
             content: "",
             boilerplateCodes: boilerplateCodes,
-            testCases: [{ input: "", expected_output: "" }, { input: "", expected_output: "" }, { input: "", expected_output: "" }, { input: "", expected_output: "" }]
+            testCases: [{ input: "", expected_output: "" }, { input: "", expected_output: "" }, { input: "", expected_output: "" }, { input: "", expected_output: "" }],
+            difficultyLevel: DifficultyLevel.EASY
         },
     });
     const { fields, append, remove } = useFieldArray({

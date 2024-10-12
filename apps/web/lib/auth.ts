@@ -2,9 +2,10 @@ import prisma from '@repo/db/client';
 import { NextAuthOptions, Session } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from "next-auth/providers/google";
-import { z, ZodError } from 'zod';
+import { ZodError } from 'zod';
 import bcrypt from "bcrypt";
 import { JWT } from 'next-auth/jwt';
+import { credentialSchema } from '@repo/common/zod';
 
 declare module "next-auth" {
     interface Session {
@@ -16,10 +17,6 @@ declare module "next-auth" {
         }
     }
 }
-const credentialSchema = z.object({
-    email: z.string().email({ message: "Invalid email address" }),
-    password: z.string().min(6, { message: "Password must be at least 8 characters long" })
-})
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
@@ -87,7 +84,7 @@ export const authOptions: NextAuthOptions = {
         },
         session: ({ session, token }: { session: Session, token: JWT }) => {
             if (session && session.user) {
-            session.user.id = token.sub ?? ""
+                session.user.id = token.sub ?? ""
             }
             return session;
         }

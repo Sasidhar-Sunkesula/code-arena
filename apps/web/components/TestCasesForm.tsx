@@ -1,18 +1,10 @@
+import { DifficultyLevel, FormData } from "@repo/common/types";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription, Textarea, Button } from "@repo/ui/shad";
 import { CircleMinus, Plus } from "lucide-react";
 import { Control, FieldArrayWithId, UseFieldArrayAppend, UseFieldArrayRemove } from "react-hook-form";
 
 interface TestCasesFormProps {
-    control: Control<{
-        problemName: string;
-        userName: string;
-        content: string;
-        boilerplateCodes: Record<string, string>;
-        testCases: {
-            input: string;
-            expected_output: string;
-        }[];
-    }, any>
+    control: Control<FormData, any>;
     fields: FieldArrayWithId<{
         problemName: string;
         userName: string;
@@ -24,15 +16,16 @@ interface TestCasesFormProps {
         }[];
     }, "testCases", "id">[];
     append: UseFieldArrayAppend<{
-        testCases: {
-            input: string;
-            expected_output: string;
-        }[];
         problemName: string;
         userName: string;
         content: string;
         boilerplateCodes: Record<string, string>;
-    }, "testCases">;
+        testCases: {
+            input: string;
+            expected_output: string;
+        }[];
+        difficultyLevel: DifficultyLevel;
+    }, "testCases">
     remove: UseFieldArrayRemove;
 }
 

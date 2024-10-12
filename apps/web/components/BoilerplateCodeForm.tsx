@@ -4,18 +4,10 @@ import { Editor } from "@monaco-editor/react";
 import { Loader2Icon } from "lucide-react";
 import { Control } from "react-hook-form";
 import { BoilerplateCodes } from "./ContributionForm";
+import { FormData } from "@repo/common/types";
 
 interface BoilerplateCodeFormProps {
-    control: Control<{
-        problemName: string;
-        userName: string;
-        content: string;
-        boilerplateCodes: Record<string, string>;
-        testCases: {
-            input: string;
-            expected_output: string;
-        }[];
-    }, any>
+    control: Control<FormData, any>;
     selectedLanguage: string;
     handleLanguageChange: (language: string) => void;
     boilerplateCodes: BoilerplateCodes;

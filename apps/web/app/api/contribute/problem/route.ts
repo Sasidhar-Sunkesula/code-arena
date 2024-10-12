@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { formSchema } from "@repo/common/zod"
+import prisma from "@repo/db/client";
 
 export async function POST(req: NextRequest) {
     try {
         const validatedBody = formSchema.parse(await req.json());
+        const createProblem = await prisma.problem.create({
+            data: {
+                name: validatedBody.problemName,
+                content: validatedBody.content,
+                contributedBy: validatedBody.userName,
+                difficultyLevel: validatedBody.difficultyLevel
+            }
+        })
         return NextResponse.json({
             validatedBody
         }, {

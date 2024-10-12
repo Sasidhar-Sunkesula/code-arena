@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { DifficultyLevel } from "../types";
 
 export const formSchema = z.object({
     problemName: z.string()
@@ -17,7 +18,8 @@ export const formSchema = z.object({
     testCases: z.array(z.object({
         input: z.string().min(1, { message: "Input is required" }),
         expected_output: z.string().min(1, { message: "Expected output is required" })
-    })).min(4, { message: "At least 4 test cases are required" })
+    })).min(4, { message: "At least 4 test cases are required" }),
+    difficultyLevel: z.nativeEnum(DifficultyLevel)
 });
 
 export const paramsSchema = z.object({
@@ -32,10 +34,14 @@ export const submitCodeSchema = z.object({
     languageId: z.number({ message: "Language Id is required" }),
     contestId: z.number().optional()
 })
-export type SubmitCodeSchema = z.infer<typeof submitCodeSchema>;
 
 export const searchParamsSchema = z.object({
     type: z.enum(["contest", "problem"], {
         message: "Type must be either 'contest' or 'problem'",
     }),
 });
+
+export const credentialSchema = z.object({
+    email: z.string().email({ message: "Invalid email address" }),
+    password: z.string().min(6, { message: "Password must be at least 8 characters long" })
+})

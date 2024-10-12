@@ -2,18 +2,10 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@repo/
 import rehypeSanitize from "rehype-sanitize";
 import MDEditor from '@uiw/react-md-editor';
 import { Control } from "react-hook-form";
+import { FormData } from "@repo/common/types";
 
 interface ProblemDescriptionFormProps {
-    control: Control<{
-        problemName: string;
-        userName: string;
-        content: string;
-        boilerplateCodes: Record<string, string>;
-        testCases: {
-            input: string;
-            expected_output: string;
-        }[];
-    }, any>
+    control: Control<FormData, any>;
     description: string;
     setDescription: React.Dispatch<React.SetStateAction<string>>
 }

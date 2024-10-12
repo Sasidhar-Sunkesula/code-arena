@@ -1,6 +1,7 @@
 {
   "name": "@repo/common",
   "exports": {
+    "./types": "./types/index.ts",
     "./zod": "./zod/index.ts"
   },
   "version": "1.0.0",

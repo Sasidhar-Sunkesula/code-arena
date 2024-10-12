@@ -1,18 +1,10 @@
-import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@repo/ui/shad";
+import { DifficultyLevel, FormData } from "@repo/common/types";
+import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@repo/ui/shad";
 import { Input } from "@repo/ui/shad";
 import { Control } from "react-hook-form";
 
 interface UserDetailsFormProps {
-    control: Control<{
-        problemName: string;
-        userName: string;
-        content: string;
-        boilerplateCodes: Record<string, string>;
-        testCases: {
-            input: string;
-            expected_output: string;
-        }[];
-    }, any>
+    control: Control<FormData, any>;
 }
 
 export function UserDetailsForm({ control }: UserDetailsFormProps) {
@@ -25,7 +17,7 @@ export function UserDetailsForm({ control }: UserDetailsFormProps) {
                     <FormItem>
                         <FormLabel>Your name</FormLabel>
                         <FormControl>
-                            <Input className="w-full md:w-8/12" placeholder="Ratan Tata" {...field} />
+                            <Input className="w-full md:w-11/12" placeholder="Ratan Tata" {...field} />
                         </FormControl>
                         <FormDescription>
                             This will be visible as contributed by when people look at your problem.
@@ -41,10 +33,35 @@ export function UserDetailsForm({ control }: UserDetailsFormProps) {
                     <FormItem>
                         <FormLabel>Name of the problem</FormLabel>
                         <FormControl>
-                            <Input className="w-full md:w-8/12" placeholder="Two sum" {...field} />
+                            <Input className="w-full md:w-11/12" placeholder="Two sum" {...field} />
                         </FormControl>
                         <FormDescription>
                             This will be visible as the problem name. Max characters are 50.
+                        </FormDescription>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={control}
+                name="difficultyLevel"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Difficulty Level</FormLabel>
+                        <FormControl>
+                            <Select value={field.value} onValueChange={field.onChange}>
+                                <SelectTrigger className="w-[220px]">
+                                    <SelectValue placeholder="Select Difficulty Level" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value={DifficultyLevel.EASY}>Easy</SelectItem>
+                                    <SelectItem value={DifficultyLevel.MEDIUM}>Medium</SelectItem>
+                                    <SelectItem value={DifficultyLevel.HARD}>Hard</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </FormControl>
+                        <FormDescription>
+                            Select the difficulty level of the problem.
                         </FormDescription>
                         <FormMessage />
                     </FormItem>

@@ -37,8 +37,8 @@ model Problem {
   name            String
   content         String
   contributedBy   String           @default("Anonymous")
-  boilerPlate     BoilerPlate[]
   difficultyLevel DifficultyLevel
+  boilerPlate     BoilerPlate[]
   testcases       TestCase[]
   contests        ContestProblem[]
   submissions     Submission[]
