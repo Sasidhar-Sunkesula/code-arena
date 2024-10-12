@@ -6,16 +6,50 @@ import prisma from "@repo/db/client";
 export async function POST(req: NextRequest) {
     try {
         const validatedBody = formSchema.parse(await req.json());
-        const createProblem = await prisma.problem.create({
-            data: {
-                name: validatedBody.problemName,
-                content: validatedBody.content,
-                contributedBy: validatedBody.userName,
-                difficultyLevel: validatedBody.difficultyLevel
-            }
-        })
+        const result = await prisma.$transaction(async (prisma) => {
+            const createProblem = await prisma.problem.create({
+                data: {
+                    name: validatedBody.problemName,
+                    content: validatedBody.content,
+                    contributedBy: validatedBody.userName,
+                    difficultyLevel: validatedBody.difficultyLevel
+                }
+            });
+
+            const boilerplateData = await Promise.all(
+                Object.entries(validatedBody.boilerplateCodes).map(async ([languageName, code]) => {
+                    const language = await prisma.language.findFirst({
+                        where: { judge0Name: languageName }
+                    });
+
+                    if (!language) {
+                        throw new Error(`Language not found: ${languageName}`);
+                    }
+
+                    return {
+                        languageId: language.id,
+                        boilerPlateCode: code,
+                        problemId: createProblem.id
+                    };
+                })
+            );
+
+            const createBoilerplateCodes = await prisma.boilerPlate.createMany({
+                data: boilerplateData
+            });
+
+            const createTestCases = await prisma.testCase.createMany({
+                data: validatedBody.testCases.map(testCase => ({
+                    input: testCase.input,
+                    expectedOutput: testCase.expected_output,
+                    problemId: createProblem.id
+                }))
+            });
+
+            return { createProblem, createBoilerplateCodes, createTestCases };
+        });
         return NextResponse.json({
-            validatedBody
+            result
         }, {
             status: 200
         })

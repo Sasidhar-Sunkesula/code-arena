@@ -3,7 +3,7 @@
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useFieldArray, useForm } from "react-hook-form"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Form } from "@repo/ui/shad"
 import { UserDetailsForm } from "./UserDetailsForm"
 import { ProblemDescriptionForm } from "./ProblemDescriptionForm"
@@ -12,6 +12,7 @@ import { NavigationButtons } from "./NavigationButtons"
 import { TestCasesForm } from "./TestCasesForm"
 import { formSchema } from "@repo/common/zod"
 import { DifficultyLevel } from "@repo/common/types"
+import { getLanguages } from "@/app/actions/getLanguages"
 
 export interface BoilerplateCodes {
     [language: string]: string;
@@ -21,23 +22,45 @@ interface ContributionFormProps {
     setStep: React.Dispatch<React.SetStateAction<number>>
 }
 export function ContributionForm({ step, setStep }: ContributionFormProps) {
-    const [selectedLanguage, setSelectedLanguage] = useState("JavaScript");
     const [description, setDescription] = useState("");
-    const [boilerplateCodes, setBoilerplateCodes] = useState<BoilerplateCodes>({
-        JavaScript: "",
-        Python: "",
-        Java: "",
-    });
+    const [boilerplateCodes, setBoilerplateCodes] = useState<BoilerplateCodes>({});
+    const [languages, setLanguages] = useState<{ id: number; judge0Name: string }[]>([]);
+    const [selectedLanguage, setSelectedLanguage] = useState<string>('');
+
+    useEffect(() => {
+        async function fetchLanguages() {
+            try {
+                const response = await getLanguages();
+                if (response.languages) {
+                    setLanguages(response.languages);
+                    // Initialize boilerplateCodes with fetched languages
+                    const initialBoilerplateCodes: BoilerplateCodes = {};
+                    response.languages.forEach((language: { judge0Name: string }) => {
+                        initialBoilerplateCodes[language.judge0Name] = '';
+                    });
+                    setBoilerplateCodes(initialBoilerplateCodes);
+                }
+            } catch (error) {
+                console.error('Failed to fetch languages', error);
+            }
+        }
+        fetchLanguages();
+    }, []);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            userName: "",
-            problemName: "",
-            content: "",
+            userName: '',
+            problemName: '',
+            content: '',
             boilerplateCodes: boilerplateCodes,
-            testCases: [{ input: "", expected_output: "" }, { input: "", expected_output: "" }, { input: "", expected_output: "" }, { input: "", expected_output: "" }],
-            difficultyLevel: DifficultyLevel.EASY
+            testCases: [
+                { input: '', expected_output: '' },
+                { input: '', expected_output: '' },
+                { input: '', expected_output: '' },
+                { input: '', expected_output: '' },
+            ],
+            difficultyLevel: DifficultyLevel.EASY,
         },
     });
     const { fields, append, remove } = useFieldArray({
@@ -49,10 +72,12 @@ export function ContributionForm({ step, setStep }: ContributionFormProps) {
     }
 
     function handleBoilerplateChange(value: string) {
-        setBoilerplateCodes(prev => ({
-            ...prev,
-            [selectedLanguage]: value,
-        }));
+        if (selectedLanguage) {
+            setBoilerplateCodes((prev) => ({
+                ...prev,
+                [selectedLanguage]: value,
+            }));
+        }
     }
 
     function onSubmit(values: z.infer<typeof formSchema>) {
@@ -75,6 +100,7 @@ export function ContributionForm({ step, setStep }: ContributionFormProps) {
                         handleLanguageChange={handleLanguageChange}
                         boilerplateCodes={boilerplateCodes}
                         handleBoilerplateChange={handleBoilerplateChange}
+                        languages={languages}
                     />
                 )}
                 {step === 3 && (

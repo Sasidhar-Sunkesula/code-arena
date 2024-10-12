@@ -12,6 +12,10 @@ interface BoilerplateCodeFormProps {
     handleLanguageChange: (language: string) => void;
     boilerplateCodes: BoilerplateCodes;
     handleBoilerplateChange: (value: string) => void;
+    languages: {
+        id: number;
+        judge0Name: string;
+    }[];
 }
 
 export function BoilerplateCodeForm({
@@ -19,7 +23,8 @@ export function BoilerplateCodeForm({
     selectedLanguage,
     handleLanguageChange,
     boilerplateCodes,
-    handleBoilerplateChange
+    handleBoilerplateChange,
+    languages
 }: BoilerplateCodeFormProps) {
     return (
         <FormField
@@ -35,9 +40,11 @@ export function BoilerplateCodeForm({
                                     <SelectValue placeholder="Select Language" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="JavaScript">JavaScript</SelectItem>
-                                    <SelectItem value="Python">Python</SelectItem>
-                                    <SelectItem value="Java">Java</SelectItem>
+                                    {languages.map((language) => (
+                                        <SelectItem key={language.id} value={language.judge0Name}>
+                                            {language.judge0Name}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </FormControl>
