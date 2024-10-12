@@ -36,6 +36,7 @@ model Problem {
   id              Int              @id @default(autoincrement())
   name            String
   content         String
+  contributedBy   String           @default("Anonymous")
   boilerPlate     BoilerPlate[]
   difficultyLevel DifficultyLevel
   testcases       TestCase[]

@@ -1,16 +1,10 @@
 import { authOptions } from "@/lib/auth";
+import { submitCodeSchema } from "@repo/common/zod";
 import prisma from "@repo/db/client";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { z, ZodError } from "zod";
+import { ZodError } from "zod";
 
-const submitCodeSchema = z.object({
-    problemId: z.number({ message: "Problem Id is missing" }),
-    submittedCode: z.string({ message: "Code should not be empty" }),
-    languageId: z.number({ message: "Language Id is required" }),
-    contestId: z.number().optional()
-})
-export type SubmitCodeSchema = z.infer<typeof submitCodeSchema>;
 interface BatchItem {
     language_id: number,
     source_code: string,

@@ -1,11 +1,6 @@
 import { StepperWithForm } from "@/components/StepperWithForm";
-import { z } from "zod"
+import { searchParamsSchema } from "@repo/common/zod";
 
-const searchParamsSchema = z.object({
-    type: z.enum(["contest", "problem"], {
-        message: "Type must be either 'contest' or 'problem'",
-    }),
-});
 export default function Contribute({ searchParams }: { searchParams: { type: string } }) {
     // Validate searchParams
     const result = searchParamsSchema.safeParse(searchParams);

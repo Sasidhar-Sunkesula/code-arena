@@ -1,12 +1,7 @@
+import { paramsSchema } from "@repo/common/zod";
 import prisma from "@repo/db/client";
 import { NextRequest, NextResponse } from "next/server";
-import { z, ZodError } from "zod";
-
-const paramsSchema = z.object({
-    submissionId: z.string().refine((val) => !isNaN(parseInt(val)), {
-        message: "submissionId must be a valid number",
-    }),
-});
+import { ZodError } from "zod";
 
 export async function GET(req: NextRequest, { params }: { params: { submissionId: string } }) {
     try {
