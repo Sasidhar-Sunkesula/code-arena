@@ -6,7 +6,7 @@ import prisma from "@repo/db/client";
 export async function POST(req: NextRequest) {
     try {
         const validatedBody = formSchema.parse(await req.json());
-        const result = await prisma.$transaction(async (prisma) => {
+        await prisma.$transaction(async () => {
             const createProblem = await prisma.problem.create({
                 data: {
                     name: validatedBody.problemName,
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
             return { createProblem, createBoilerplateCodes, createTestCases };
         });
         return NextResponse.json({
-            result
+            msg: "Success"
         }, {
             status: 200
         })

@@ -1,6 +1,5 @@
 "use client"
 
-import { SubmitCodeSchema } from "@/app/api/submitCode/route";
 import { Badge, Button } from "@repo/ui/shad";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from 'react-hot-toast';
@@ -8,6 +7,7 @@ import React from "react";
 import { ArrowRight } from "lucide-react";
 import { SubmissionData } from "./CodeEditor";
 import { useSession } from "next-auth/react";
+import { SubmitCodeSchema } from "@repo/common/types";
 
 type ButtonClientProps = {
     text: string;
@@ -34,6 +34,7 @@ export function CodeSubmitButton({
 }: ButtonClientProps) {
     const [submissionId, setSubmissionId] = useState<number | null>(null);
     const session = useSession();
+
     async function submitCode() {
         try {
             const requestBody: SubmitCodeSchema = {
@@ -51,10 +52,10 @@ export function CodeSubmitButton({
                 },
                 body: JSON.stringify(requestBody)
             });
+            const submissionData = await submissionResponse.json();
             if (!submissionResponse.ok) {
-                throw new Error("Unable to create a submission at this moment")
+                throw new Error(submissionData.msg);
             }
-            const submissionData: { submissionId: number } = await submissionResponse.json();
             setSubmissionId(submissionData.submissionId);
         } catch (error) {
             setSubmissionPending(false);
@@ -66,6 +67,10 @@ export function CodeSubmitButton({
             const intervalId = setInterval(async () => {
                 try {
                     const resultResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/checkStatus/${submissionId}`);
+                    if (!resultResponse.ok) {
+                        const errorData = await resultResponse.json();
+                        throw new Error(errorData.msg);
+                    }
                     const submissionResult = await resultResponse.json();
                     // Check if the condition to stop polling is met
                     if (submissionResult?.msg !== "PENDING") {

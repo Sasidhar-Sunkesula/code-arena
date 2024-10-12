@@ -1,12 +1,13 @@
 import { Button } from "@repo/ui/shad";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 
 interface NavigationButtonsProps {
     step: number;
-    setStep: React.Dispatch<React.SetStateAction<number>>
+    setStep: React.Dispatch<React.SetStateAction<number>>;
+    loading: boolean
 }
 
-export function NavigationButtons({ step, setStep }: NavigationButtonsProps) {
+export function NavigationButtons({ step, setStep, loading }: NavigationButtonsProps) {
     return (
         <div className="flex items-center space-x-4">
             <Button disabled={step === 1} type="button" onClick={() => setStep(prev => prev - 1)}>
@@ -19,9 +20,15 @@ export function NavigationButtons({ step, setStep }: NavigationButtonsProps) {
                     <ArrowRight className="w-5 ml-2" />
                 </Button>
             ) : (
-                <Button type="submit">
-                    Submit
-                    <ArrowRight className="w-5 ml-2" />
+                <Button disabled={loading} type="submit">
+                    {
+                        loading
+                            ? <Loader2 className="animate-spin" />
+                            : <span className="flex items-center">
+                                Submit
+                                <ArrowRight className="w-5 ml-2" />
+                            </span>
+                    }
                 </Button>
             )}
         </div>

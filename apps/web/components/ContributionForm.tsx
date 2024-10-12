@@ -13,6 +13,7 @@ import { TestCasesForm } from "./TestCasesForm"
 import { formSchema } from "@repo/common/zod"
 import { DifficultyLevel } from "@repo/common/types"
 import { getLanguages } from "@/app/actions/getLanguages"
+import toast, { Toaster } from "react-hot-toast"
 
 export interface BoilerplateCodes {
     [language: string]: string;
@@ -26,6 +27,7 @@ export function ContributionForm({ step, setStep }: ContributionFormProps) {
     const [boilerplateCodes, setBoilerplateCodes] = useState<BoilerplateCodes>({});
     const [languages, setLanguages] = useState<{ id: number; judge0Name: string }[]>([]);
     const [selectedLanguage, setSelectedLanguage] = useState<string>('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         async function fetchLanguages() {
@@ -80,8 +82,27 @@ export function ContributionForm({ step, setStep }: ContributionFormProps) {
         }
     }
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        try {
+            setLoading(true);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/contribute/problem`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(values),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.msg);
+            }
+            toast.success("Problem submitted successfully!");
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "An error occurred while submitting the problem.");
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -106,8 +127,9 @@ export function ContributionForm({ step, setStep }: ContributionFormProps) {
                 {step === 3 && (
                     <TestCasesForm control={form.control} fields={fields} append={append} remove={remove} />
                 )}
-                <NavigationButtons step={step} setStep={setStep} />
+                <NavigationButtons loading={loading} step={step} setStep={setStep} />
             </form>
+            <Toaster />
         </Form>
     );
 }
