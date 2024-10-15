@@ -14,8 +14,8 @@ export function NavigationButtons({ step, setStep, loading }: NavigationButtonsP
                 <ArrowLeft className="w-5 mr-2" />
                 Back
             </Button>
-            {step < 4 ? (
-                <Button type="button" onClick={() => setStep(prev => (prev < 4 ? prev + 1 : prev))}>
+            {step <= 4 ? (
+                <Button type="button" onClick={() => setStep(prev => (prev <= 4 ? prev + 1 : prev))}>
                     Next
                     <ArrowRight className="w-5 ml-2" />
                 </Button>

@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
             return { createProblem, createBoilerplateCodes, createTestCases };
         });
         return NextResponse.json({
-            result
+            createdProblemId: result.createProblem.id
         }, {
             status: 200
         })

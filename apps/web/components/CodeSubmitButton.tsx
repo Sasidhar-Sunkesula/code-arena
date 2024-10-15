@@ -9,11 +9,11 @@ import { SubmissionData } from "./CodeEditor";
 import { useSession } from "next-auth/react";
 import { SubmissionType, SubmitCodeSchema } from "@repo/common/types";
 
-type ButtonClientProps = {
+type CodeSubmitButtonProps = {
     text: string;
     type: SubmissionType;
     fullCode: string;
-    problemId: number;
+    problemId?: number;
     contestId?: string;
     languageId: number;
     submissionPending: boolean;
@@ -33,7 +33,7 @@ export function CodeSubmitButton({
     submissionPending,
     setSubmissionResults,
     setSubmitClicked
-}: ButtonClientProps) {
+}: CodeSubmitButtonProps) {
     const [submissionId, setSubmissionId] = useState<number | null>(null);
     const session = useSession();
 

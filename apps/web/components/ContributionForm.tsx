@@ -14,30 +14,27 @@ import { formSchema } from "@repo/common/zod"
 import { DifficultyLevel } from "@repo/common/types"
 import { getLanguages } from "@/app/actions/getLanguages"
 import toast, { Toaster } from "react-hot-toast"
-import { BoilerplateCodes } from "./StepperWithForm"
 import { Language } from "./CodeEditor"
+import { ConfirmationTest } from "./ConfirmationTest"
 
 interface ContributionFormProps {
     step: number;
     setStep: React.Dispatch<React.SetStateAction<number>>;
-    boilerplateCodes: BoilerplateCodes;
-    languages: Language[];
-    setCreatedProblemId: React.Dispatch<React.SetStateAction<number | null>>
-    setLanguages: React.Dispatch<React.SetStateAction<Language[]>>
-    setBoilerplateCodes: React.Dispatch<React.SetStateAction<BoilerplateCodes>>;
+}
+export interface BoilerplateCodes {
+    [language: string]: string;
 }
 export function ContributionForm({
     step,
-    languages,
     setStep,
-    boilerplateCodes,
-    setLanguages,
-    setBoilerplateCodes
 }: ContributionFormProps) {
 
     const [description, setDescription] = useState("");
     const [selectedLanguage, setSelectedLanguage] = useState<string>('');
     const [loading, setLoading] = useState(false);
+    const [createdProblemId, setCreatedProblemId] = useState<number | null>(null);
+    const [languages, setLanguages] = useState<Language[]>([]);
+    const [boilerplateCodes, setBoilerplateCodes] = useState<BoilerplateCodes>({});
 
     useEffect(() => {
         async function fetchLanguages() {
@@ -47,7 +44,7 @@ export function ContributionForm({
                     setLanguages(response.languages);
                     // Initialize boilerplateCodes with fetched languages
                     const initialBoilerplateCodes: BoilerplateCodes = {};
-                    response.languages.forEach((language: { judge0Name: string }) => {
+                    response.languages.map((language) => {
                         initialBoilerplateCodes[language.judge0Name] = '';
                     });
                     setBoilerplateCodes(initialBoilerplateCodes);
@@ -109,6 +106,8 @@ export function ContributionForm({
                 const errorData = await response.json();
                 throw new Error(errorData.msg);
             }
+            const data: { createdProblemId: number } = await response.json();
+            setCreatedProblemId(data.createdProblemId)
             toast.success("Problem submitted successfully!");
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "An error occurred while creating the problem.");
@@ -138,6 +137,13 @@ export function ContributionForm({
                 )}
                 {step === 3 && (
                     <TestCasesForm control={form.control} fields={fields} append={append} remove={remove} />
+                )}
+                {step === 4 && (
+                    <ConfirmationTest
+                        createdProblemId={1}
+                        languages={languages}
+                        boilerplateCodes={boilerplateCodes}
+                    />
                 )}
                 <NavigationButtons loading={loading} step={step} setStep={setStep} />
             </form>

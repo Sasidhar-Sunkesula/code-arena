@@ -90,11 +90,11 @@ model Submission {
   memory          Float?
   testCasesPassed Int?
   userId          String
-  problemId       Int
+  problemId       Int?
   contestId       Int?
   language        Language         @relation(fields: [languageId], references: [id])
   user            User             @relation(fields: [userId], references: [id])
-  problem         Problem          @relation(fields: [problemId], references: [id])
+  problem         Problem?          @relation(fields: [problemId], references: [id])
   contest         Contest?         @relation(fields: [contestId], references: [id])
   testCaseResults TestCaseResult[]
 
