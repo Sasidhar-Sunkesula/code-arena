@@ -14,18 +14,17 @@ import { formSchema } from "@repo/common/zod"
 import { DifficultyLevel } from "@repo/common/types"
 import { getLanguages } from "@/app/actions/getLanguages"
 import toast, { Toaster } from "react-hot-toast"
+import { BoilerplateCodes } from "./StepperWithForm"
 
-export interface BoilerplateCodes {
-    [language: string]: string;
-}
 interface ContributionFormProps {
     step: number;
-    setStep: React.Dispatch<React.SetStateAction<number>>
+    setStep: React.Dispatch<React.SetStateAction<number>>;
+    boilerplateCodes: BoilerplateCodes;
+    setBoilerplateCodes: React.Dispatch<React.SetStateAction<BoilerplateCodes>>;
 }
-export function ContributionForm({ step, setStep }: ContributionFormProps) {
+export function ContributionForm({ step, setStep, boilerplateCodes, setBoilerplateCodes }: ContributionFormProps) {
     const [description, setDescription] = useState("");
-    const [boilerplateCodes, setBoilerplateCodes] = useState<BoilerplateCodes>({});
-    const [languages, setLanguages] = useState<{ id: number; judge0Name: string }[]>([]);
+    const [languages, setLanguages] = useState<{ id: number; judge0Name: string, monacoName: string }[]>([]);
     const [selectedLanguage, setSelectedLanguage] = useState<string>('');
     const [loading, setLoading] = useState(false);
 
@@ -41,9 +40,11 @@ export function ContributionForm({ step, setStep }: ContributionFormProps) {
                         initialBoilerplateCodes[language.judge0Name] = '';
                     });
                     setBoilerplateCodes(initialBoilerplateCodes);
+                } else if (response.msg) {
+                    throw new Error(response.msg)
                 }
             } catch (error) {
-                console.error('Failed to fetch languages', error);
+                toast.error(error instanceof Error ? error.message : "An unknown error has occured")
             }
         }
         fetchLanguages();
@@ -99,7 +100,7 @@ export function ContributionForm({ step, setStep }: ContributionFormProps) {
             }
             toast.success("Problem submitted successfully!");
         } catch (error) {
-            toast.error(error instanceof Error ? error.message : "An error occurred while submitting the problem.");
+            toast.error(error instanceof Error ? error.message : "An error occurred while creating the problem.");
         } finally {
             setLoading(false);
         }

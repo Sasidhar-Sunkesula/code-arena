@@ -38,7 +38,7 @@ export const submitCodeSchema = z.object({
 export const searchParamsSchema = z.object({
     type: z.enum(["contest", "problem"], {
         message: "Type must be either 'contest' or 'problem'",
-    }),
+    })
 });
 
 export const credentialSchema = z.object({

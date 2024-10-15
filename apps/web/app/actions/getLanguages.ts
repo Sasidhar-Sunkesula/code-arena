@@ -10,7 +10,7 @@ export async function getLanguages() {
         };
     } catch (error) {
         return {
-            message: "An error occurred while fetching languages. Please try again later."
+            msg: error instanceof Error ? error.message : "An error occurred while fetching languages."
         };
     }
 }
