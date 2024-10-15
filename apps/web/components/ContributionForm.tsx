@@ -15,16 +15,27 @@ import { DifficultyLevel } from "@repo/common/types"
 import { getLanguages } from "@/app/actions/getLanguages"
 import toast, { Toaster } from "react-hot-toast"
 import { BoilerplateCodes } from "./StepperWithForm"
+import { Language } from "./CodeEditor"
 
 interface ContributionFormProps {
     step: number;
     setStep: React.Dispatch<React.SetStateAction<number>>;
     boilerplateCodes: BoilerplateCodes;
+    languages: Language[];
+    setCreatedProblemId: React.Dispatch<React.SetStateAction<number | null>>
+    setLanguages: React.Dispatch<React.SetStateAction<Language[]>>
     setBoilerplateCodes: React.Dispatch<React.SetStateAction<BoilerplateCodes>>;
 }
-export function ContributionForm({ step, setStep, boilerplateCodes, setBoilerplateCodes }: ContributionFormProps) {
+export function ContributionForm({
+    step,
+    languages,
+    setStep,
+    boilerplateCodes,
+    setLanguages,
+    setBoilerplateCodes
+}: ContributionFormProps) {
+
     const [description, setDescription] = useState("");
-    const [languages, setLanguages] = useState<{ id: number; judge0Name: string, monacoName: string }[]>([]);
     const [selectedLanguage, setSelectedLanguage] = useState<string>('');
     const [loading, setLoading] = useState(false);
 

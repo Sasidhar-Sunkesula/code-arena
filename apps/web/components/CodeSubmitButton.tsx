@@ -7,10 +7,11 @@ import React from "react";
 import { ArrowRight } from "lucide-react";
 import { SubmissionData } from "./CodeEditor";
 import { useSession } from "next-auth/react";
-import { SubmitCodeSchema } from "@repo/common/types";
+import { SubmissionType, SubmitCodeSchema } from "@repo/common/types";
 
 type ButtonClientProps = {
     text: string;
+    type: SubmissionType;
     fullCode: string;
     problemId: number;
     contestId?: string;
@@ -27,6 +28,7 @@ export function CodeSubmitButton({
     languageId,
     problemId,
     contestId,
+    type,
     setSubmissionPending,
     submissionPending,
     setSubmissionResults,
@@ -41,6 +43,7 @@ export function CodeSubmitButton({
                 problemId: problemId,
                 submittedCode: fullCode,
                 languageId: languageId,
+                type: type,
                 ...(contestId && !isNaN(parseInt(contestId)) ? { contestId: parseInt(contestId) } : {})
             };
             setSubmitClicked(true);

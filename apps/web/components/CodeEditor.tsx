@@ -10,6 +10,7 @@ import { ResultDisplay } from './ResultDisplay'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/shad'
 import { Loader2Icon } from 'lucide-react'
 import { ProblemSubmissions } from './ProblemSubmissions'
+import { SubmissionType } from '@repo/common/types'
 
 export interface Language {
     id: number;
@@ -17,7 +18,7 @@ export interface Language {
     monacoName: string;
     judge0Id: number;
 }
-interface BoilerPlate {
+interface BoilerPlateWithLanguage {
     id: number;
     boilerPlateCode: string;
     languageId: number;
@@ -30,16 +31,18 @@ type TestCaseWithResult = TestCaseResult & {
 export type SubmissionData = Submission & {
     testCaseResults: TestCaseWithResult[]
 }
-export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPlate[], contestId?: string }) {
+export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPlateWithLanguage[], contestId?: string }) {
     const [selectedLanguage, setSelectedLanguage] = useState(boilerPlates[0]?.language.monacoName || "")
-    const boilerPlate = boilerPlates.find((item) => item.language.monacoName === selectedLanguage)
-    const [fullCode, setFullCode] = useState<string>(boilerPlate?.boilerPlateCode || "")
+    const boilerPlateOfSelectedLang = boilerPlates.find((item) => item.language.monacoName === selectedLanguage)
+    const [fullCode, setFullCode] = useState<string>(boilerPlateOfSelectedLang?.boilerPlateCode || "")
     const [submissionPending, setSubmissionPending] = useState(false);
     const [submissionResults, setSubmissionResults] = useState<SubmissionData | null>(null);
     const [submitClicked, setSubmitClicked] = useState(false);
+
     useEffect(() => {
-        setFullCode(boilerPlate?.boilerPlateCode || "")
-    }, [boilerPlate])
+        setFullCode(boilerPlateOfSelectedLang?.boilerPlateCode || "")
+    }, [boilerPlateOfSelectedLang])
+
     return (
         <div className='space-y-3'>
             <Toaster />
@@ -82,23 +85,23 @@ export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPl
                 </TabsContent>
                 <TabsContent value="submissions">
                     {
-                        boilerPlate?.problemId &&
+                        boilerPlateOfSelectedLang?.problemId &&
                         <ProblemSubmissions
-                            problemId={boilerPlate?.problemId}
+                            problemId={boilerPlateOfSelectedLang?.problemId}
                             contestId={(contestId && !isNaN(parseInt(contestId))) ? parseInt(contestId) : undefined}
                         />
                     }
                 </TabsContent>
             </Tabs>
             {
-                boilerPlate?.languageId || boilerPlate?.problemId
-                    ?
-                    <div className="flex justify-end">
+                boilerPlateOfSelectedLang?.languageId || boilerPlateOfSelectedLang?.problemId
+                    ? <div className="flex justify-end">
                         <CodeSubmitButton
                             text="Submit"
+                            type={SubmissionType.REGULAR}
                             contestId={contestId}
-                            problemId={boilerPlate.problemId}
-                            languageId={boilerPlate.languageId}
+                            problemId={boilerPlateOfSelectedLang.problemId}
+                            languageId={boilerPlateOfSelectedLang.languageId}
                             fullCode={fullCode}
                             submissionPending={submissionPending}
                             setSubmissionPending={setSubmissionPending}
@@ -106,8 +109,7 @@ export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPl
                             setSubmitClicked={setSubmitClicked}
                         />
                     </div>
-                    :
-                    toast.error("Language not found, problem cannot be submitted")
+                    : toast.error("Language not found, problem cannot be submitted")
             }
             {
                 submitClicked && <ResultDisplay

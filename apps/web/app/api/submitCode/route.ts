@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
             }
         })
         if (!testCases || testCases.length === 0) {
-            throw new Error("Incorrect problemId, unable to find the test cases");
+            throw new Error("Unable to find the test cases for this problem");
         }
         const selectedLanguage = await prisma.language.findUnique({
             where: {
@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
                 submittedCode: validatedInput.submittedCode,
                 languageId: selectedLanguage.id,
                 createdAt: new Date(),
+                submissionType: validatedInput.type,
                 userId: session.user.id,
                 problemId: validatedInput.problemId,
                 contestId: validatedInput?.contestId

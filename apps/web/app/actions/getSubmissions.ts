@@ -16,7 +16,8 @@ export async function getSubmissions(problemId: number, contestId?: number) {
         const submissions = await prisma.submission.findMany({
             where: {
                 problemId: problemId,
-                contestId: contestId
+                contestId: contestId,
+                submissionType: "REGULAR"
             },
             orderBy: {
                 createdAt: 'desc'

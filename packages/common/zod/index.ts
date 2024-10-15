@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { DifficultyLevel } from "../types";
+import { DifficultyLevel, SubmissionType } from "../types";
 
 export const formSchema = z.object({
     problemName: z.string()
@@ -32,7 +32,10 @@ export const submitCodeSchema = z.object({
     problemId: z.number({ message: "Problem Id is missing" }),
     submittedCode: z.string({ message: "Code should not be empty" }),
     languageId: z.number({ message: "Language Id is required" }),
-    contestId: z.number().optional()
+    contestId: z.number().optional(),
+    type: z.nativeEnum(SubmissionType, {
+        message: "Type must be either 'REGULAR', 'CONFIRMATION_TEST', or 'DEMO'"
+    })
 })
 
 export const searchParamsSchema = z.object({

@@ -3,14 +3,24 @@ import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } 
 import { Editor } from "@monaco-editor/react";
 import { Loader2Icon } from "lucide-react";
 import { BoilerplateCodes } from "./StepperWithForm";
+import { CodeSubmitButton } from "./CodeSubmitButton";
+import { SubmissionType } from "@repo/common/types";
+import { Language, SubmissionData } from "./CodeEditor";
+import { ResultDisplay } from "./ResultDisplay";
+import toast, { Toaster } from "react-hot-toast";
 
 interface ConfirmationTestProps {
     boilerplateCodes: BoilerplateCodes;
+    languages: Language[];
+    createdProblemId: number;
 }
 
-export function ConfirmationTest({ boilerplateCodes }: ConfirmationTestProps) {
+export function ConfirmationTest({ boilerplateCodes, languages, createdProblemId }: ConfirmationTestProps) {
     const [selectedLanguage, setSelectedLanguage] = useState<string>("");
     const [code, setCode] = useState<string>("");
+    const [submissionPending, setSubmissionPending] = useState(false);
+    const [submissionResults, setSubmissionResults] = useState<SubmissionData | null>(null);
+    const [submitClicked, setSubmitClicked] = useState(false);
 
     // Filter languages to only include those with non-empty boilerplate code
     const filteredLanguages = Object.keys(boilerplateCodes).filter(
@@ -21,7 +31,7 @@ export function ConfirmationTest({ boilerplateCodes }: ConfirmationTestProps) {
         setSelectedLanguage(language);
         setCode(boilerplateCodes[language] ?? "");
     };
-
+    const filteredLangInfo = languages.find((languageInfo) => languageInfo.judge0Name === selectedLanguage)
     return (
         <div className="space-y-4">
             <div className="space-y-2">
@@ -67,9 +77,32 @@ export function ConfirmationTest({ boilerplateCodes }: ConfirmationTestProps) {
                     }}
                 />
                 <p className="mt-2 text-sm text-gray-500">
-                    The boilerplate code should contain a function that the user has to implement and the input handling code for that function. The input handling code should also call the function.
+                    You should solve and test the problem with all the languages that you have submitted the boilerplate code.
                 </p>
+                {filteredLangInfo
+                    ? <div className="flex justify-end">
+                        <CodeSubmitButton
+                            text="Submit"
+                            type={SubmissionType.CONFIRMATION_TEST}
+                            problemId={createdProblemId}
+                            languageId={filteredLangInfo.id}
+                            fullCode={code}
+                            submissionPending={submissionPending}
+                            setSubmissionPending={setSubmissionPending}
+                            setSubmissionResults={setSubmissionResults}
+                            setSubmitClicked={setSubmitClicked}
+                        />
+                    </div>
+                    : toast.error("Language not found, problem cannot be submitted")
+                }
+                {
+                    submitClicked && <ResultDisplay
+                        submissionPending={submissionPending}
+                        submissionResults={submissionResults}
+                    />
+                }
             </div>
+            <Toaster />
         </div>
     );
 }

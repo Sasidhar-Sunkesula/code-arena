@@ -11,3 +11,8 @@ export type FormData = z.infer<typeof formSchema>;
 
 export type SubmitCodeSchema = z.infer<typeof submitCodeSchema>;
 
+export enum SubmissionType {
+    REGULAR = "REGULAR",
+    CONFIRMATION_TEST = "CONFIRMATION_TEST",
+    DEMO = "DEMO"
+}
