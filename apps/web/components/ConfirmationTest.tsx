@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Label, Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/shad";
 import { Editor } from "@monaco-editor/react";
-import { Loader2Icon } from "lucide-react";
+import { CheckCircle2, Loader2Icon } from "lucide-react";
 import { CodeSubmitButton } from "./CodeSubmitButton";
 import { SubmissionType } from "@repo/common/types";
 import { Language, SubmissionData } from "./CodeEditor";
@@ -14,10 +14,10 @@ import { BoilerplateCodes } from "./ContributionForm";
 interface ConfirmationTestProps {
     boilerplateCodes: BoilerplateCodes;
     languages: Language[];
-    createdProblemId: number;
+    setAllDone: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function ConfirmationTest({ boilerplateCodes, languages }: ConfirmationTestProps) {
+export function ConfirmationTest({ boilerplateCodes, languages, setAllDone }: ConfirmationTestProps) {
     // Filter languages to only include those with non-empty boilerplate code
     const filteredLanguages = Object.keys(boilerplateCodes).filter(
         (language) => boilerplateCodes[language]?.trim() !== ""
@@ -27,6 +27,17 @@ export function ConfirmationTest({ boilerplateCodes, languages }: ConfirmationTe
     const [submissionPending, setSubmissionPending] = useState(false);
     const [submissionResults, setSubmissionResults] = useState<SubmissionData | null>(null);
     const [submitClicked, setSubmitClicked] = useState(false);
+    const acceptedCountRef = useRef<number>(0);
+    const selectedLangInfo = languages.find((lang) => lang.judge0Name === selectedLanguage)
+
+    useEffect(() => {
+        if (submissionResults && submissionResults.status === "Accepted" && submissionResults.languageId === selectedLangInfo?.id) {
+            acceptedCountRef.current += 1;
+            if (acceptedCountRef.current === filteredLanguages.length) {
+                setAllDone(true);
+            }
+        }
+    }, [submissionResults, filteredLanguages.length, languages, selectedLanguage, setAllDone]);
 
     function handleCodeChange(lang: string, code: string) {
         setCode(prev => ({
@@ -37,7 +48,6 @@ export function ConfirmationTest({ boilerplateCodes, languages }: ConfirmationTe
     function handleLanguageChange(lang: string) {
         setSelectedLanguage(lang);
     }
-    const selectedLangInfo = languages.find((lang) => lang.judge0Name === selectedLanguage)
     return (
         <div className="space-y-4">
             <Label>Select Language</Label>
@@ -45,7 +55,12 @@ export function ConfirmationTest({ boilerplateCodes, languages }: ConfirmationTe
                 <TabsList>
                     {
                         filteredLanguages.map((lang) => (
-                            <TabsTrigger key={lang} value={lang}>{lang}</TabsTrigger>
+                            <TabsTrigger key={lang} value={lang}>
+                                {lang}
+                                {submissionResults && submissionResults.status === "Accepted" && submissionResults.languageId === selectedLangInfo?.id && (
+                                    <CheckCircle2 className="w-5 text-green-500" />
+                                )}
+                            </TabsTrigger>
                         ))
                     }
                 </TabsList>

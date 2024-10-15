@@ -4,7 +4,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useFieldArray, useForm } from "react-hook-form"
 import { useEffect, useState } from "react"
-import { Form } from "@repo/ui/shad"
+import { Form, Label } from "@repo/ui/shad"
 import { UserDetailsForm } from "./UserDetailsForm"
 import { ProblemDescriptionForm } from "./ProblemDescriptionForm"
 import { BoilerplateCodeForm } from "./BoilerplateCodeForm"
@@ -16,6 +16,7 @@ import { getLanguages } from "@/app/actions/getLanguages"
 import toast, { Toaster } from "react-hot-toast"
 import { Language } from "./CodeEditor"
 import { ConfirmationTest } from "./ConfirmationTest"
+import { MarkdownRenderer } from "./MarkdownRenderer"
 
 interface ContributionFormProps {
     step: number;
@@ -28,11 +29,10 @@ export function ContributionForm({
     step,
     setStep,
 }: ContributionFormProps) {
-
+    const [allDone, setAllDone] = useState(false);
     const [description, setDescription] = useState("");
     const [selectedLanguage, setSelectedLanguage] = useState<string>('');
     const [loading, setLoading] = useState(false);
-    const [createdProblemId, setCreatedProblemId] = useState<number | null>(null);
     const [languages, setLanguages] = useState<Language[]>([]);
     const [boilerplateCodes, setBoilerplateCodes] = useState<BoilerplateCodes>({});
 
@@ -106,8 +106,6 @@ export function ContributionForm({
                 const errorData = await response.json();
                 throw new Error(errorData.msg);
             }
-            const data: { createdProblemId: number } = await response.json();
-            setCreatedProblemId(data.createdProblemId)
             toast.success("Problem submitted successfully!");
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "An error occurred while creating the problem.");
@@ -115,7 +113,8 @@ export function ContributionForm({
             setLoading(false);
         }
     }
-
+    // Retrieve the content value from the form state
+    const content = form.watch("content");
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -126,26 +125,38 @@ export function ContributionForm({
                     </div>
                 )}
                 {step === 2 && (
-                    <BoilerplateCodeForm
-                        control={form.control}
-                        selectedLanguage={selectedLanguage}
-                        handleLanguageChange={handleLanguageChange}
-                        boilerplateCodes={boilerplateCodes}
-                        handleBoilerplateChange={handleBoilerplateChange}
-                        languages={languages}
-                    />
+                    <div className="flex gap-x-4">
+                        <BoilerplateCodeForm
+                            control={form.control}
+                            selectedLanguage={selectedLanguage}
+                            handleLanguageChange={handleLanguageChange}
+                            boilerplateCodes={boilerplateCodes}
+                            handleBoilerplateChange={handleBoilerplateChange}
+                            languages={languages}
+                        />
+                        <div>
+                            <Label>Problem Description</Label>
+                            <MarkdownRenderer content={content} />
+                        </div>
+                    </div>
                 )}
                 {step === 3 && (
                     <TestCasesForm control={form.control} fields={fields} append={append} remove={remove} />
                 )}
                 {step === 4 && (
                     <ConfirmationTest
-                        createdProblemId={1}
                         languages={languages}
                         boilerplateCodes={boilerplateCodes}
+                        setAllDone={setAllDone}
                     />
                 )}
-                <NavigationButtons loading={loading} step={step} setStep={setStep} />
+                <NavigationButtons
+                    loading={loading}
+                    step={step}
+                    setStep={setStep}
+                    trigger={form.trigger}
+                    allDone={allDone}
+                />
             </form>
             <Toaster />
         </Form>

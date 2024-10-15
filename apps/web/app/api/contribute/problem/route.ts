@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
             })
         } else if (error instanceof Error) {
             return NextResponse.json({
-                msg: error.message
+                msg: error.message.length < 50 ? error.message : "Unable to create the problem" 
             }, {
                 status: 500
             })

@@ -57,6 +57,7 @@ export function BoilerplateCodeForm({
                         <FormControl>
                             <Editor
                                 height={"50vh"}
+                                width={"45vw"}
                                 language={selectedLanguage}
                                 value={boilerplateCodes[selectedLanguage]}
                                 onChange={(value) => {
