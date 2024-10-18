@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { DifficultyLevel, SubmissionType } from "../types";
 
-export const formSchema = z.object({
+export const problemFormSchema = z.object({
     problemName: z.string()
         .min(3, { message: "Problem name must be at least 3 characters." })
         .max(50, { message: "Problem name must be at most 50 characters." }),
@@ -22,6 +22,15 @@ export const formSchema = z.object({
     difficultyLevel: z.nativeEnum(DifficultyLevel)
 });
 
+export const contestFormSchema = z.object({
+    contestName: z.string()
+        .min(3, { message: "Contest name must be at least 3 characters." })
+        .max(50, { message: "Contest name must be at most 50 characters." }),
+    userName: z.string()
+        .min(3, { message: "User name must be at least 3 characters." })
+        .max(50, { message: "User name must be at most 50 characters." }),
+    difficultyLevel: z.nativeEnum(DifficultyLevel)
+})
 export const paramsSchema = z.object({
     submissionId: z.string().refine((val) => !isNaN(parseInt(val)), {
         message: "submissionId must be a valid number",

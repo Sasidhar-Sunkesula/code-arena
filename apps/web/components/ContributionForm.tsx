@@ -10,7 +10,7 @@ import { ProblemDescriptionForm } from "./ProblemDescriptionForm"
 import { BoilerplateCodeForm } from "./BoilerplateCodeForm"
 import { NavigationButtons } from "./NavigationButtons"
 import { TestCasesForm } from "./TestCasesForm"
-import { formSchema } from "@repo/common/zod"
+import { problemFormSchema } from "@repo/common/zod"
 import { DifficultyLevel } from "@repo/common/types"
 import { getLanguages } from "@/app/actions/getLanguages"
 import toast, { Toaster } from "react-hot-toast"
@@ -18,17 +18,17 @@ import { Language } from "./CodeEditor"
 import { ConfirmationTest } from "./ConfirmationTest"
 import { MarkdownRenderer } from "./MarkdownRenderer"
 
-interface ContributionFormProps {
+interface ProblemContributionFormProps {
     step: number;
     setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 export interface BoilerplateCodes {
     [language: string]: string;
 }
-export function ContributionForm({
+export function ProblemContributionForm({
     step,
     setStep,
-}: ContributionFormProps) {
+}: ProblemContributionFormProps) {
     const [allDone, setAllDone] = useState(false);
     const [description, setDescription] = useState("");
     const [selectedLanguage, setSelectedLanguage] = useState<string>('');
@@ -58,8 +58,8 @@ export function ContributionForm({
         fetchLanguages();
     }, []);
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof problemFormSchema>>({
+        resolver: zodResolver(problemFormSchema),
         defaultValues: {
             userName: '',
             problemName: '',
@@ -91,7 +91,7 @@ export function ContributionForm({
         }
     }
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof problemFormSchema>) {
         try {
             setLoading(true);
             const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/contribute/problem`, {
@@ -120,7 +120,23 @@ export function ContributionForm({
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 {step === 1 && (
                     <div className="space-y-10">
-                        <UserDetailsForm control={form.control} />
+                        <UserDetailsForm
+                            control={form.control}
+                            labels={{
+                                userName: "Your Name",
+                                problemName: "Name of the Problem",
+                                difficultyLevel: "Difficulty Level"
+                            }}
+                            descriptions={{
+                                userName: "This will be visible as contributed by when people look at your problem.",
+                                problemName: "This will be visible as the problem name. Max characters are 50.",
+                                difficultyLevel: "Select the difficulty level of the problem."
+                            }}
+                            placeholders={{
+                                userName: "Ratan Tata",
+                                problemName: "Two Sum"
+                            }}
+                        />
                         <ProblemDescriptionForm control={form.control} description={description} setDescription={setDescription} />
                     </div>
                 )}

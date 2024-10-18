@@ -1,4 +1,5 @@
-import { StepperWithForm } from "@/components/StepperWithForm";
+import { ContestForm } from "@/components/ContestForm";
+import { ProblemForm } from "@/components/ProblemForm";
 import { searchParamsSchema } from "@repo/common/zod";
 
 export default function Contribute({ searchParams }: { searchParams: { type: string } }) {
@@ -14,7 +15,11 @@ export default function Contribute({ searchParams }: { searchParams: { type: str
     return (
         <div className="px-8 py-6 space-y-5 w-full">
             <h2 className="text-xl font-medium underline">Contribute a {searchParams.type}</h2>
-            <StepperWithForm />
+            {
+                result.data.type === "problem"
+                    ? <ProblemForm />
+                    : <ContestForm />
+            }
         </div>
     )
 }

@@ -27,14 +27,16 @@ export function ConfirmationTest({ boilerplateCodes, languages, setAllDone }: Co
     const [submissionPending, setSubmissionPending] = useState(false);
     const [submissionResults, setSubmissionResults] = useState<SubmissionData | null>(null);
     const [submitClicked, setSubmitClicked] = useState(false);
-    const acceptedCountRef = useRef<number>(0);
     const selectedLangInfo = languages.find((lang) => lang.judge0Name === selectedLanguage)
+    const acceptedLanguagesRef = useRef<Set<string>>(new Set());
 
     useEffect(() => {
-        if (submissionResults && submissionResults.status === "Accepted" && submissionResults.languageId === selectedLangInfo?.id) {
-            acceptedCountRef.current += 1;
-            if (acceptedCountRef.current === filteredLanguages.length) {
-                setAllDone(true);
+        if (submissionResults && submissionResults.status === "Accepted" && submissionResults.languageId === languages.find((lang) => lang.judge0Name === selectedLanguage)?.id) {
+            if (!acceptedLanguagesRef.current.has(selectedLanguage)) {
+                acceptedLanguagesRef.current.add(selectedLanguage);
+                if (acceptedLanguagesRef.current.size === filteredLanguages.length) {
+                    setAllDone(true);
+                }
             }
         }
     }, [submissionResults, filteredLanguages.length, languages, selectedLanguage, setAllDone]);

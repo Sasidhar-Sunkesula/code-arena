@@ -5,9 +5,23 @@ import { Control } from "react-hook-form";
 
 interface UserDetailsFormProps {
     control: Control<FormData, any>;
+    labels: {
+        userName: string;
+        problemName: string;
+        difficultyLevel: string;
+    };
+    descriptions: {
+        userName: string;
+        problemName: string;
+        difficultyLevel: string;
+    };
+    placeholders: {
+        userName: string;
+        problemName: string;
+    }
 }
 
-export function UserDetailsForm({ control }: UserDetailsFormProps) {
+export function UserDetailsForm({ control, labels, descriptions, placeholders }: UserDetailsFormProps) {
     return (
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <FormField
@@ -15,12 +29,12 @@ export function UserDetailsForm({ control }: UserDetailsFormProps) {
                 name="userName"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Your name</FormLabel>
+                        <FormLabel>{labels.userName}</FormLabel>
                         <FormControl>
-                            <Input className="w-full md:w-11/12" placeholder="Ratan Tata" {...field} />
+                            <Input className="w-full md:w-11/12" placeholder={placeholders.userName} {...field} />
                         </FormControl>
                         <FormDescription>
-                            This will be visible as contributed by when people look at your problem.
+                            {descriptions.userName}
                         </FormDescription>
                         <FormMessage />
                     </FormItem>
@@ -31,12 +45,12 @@ export function UserDetailsForm({ control }: UserDetailsFormProps) {
                 name="problemName"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Name of the problem</FormLabel>
+                        <FormLabel>{labels.problemName}</FormLabel>
                         <FormControl>
-                            <Input className="w-full md:w-11/12" placeholder="Two sum" {...field} />
+                            <Input className="w-full md:w-11/12" placeholder={placeholders.problemName} {...field} />
                         </FormControl>
                         <FormDescription>
-                            This will be visible as the problem name. Max characters are 50.
+                            {descriptions.problemName}
                         </FormDescription>
                         <FormMessage />
                     </FormItem>
@@ -47,7 +61,7 @@ export function UserDetailsForm({ control }: UserDetailsFormProps) {
                 name="difficultyLevel"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Difficulty Level</FormLabel>
+                        <FormLabel>{labels.difficultyLevel}</FormLabel>
                         <FormControl>
                             <Select value={field.value} onValueChange={field.onChange}>
                                 <SelectTrigger className="w-[220px]">
@@ -61,7 +75,7 @@ export function UserDetailsForm({ control }: UserDetailsFormProps) {
                             </Select>
                         </FormControl>
                         <FormDescription>
-                            Select the difficulty level of the problem.
+                            {descriptions.difficultyLevel}
                         </FormDescription>
                         <FormMessage />
                     </FormItem>
