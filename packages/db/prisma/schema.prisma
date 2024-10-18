@@ -50,6 +50,7 @@ model Contest {
   noOfProblems Int
   level        ContestLevel
   closesOn     DateTime
+  startsOn     DateTime         @default(now())
   problems     ContestProblem[]
   users        UserContest[]
   submissions  Submission[]
@@ -94,7 +95,7 @@ model Submission {
   contestId       Int?
   language        Language         @relation(fields: [languageId], references: [id])
   user            User             @relation(fields: [userId], references: [id])
-  problem         Problem?          @relation(fields: [problemId], references: [id])
+  problem         Problem?         @relation(fields: [problemId], references: [id])
   contest         Contest?         @relation(fields: [contestId], references: [id])
   testCaseResults TestCaseResult[]
 

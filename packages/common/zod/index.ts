@@ -29,8 +29,39 @@ export const contestFormSchema = z.object({
     userName: z.string()
         .min(3, { message: "User name must be at least 3 characters." })
         .max(50, { message: "User name must be at most 50 characters." }),
-    difficultyLevel: z.nativeEnum(DifficultyLevel)
-})
+    difficultyLevel: z.nativeEnum(DifficultyLevel),
+    startsOn: z.date({
+        required_error: "A start date is required."
+    }).refine(date => date >= new Date(), {
+        message: "Start date cannot be in the past."
+    }),
+    endsOn: z.date({
+        required_error: "An end date is required."
+    })
+}).superRefine((data, ctx) => {
+    if (data.endsOn <= data.startsOn) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "End date must be after the start date.",
+            path: ["endsOn"]
+        });
+    }
+    if (data.startsOn === data.endsOn) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Start date and end date cannot be the same.",
+            path: ["endsOn"]
+        });
+    }
+    if (data.endsOn < new Date()) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "End date cannot be in the past.",
+            path: ["endsOn"]
+        });
+    }
+});
+
 export const paramsSchema = z.object({
     submissionId: z.string().refine((val) => !isNaN(parseInt(val)), {
         message: "submissionId must be a valid number",

@@ -14,3 +14,5 @@ export * from "./shad/ui/label";
 export * from "./shad/ui/form";
 export * from "./shad/ui/input";
 export * from "./shad/ui/textarea";
+export * from "./shad/ui/calendar";
+export * from "./shad/ui/popover";
