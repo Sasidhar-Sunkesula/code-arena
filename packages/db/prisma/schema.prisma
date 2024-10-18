@@ -45,15 +45,15 @@ model Problem {
 }
 
 model Contest {
-  id           Int              @id @default(autoincrement())
-  name         String
-  noOfProblems Int
-  level        ContestLevel
-  closesOn     DateTime
-  startsOn     DateTime         @default(now())
-  problems     ContestProblem[]
-  users        UserContest[]
-  submissions  Submission[]
+  id            Int              @id @default(autoincrement())
+  name          String
+  level         ContestLevel
+  contributedBy String           @default("Anonymous")
+  closesOn      DateTime
+  startsOn      DateTime         @default(now())
+  problems      ContestProblem[]
+  users         UserContest[]
+  submissions   Submission[]
 }
 
 // Join table

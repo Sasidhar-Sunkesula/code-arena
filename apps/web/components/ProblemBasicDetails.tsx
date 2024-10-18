@@ -1,47 +1,26 @@
-"use client"
-
-import { DifficultyLevel, FormData } from "@repo/common/types";
+import { DifficultyLevel, ProblemFormType } from "@repo/common/types";
 import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@repo/ui/shad";
 import { Input } from "@repo/ui/shad";
 import { Control } from "react-hook-form";
 
-interface UserDetailsFormProps {
-    control: Control<FormData, any>;
-    labels: {
-        userName: string;
-        problemName: string;
-        difficultyLevel: string;
-    };
-    descriptions: {
-        userName: string;
-        problemName: string;
-        difficultyLevel: string;
-    };
-    fieldNames: {
-        userName: "userName",
-        problemName: "contestName" | "problemName",
-        difficultyLevel: "difficultyLevel"
-    }
-    placeholders: {
-        userName: string;
-        problemName: string;
-    }
+interface ProblemBasicDetailsProps {
+    control: Control<ProblemFormType, any>;
 }
 
-export function UserDetailsForm({ control, labels, descriptions, placeholders, fieldNames }: UserDetailsFormProps) {
+export function ProblemBasicDetails({ control }: ProblemBasicDetailsProps) {
     return (
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <FormField
                 control={control}
-                name={fieldNames.userName}
+                name="userName"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{labels.userName}</FormLabel>
+                        <FormLabel>Your name</FormLabel>
                         <FormControl>
-                            <Input className="w-full md:w-11/12" placeholder={placeholders.userName} {...field} />
+                            <Input className="w-full md:w-11/12" placeholder="Ratan Tata" {...field} />
                         </FormControl>
                         <FormDescription>
-                            {descriptions.userName}
+                            This will be visible as contributed by when people look at your problem.
                         </FormDescription>
                         <FormMessage />
                     </FormItem>
@@ -49,15 +28,15 @@ export function UserDetailsForm({ control, labels, descriptions, placeholders, f
             />
             <FormField
                 control={control}
-                name={fieldNames.problemName}
+                name="problemName"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{labels.problemName}</FormLabel>
+                        <FormLabel>Name of the problem</FormLabel>
                         <FormControl>
-                            <Input className="w-full md:w-11/12" placeholder={placeholders.problemName} {...field} />
+                            <Input className="w-full md:w-11/12" placeholder="Two sum" {...field} />
                         </FormControl>
                         <FormDescription>
-                            {descriptions.problemName}
+                            This will be visible as the problem name. Max characters are 50.
                         </FormDescription>
                         <FormMessage />
                     </FormItem>
@@ -65,10 +44,10 @@ export function UserDetailsForm({ control, labels, descriptions, placeholders, f
             />
             <FormField
                 control={control}
-                name={fieldNames.difficultyLevel}
+                name="difficultyLevel"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{labels.difficultyLevel}</FormLabel>
+                        <FormLabel>Difficulty Level</FormLabel>
                         <FormControl>
                             <Select value={field.value} onValueChange={field.onChange}>
                                 <SelectTrigger className="w-[220px]">
@@ -82,7 +61,7 @@ export function UserDetailsForm({ control, labels, descriptions, placeholders, f
                             </Select>
                         </FormControl>
                         <FormDescription>
-                            {descriptions.difficultyLevel}
+                            Select the difficulty level of the problem.
                         </FormDescription>
                         <FormMessage />
                     </FormItem>

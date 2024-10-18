@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
-import { formSchema } from "@repo/common/zod"
+import { problemFormSchema } from "@repo/common/zod"
 import prisma from "@repo/db/client";
 
 export async function POST(req: NextRequest) {
     try {
-        const validatedBody = formSchema.parse(await req.json());
+        const validatedBody = problemFormSchema.parse(await req.json());
         const result = await prisma.$transaction(async () => {
             const createProblem = await prisma.problem.create({
                 data: {
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
             })
         } else if (error instanceof Error) {
             return NextResponse.json({
-                msg: error.message.length < 50 ? error.message : "Unable to create the problem" 
+                msg: error.message.length < 50 ? error.message : "Unable to create the problem"
             }, {
                 status: 500
             })

@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { DifficultyLevel, SubmissionType } from "../types";
+import { ContestLevel, DifficultyLevel, SubmissionType } from "../types";
 
 export const problemFormSchema = z.object({
     problemName: z.string()
@@ -33,7 +33,7 @@ export const contestFormSchema = z.object({
     userName: z.string()
         .min(3, { message: "User name must be at least 3 characters." })
         .max(50, { message: "User name must be at most 50 characters." }),
-    difficultyLevel: z.nativeEnum(DifficultyLevel),
+    difficultyLevel: z.nativeEnum(ContestLevel),
     startsOn: z.date({
         required_error: "A start date is required."
     }).refine(date => normalizeDate(date) >= normalizeDate(new Date()), {
@@ -43,24 +43,20 @@ export const contestFormSchema = z.object({
         required_error: "An end date is required."
     })
 }).superRefine((data, ctx) => {
-    if (normalizeDate(data.endsOn) < normalizeDate(data.startsOn)) {
+    const normalizedStartsOn = normalizeDate(data.startsOn);
+    const normalizedEndsOn = normalizeDate(data.endsOn);
+
+    if (normalizedEndsOn < normalizedStartsOn) {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "End date must be after the start date.",
             path: ["endsOn"]
         });
     }
-    if (normalizeDate(data.endsOn) === normalizeDate(data.startsOn)) {
+    if (normalizedEndsOn.getTime() === normalizedStartsOn.getTime()) {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Start date and end date cannot be the same.",
-            path: ["endsOn"]
-        });
-    }
-    if (normalizeDate(data.endsOn) < normalizeDate(data.startsOn)) {
-        ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "End date cannot be in the past.",
             path: ["endsOn"]
         });
     }

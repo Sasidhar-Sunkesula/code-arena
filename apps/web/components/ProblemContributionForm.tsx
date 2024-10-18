@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useFieldArray, useForm } from "react-hook-form"
 import { useEffect, useState } from "react"
 import { Form, Label } from "@repo/ui/shad"
-import { UserDetailsForm } from "./UserDetailsForm"
+import { ProblemBasicDetails } from "./ProblemBasicDetails"
 import { ProblemDescriptionForm } from "./ProblemDescriptionForm"
 import { BoilerplateCodeForm } from "./BoilerplateCodeForm"
 import { NavigationButtons } from "./NavigationButtons"
@@ -120,27 +120,8 @@ export function ProblemContributionForm({
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 {step === 1 && (
                     <div className="space-y-10">
-                        <UserDetailsForm
+                        <ProblemBasicDetails
                             control={form.control}
-                            labels={{
-                                userName: "Your Name",
-                                problemName: "Name of the Problem",
-                                difficultyLevel: "Difficulty Level"
-                            }}
-                            descriptions={{
-                                userName: "This will be visible as contributed by when people look at your problem.",
-                                problemName: "This will be visible as the problem name. Max characters are 50.",
-                                difficultyLevel: "Select the difficulty level of the problem."
-                            }}
-                            fieldNames={{
-                                userName: "userName",
-                                problemName: "problemName",
-                                difficultyLevel: "difficultyLevel"
-                            }}
-                            placeholders={{
-                                userName: "Ratan Tata",
-                                problemName: "Two Sum"
-                            }}
                         />
                         <ProblemDescriptionForm control={form.control} description={description} setDescription={setDescription} />
                     </div>

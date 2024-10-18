@@ -6,12 +6,14 @@ import Link from "next/link";
 interface ContestCardProps {
     id: number;
     name: string;
-    noOfProblems: number;
     level: ContestLevel;
     closesOn: Date;
+    _count: {
+        problems: number
+    }
 }
 
-export function ContestCard({ id, name, noOfProblems, level, closesOn }: ContestCardProps) {
+export function ContestCard({ id, name, level, closesOn, _count }: ContestCardProps) {
     return (
         <Card>
             <CardHeader>
@@ -20,7 +22,7 @@ export function ContestCard({ id, name, noOfProblems, level, closesOn }: Contest
             <CardContent className="space-y-2">
                 <div className="flex items-center">
                     <HashIcon className="mr-2 h-4 w-4" />
-                    <span>{noOfProblems} Problems</span>
+                    <span>{_count.problems} Problems</span>
                 </div>
                 <div className="flex items-center">
                     <LayersIcon className="mr-2 h-4 w-4" />

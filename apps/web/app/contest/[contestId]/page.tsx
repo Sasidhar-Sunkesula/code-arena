@@ -35,6 +35,11 @@ export default async function ContestInfo({ params }: { params: { contestId: str
                         }
                     }
                 }
+            },
+            _count: {
+                select: {
+                    problems: true // Count total problems for the contest
+                }
             }
         }
     });
@@ -63,7 +68,7 @@ export default async function ContestInfo({ params }: { params: { contestId: str
                     <div>
                         <ContestDetails
                             name={contestData.name}
-                            problemCount={contestData.noOfProblems}
+                            problemCount={contestData._count.problems}
                             endTime={contestData.closesOn}
                             submissions={submissions}
                         />

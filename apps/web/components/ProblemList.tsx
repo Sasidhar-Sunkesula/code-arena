@@ -2,7 +2,7 @@ import * as React from "react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Badge } from "@repo/ui/shad";
 import { DifficultyLevel, SubmissionStatus } from "@prisma/client";
 import Link from "next/link";
-import { CheckCircle, CircleXIcon } from "lucide-react";
+import { Check, CircleXIcon } from "lucide-react";
 
 interface Problem {
     id: number;
@@ -58,7 +58,7 @@ export function ProblemList({ problems, contestId, userId }: ProblemListProps) {
                         } else if (problem._count.submissions === 0) {
                             statusIcon = null; // Show nothing if there are no submissions
                         } else if (problem.submissions?.some(submission => submission.status === "Accepted")) {
-                            statusIcon = <CheckCircle className="text-green-500 w-5" />;
+                            statusIcon = <Check className="w-5" />;
                         } else {
                             statusIcon = <CircleXIcon className="text-yellow-500 w-5" />;
                         }

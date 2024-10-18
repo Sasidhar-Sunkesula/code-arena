@@ -1,6 +1,6 @@
 "use client"
 
-import { DifficultyLevel } from "@repo/common/types";
+import { ContestLevel, DifficultyLevel } from "@repo/common/types";
 import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Button } from "@repo/ui/shad";
 import { Control, UseFormWatch } from "react-hook-form";
 import { Calendar as CalendarIcon } from "lucide-react"
@@ -17,14 +17,14 @@ interface ContestRangeFormProps {
     control: Control<{
         contestName: string;
         userName: string;
-        difficultyLevel: DifficultyLevel;
+        difficultyLevel: ContestLevel;
         startsOn: Date;
         endsOn: Date;
     }, any>;
     watch: UseFormWatch<{
         contestName: string;
         userName: string;
-        difficultyLevel: DifficultyLevel;
+        difficultyLevel: ContestLevel;
         startsOn: Date;
         endsOn: Date;
     }>
