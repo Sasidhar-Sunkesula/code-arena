@@ -1,3 +1,5 @@
+"use client"
+
 import { DifficultyLevel, FormData } from "@repo/common/types";
 import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@repo/ui/shad";
 import { Input } from "@repo/ui/shad";
@@ -15,18 +17,23 @@ interface UserDetailsFormProps {
         problemName: string;
         difficultyLevel: string;
     };
+    fieldNames: {
+        userName: "userName",
+        problemName: "contestName" | "problemName",
+        difficultyLevel: "difficultyLevel"
+    }
     placeholders: {
         userName: string;
         problemName: string;
     }
 }
 
-export function UserDetailsForm({ control, labels, descriptions, placeholders }: UserDetailsFormProps) {
+export function UserDetailsForm({ control, labels, descriptions, placeholders, fieldNames }: UserDetailsFormProps) {
     return (
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <FormField
                 control={control}
-                name="userName"
+                name={fieldNames.userName}
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>{labels.userName}</FormLabel>
@@ -42,7 +49,7 @@ export function UserDetailsForm({ control, labels, descriptions, placeholders }:
             />
             <FormField
                 control={control}
-                name="problemName"
+                name={fieldNames.problemName}
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>{labels.problemName}</FormLabel>
@@ -58,7 +65,7 @@ export function UserDetailsForm({ control, labels, descriptions, placeholders }:
             />
             <FormField
                 control={control}
-                name="difficultyLevel"
+                name={fieldNames.difficultyLevel}
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>{labels.difficultyLevel}</FormLabel>

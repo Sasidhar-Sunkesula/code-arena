@@ -9,7 +9,7 @@ import { SubmissionType } from "@repo/common/types";
 import { Language, SubmissionData } from "./CodeEditor";
 import { ResultDisplay } from "./ResultDisplay";
 import toast, { Toaster } from "react-hot-toast";
-import { BoilerplateCodes } from "./ContributionForm";
+import { BoilerplateCodes } from "./ProblemContributionForm";
 
 interface ConfirmationTestProps {
     boilerplateCodes: BoilerplateCodes;

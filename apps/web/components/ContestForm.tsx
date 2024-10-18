@@ -38,6 +38,11 @@ export function ContestForm() {
                             problemName: "Contest Name",
                             difficultyLevel: "Difficulty Level"
                         }}
+                        fieldNames={{
+                            userName: "userName",
+                            problemName: "contestName",
+                            difficultyLevel: "difficultyLevel"
+                        }}
                         descriptions={{
                             userName: "This will be visible as contributed by when people look at your contest.",
                             problemName: "This will be visible as the contest name. Max characters are 50.",

@@ -132,6 +132,11 @@ export function ProblemContributionForm({
                                 problemName: "This will be visible as the problem name. Max characters are 50.",
                                 difficultyLevel: "Select the difficulty level of the problem."
                             }}
+                            fieldNames={{
+                                userName: "userName",
+                                problemName: "problemName",
+                                difficultyLevel: "difficultyLevel"
+                            }}
                             placeholders={{
                                 userName: "Ratan Tata",
                                 problemName: "Two Sum"

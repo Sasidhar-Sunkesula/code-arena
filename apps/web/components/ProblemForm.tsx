@@ -1,6 +1,6 @@
 "use client"
 
-import { ProblemContributionForm } from "@/components/ContributionForm";
+import { ProblemContributionForm } from "@/components/ProblemContributionForm";
 import { Stepper } from "@/components/Stepper";
 import { useState } from "react";
 

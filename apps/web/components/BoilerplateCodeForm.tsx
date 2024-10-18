@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Editor } from "@monaco-editor/react";
 import { Loader2Icon } from "lucide-react";
 import { Control } from "react-hook-form";
-import { BoilerplateCodes } from "./ContributionForm";
+import { BoilerplateCodes } from "./ProblemContributionForm";
 import { FormData } from "@repo/common/types";
 
 interface BoilerplateCodeFormProps {

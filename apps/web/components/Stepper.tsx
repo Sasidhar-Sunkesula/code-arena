@@ -1,5 +1,3 @@
-"use client"
-
 import { Code, FileInput, PackageCheck, ReceiptText, Check } from "lucide-react"
 
 export function Stepper({ step }: { step: number }) {

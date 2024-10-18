@@ -1,3 +1,5 @@
+"use client"
+
 import { DifficultyLevel } from "@repo/common/types";
 import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Button } from "@repo/ui/shad";
 import { Control, UseFormWatch } from "react-hook-form";
@@ -113,7 +115,7 @@ export function ContestRangeForm({ control, watch }: ContestRangeFormProps) {
                             </PopoverContent>
                         </Popover>
                         <FormDescription>
-                            Contest end date must be after the start date
+                            Contest end date must be on or after the start date
                         </FormDescription>
                         <FormMessage />
                     </FormItem>
