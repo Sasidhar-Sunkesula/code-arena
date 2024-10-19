@@ -34,7 +34,7 @@ export const contestFormSchema = z.object({
         .min(3, { message: "User name must be at least 3 characters." })
         .max(50, { message: "User name must be at most 50 characters." }),
     difficultyLevel: z.nativeEnum(ContestLevel),
-    problemIds: z.array(z.number()).nonempty({ message: "Problem IDs cannot be empty" }),
+    problemIds: z.array(z.number()),
     startsOn: z.date({
         required_error: "A start date is required."
     }).refine(date => normalizeDate(date) >= normalizeDate(new Date()), {

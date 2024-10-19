@@ -106,7 +106,7 @@ export function ProblemContributionForm({
                 const errorData = await response.json();
                 throw new Error(errorData.msg);
             }
-            toast.success("Problem submitted successfully!");
+            toast.success("Problem added successfully! Thank you for your contribution");
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "An error occurred while creating the problem.");
         } finally {
