@@ -1,6 +1,6 @@
 "use client"
 
-import { ContestLevel, DifficultyLevel } from "@repo/common/types";
+import { ContestFormType } from "@repo/common/types";
 import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Button } from "@repo/ui/shad";
 import { Control, UseFormWatch } from "react-hook-form";
 import { Calendar as CalendarIcon } from "lucide-react"
@@ -14,20 +14,8 @@ import {
 import { format } from "date-fns"
 
 interface ContestRangeFormProps {
-    control: Control<{
-        contestName: string;
-        userName: string;
-        difficultyLevel: ContestLevel;
-        startsOn: Date;
-        endsOn: Date;
-    }, any>;
-    watch: UseFormWatch<{
-        contestName: string;
-        userName: string;
-        difficultyLevel: ContestLevel;
-        startsOn: Date;
-        endsOn: Date;
-    }>
+    control: Control<ContestFormType, any>;
+    watch: UseFormWatch<ContestFormType>
 }
 export function ContestRangeForm({ control, watch }: ContestRangeFormProps) {
     const startsOn = watch("startsOn");

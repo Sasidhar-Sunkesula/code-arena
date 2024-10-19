@@ -1,10 +1,10 @@
-import { DifficultyLevel, FormData } from "@repo/common/types";
+import { DifficultyLevel, ProblemFormType } from "@repo/common/types";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription, Textarea, Button } from "@repo/ui/shad";
 import { CircleMinus, Plus } from "lucide-react";
 import { Control, FieldArrayWithId, UseFieldArrayAppend, UseFieldArrayRemove } from "react-hook-form";
 
 interface TestCasesFormProps {
-    control: Control<FormData, any>;
+    control: Control<ProblemFormType, any>;
     fields: FieldArrayWithId<{
         problemName: string;
         userName: string;

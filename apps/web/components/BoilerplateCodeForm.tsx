@@ -1,13 +1,13 @@
-import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@repo/ui/shad";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui/shad";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription, Popover, PopoverTrigger, Button, PopoverContent, Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@repo/ui/shad";
 import { Editor } from "@monaco-editor/react";
-import { Loader2Icon } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2Icon } from "lucide-react";
 import { Control } from "react-hook-form";
 import { BoilerplateCodes } from "./ProblemContributionForm";
-import { FormData } from "@repo/common/types";
+import { ProblemFormType } from "@repo/common/types";
+import { cn } from "@repo/ui/utils";
 
 interface BoilerplateCodeFormProps {
-    control: Control<FormData, any>;
+    control: Control<ProblemFormType, any>;
     selectedLanguage: string;
     handleLanguageChange: (language: string) => void;
     boilerplateCodes: BoilerplateCodes;
@@ -21,8 +21,8 @@ interface BoilerplateCodeFormProps {
 export function BoilerplateCodeForm({
     control,
     selectedLanguage,
-    handleLanguageChange,
     boilerplateCodes,
+    handleLanguageChange,
     handleBoilerplateChange,
     languages
 }: BoilerplateCodeFormProps) {
@@ -32,21 +32,57 @@ export function BoilerplateCodeForm({
             name="boilerplateCodes"
             render={({ field }) => (
                 <FormItem className="space-y-4">
-                    <div className="space-y-2">
+                    <div className="space-y-2 space-x-2">
                         <FormLabel>Select Language</FormLabel>
                         <FormControl>
-                            <Select value={selectedLanguage} onValueChange={handleLanguageChange}>
-                                <SelectTrigger className="w-[220px]">
-                                    <SelectValue placeholder="Select Language" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {languages.map((language) => (
-                                        <SelectItem key={language.id} value={language.judge0Name}>
-                                            {language.judge0Name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <FormControl>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            className={cn(
+                                                "w-[250px] justify-between",
+                                                !selectedLanguage && "text-muted-foreground"
+                                            )}
+                                        >
+                                            {selectedLanguage
+                                                ? languages.find(
+                                                    (language) => language.judge0Name === selectedLanguage
+                                                )?.judge0Name
+                                                : "Select language"}
+                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-[250px] p-0">
+                                    <Command>
+                                        <CommandInput placeholder="Search language..." />
+                                        <CommandList>
+                                            <CommandEmpty>No language found.</CommandEmpty>
+                                            <CommandGroup>
+                                                {languages.map((language) => (
+                                                    <CommandItem
+                                                        value={language.judge0Name}
+                                                        key={language.id}
+                                                        onSelect={handleLanguageChange}
+                                                    >
+                                                        <Check
+                                                            className={cn(
+                                                                "mr-2 h-4 w-4",
+                                                                language.judge0Name === selectedLanguage
+                                                                    ? "opacity-100"
+                                                                    : "opacity-0"
+                                                            )}
+                                                        />
+                                                        {language.judge0Name}
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
                         </FormControl>
                         <FormDescription>
                             This is the language of the boiler plate code, at least one boilerplate code should be given.

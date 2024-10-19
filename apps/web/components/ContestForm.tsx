@@ -6,9 +6,10 @@ import { useForm } from "react-hook-form"
 import { Button, Form } from "@repo/ui/shad"
 import { contestFormSchema } from "@repo/common/zod"
 import { ContestLevel } from "@repo/common/types"
-import toast, { Toaster } from "react-hot-toast"
+import { Toaster } from "react-hot-toast"
 import { ContestRangeForm } from "./ContestRangeForm"
 import { ContestBasicDetails } from "./ContestBasicDetails"
+import { ContestProblemSelection } from "./ContestProblemSelection"
 
 export function ContestForm() {
 
@@ -19,7 +20,8 @@ export function ContestForm() {
             contestName: '',
             difficultyLevel: ContestLevel.BEGINNER,
             startsOn: new Date(),
-            endsOn: new Date()
+            endsOn: new Date(),
+            problemIds: []
         },
     });
 
@@ -37,6 +39,9 @@ export function ContestForm() {
                     <ContestRangeForm
                         control={form.control}
                         watch={form.watch}
+                    />
+                    <ContestProblemSelection
+                        control={form.control}
                     />
                 </div>
                 <Button type="submit">Submit</Button>

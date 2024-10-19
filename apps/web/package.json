@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@algolia/client-search": "^5.9.1",
     "@monaco-editor/react": "^4.6.0",
     "@repo/db": "*",
     "@repo/ui": "*",
@@ -26,8 +27,8 @@
     "remark-gfm": "^4.0.0"
   },
   "devDependencies": {
-    "@repo/eslint-config": "*",
     "@repo/common": "*",
+    "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@types/node": "^20",
     "@types/react": "^18",
