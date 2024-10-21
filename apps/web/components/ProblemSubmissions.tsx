@@ -47,8 +47,8 @@ export function ProblemSubmissions({ problemId, contestId }: { problemId: number
     return (
         <div>
             <Toaster />
-            {submissionList?.message ? (
-                <div className="md:h-[450px] border p-2 text-destructive font-semibold flex justify-center items-center">{submissionList.message}</div>
+            {!submissionList ? (
+                <div className="md:h-[450px] border p-2 text-destructive font-semibold flex justify-center items-center">Error while fetching submissions</div>
             ) : (
                 <div className="space-y-2 md:h-[450px] overflow-y-auto">
                     {contestId && <p className="text-sm text-center">Submissions shown here are contest specific.</p>}

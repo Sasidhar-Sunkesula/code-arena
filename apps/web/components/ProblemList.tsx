@@ -4,7 +4,7 @@ import { DifficultyLevel, SubmissionStatus } from "@prisma/client";
 import Link from "next/link";
 import { Check, CircleXIcon } from "lucide-react";
 
-interface Problem {
+export interface Problem {
     id: number;
     name: string;
     difficultyLevel: DifficultyLevel;
@@ -18,7 +18,7 @@ interface Submission {
     status: SubmissionStatus;
 }
 
-interface ProblemListProps {
+export interface ProblemListProps {
     problems: Problem[];
     contestId: number | null;
     userId: string | null;
@@ -39,7 +39,7 @@ const calculateAcceptanceRate = (submissions: Submission[], totalSubmissions: nu
 export function ProblemList({ problems, contestId, userId }: ProblemListProps) {
 
     return (
-        <div className="space-y-4">
+        <div>
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -51,43 +51,48 @@ export function ProblemList({ problems, contestId, userId }: ProblemListProps) {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {problems.map((problem) => {
-                        let statusIcon;
-                        if (userId === null) {
-                            statusIcon = "NA";
-                        } else if (problem._count.submissions === 0) {
-                            statusIcon = null; // Show nothing if there are no submissions
-                        } else if (problem.submissions?.some(submission => submission.status === "Accepted")) {
-                            statusIcon = <Check className="w-5" />;
-                        } else {
-                            statusIcon = <CircleXIcon className="text-yellow-500 w-5" />;
-                        }
-                        return (
-                            <TableRow key={problem.id}>
-                                <TableCell className="font-medium">
-                                    <Link href={`/solve/${problem.id}${contestId ? `?contestId=${contestId}` : ''}`}>
-                                        {problem.name}
-                                    </Link>
-                                </TableCell>
-                                <TableCell>
-                                    {statusIcon}
-                                </TableCell>
-                                <TableCell>
-                                    <Badge variant={"outline"} className={`${levelColor[problem.difficultyLevel]}`}>
-                                        {problem.difficultyLevel}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell>
-                                    {problem._count.submissions}
-                                </TableCell>
-                                <TableCell>
-                                    {calculateAcceptanceRate(problem.submissions, problem._count.submissions)}
-                                </TableCell>
-                            </TableRow>
-                        );
-                    })}
+                    {problems.length > 0 &&
+                        problems.map((problem) => {
+                            let statusIcon;
+                            if (userId === null) {
+                                statusIcon = "NA";
+                            } else if (problem._count.submissions === 0) {
+                                statusIcon = null; // Show nothing if there are no submissions
+                            } else if (problem.submissions?.some(submission => submission.status === "Accepted")) {
+                                statusIcon = <Check className="w-5" />;
+                            } else {
+                                statusIcon = <CircleXIcon className="text-yellow-500 w-5" />;
+                            }
+                            return (
+                                <TableRow key={problem.id}>
+                                    <TableCell className="font-medium">
+                                        <Link href={`/solve/${problem.id}${contestId ? `?contestId=${contestId}` : ''}`}>
+                                            {problem.name}
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell>{statusIcon}</TableCell>
+                                    <TableCell>
+                                        <Badge variant={"outline"} className={`${levelColor[problem.difficultyLevel]}`}>
+                                            {problem.difficultyLevel}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell>{problem._count.submissions}</TableCell>
+                                    <TableCell>
+                                        {calculateAcceptanceRate(problem.submissions, problem._count.submissions)}
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })
+                    }
                 </TableBody>
             </Table>
+            {
+                problems.length === 0 && (
+                    <div className="h-28 text-sm border flex justify-center items-center">
+                        No problems found
+                    </div>
+                )
+            }
         </div>
     );
 }

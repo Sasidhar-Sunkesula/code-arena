@@ -14,7 +14,7 @@ export default function Contribute({ searchParams }: { searchParams: { type: str
     }
     return (
         <div className="px-8 py-6 space-y-5 w-full">
-            <h2 className="text-xl font-medium underline">Contribute a {searchParams.type}</h2>
+            <h2 className="text-xl font-medium">Contribute a {searchParams.type}</h2>
             {
                 result.data.type === "problem"
                     ? <ProblemForm />
