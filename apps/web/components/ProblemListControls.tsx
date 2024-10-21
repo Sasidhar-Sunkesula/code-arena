@@ -5,18 +5,22 @@ import { Problem, ProblemList } from "./ProblemList"
 import { useEffect, useState } from "react";
 import { getProblems } from "@/app/actions/getProblems";
 import toast, { Toaster } from "react-hot-toast";
-import { Loader2 } from "lucide-react";
 import { SearchForProblemList } from "./SearchForProblemList";
+import { ProblemListPagination } from "./ProblemListPagination";
+import { Loader2 } from "lucide-react";
 
 export function ProblemListControls() {
     const session = useSession();
+    const [page, setPage] = useState<number>(1);
+    const [limit, setLimit] = useState<number>(10);
     const [loading, setLoading] = useState(true);
     const [problemList, setProblemList] = useState<{ formattedProblemList: Problem[], problemCount: number } | null>(null);
     const [searchKey, setSearchKey] = useState("");
+
     useEffect(() => {
         async function fetchProblems() {
             try {
-                const data = await getProblems(searchKey);
+                const data = await getProblems(searchKey, page, limit);
                 if (data?.formattedProblemList && data?.problemCount) {
                     setProblemList(data)
                 }
@@ -30,11 +34,13 @@ export function ProblemListControls() {
             }
         }
         fetchProblems()
-    }, [searchKey]);
+    }, [searchKey, page, limit]);
 
     if (loading) {
         return (
-            <Loader2 className="animate-spin w-5" />
+            <div className="h-28 text-sm border flex justify-center items-center">
+                <Loader2 className="w-4 animate-spin" />
+            </div>
         )
     }
     return (
@@ -50,6 +56,13 @@ export function ProblemListControls() {
                     problems={problemList.formattedProblemList}
                     contestId={null} // No contest in this case
                     userId={session?.data?.user?.id || null}
+                    loading={loading}
+                />
+                <ProblemListPagination
+                    page={page}
+                    limit={limit}
+                    totalProblems={problemList.problemCount}
+                    setPage={setPage}
                 />
                 <Toaster />
             </div>

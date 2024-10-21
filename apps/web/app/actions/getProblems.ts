@@ -4,10 +4,13 @@ import prisma from "@repo/db/client";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 
-export async function getProblems(searchKey: string) {
+export async function getProblems(searchKey: string, page: number, limit: number) {
     try {
         const session = await getServerSession(authOptions);
+        const offset = (page - 1) * limit;
         const problemList = await prisma.problem.findMany({
+            take: limit,
+            skip: offset,
             where: {
                 name: {
                     contains: searchKey,
@@ -34,7 +37,14 @@ export async function getProblems(searchKey: string) {
                 }
             }
         });
-        const problemCount = await prisma.problem.count();
+        const problemCount = await prisma.problem.count({
+            where: {
+                name: {
+                    contains: searchKey,
+                    mode: "insensitive"
+                }
+            }
+        });
         const formattedProblemList = problemList.map(problem => ({
             id: problem.id,
             name: problem.name,

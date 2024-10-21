@@ -22,6 +22,7 @@ export interface ProblemListProps {
     problems: Problem[];
     contestId: number | null;
     userId: string | null;
+    loading?: boolean;
 }
 
 const levelColor = {
@@ -87,11 +88,9 @@ export function ProblemList({ problems, contestId, userId }: ProblemListProps) {
                 </TableBody>
             </Table>
             {
-                problems.length === 0 && (
-                    <div className="h-28 text-sm border flex justify-center items-center">
-                        No problems found
-                    </div>
-                )
+                problems.length === 0 && <div className="h-28 text-sm border flex justify-center items-center">
+                    No problems found
+                </div>
             }
         </div>
     );
