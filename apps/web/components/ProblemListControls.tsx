@@ -8,11 +8,15 @@ import toast, { Toaster } from "react-hot-toast";
 import { SearchForProblemList } from "./SearchForProblemList";
 import { ProblemListPagination } from "./ProblemListPagination";
 import { Loader2 } from "lucide-react";
+import { useSearchParams } from 'next/navigation';
 
 export function ProblemListControls() {
     const session = useSession();
-    const [page, setPage] = useState<number>(1);
-    const [limit, setLimit] = useState<number>(10);
+    const searchParams = useSearchParams();
+    const pageFromParams = searchParams.get('page');
+    const limitFromParams = searchParams.get('limit');
+    const [page, setPage] = useState<number>(parseInt(pageFromParams ?? '1'))
+    const [limit, setLimit] = useState<number>(parseInt(limitFromParams ?? '10'))
     const [loading, setLoading] = useState(true);
     const [problemList, setProblemList] = useState<{ formattedProblemList: Problem[], problemCount: number } | null>(null);
     const [searchKey, setSearchKey] = useState("");
@@ -56,11 +60,11 @@ export function ProblemListControls() {
                     problems={problemList.formattedProblemList}
                     contestId={null} // No contest in this case
                     userId={session?.data?.user?.id || null}
-                    loading={loading}
                 />
                 <ProblemListPagination
                     page={page}
                     limit={limit}
+                    setLimit={setLimit}
                     totalProblems={problemList.problemCount}
                     setPage={setPage}
                 />

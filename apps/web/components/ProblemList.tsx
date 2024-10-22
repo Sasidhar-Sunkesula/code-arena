@@ -22,7 +22,6 @@ export interface ProblemListProps {
     problems: Problem[];
     contestId: number | null;
     userId: string | null;
-    loading?: boolean;
 }
 
 const levelColor = {

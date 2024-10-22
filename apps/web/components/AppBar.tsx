@@ -51,7 +51,7 @@ export default function AppBar({ session }: { session: Session | null }) {
                                 </NavigationMenuContent>
                             </NavigationMenuItem>
                             <NavigationMenuItem>
-                                <Link href="/problems" legacyBehavior passHref>
+                                <Link href="/problems?" legacyBehavior passHref>
                                     <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                         Problems
                                     </NavigationMenuLink>
