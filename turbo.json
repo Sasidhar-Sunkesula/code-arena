@@ -6,7 +6,9 @@
     "GOOGLE_CLIENT_SECRET",
     "NEXTAUTH_SECRET",
     "JUDGE0_URL",
-    "NEXT_PUBLIC_BASE_URL"
+    "NEXT_PUBLIC_BASE_URL",
+    "REDIS_HOST",
+    "REDIS_PORT"
   ],
   "globalDependencies": [
     "**/.env.*local",
