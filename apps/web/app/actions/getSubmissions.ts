@@ -29,6 +29,7 @@ export async function getSubmissions(problemId: number, contestId?: number) {
                 createdAt: true,
                 runTime: true,
                 memory: true,
+                points: true,
                 testCasesPassed: true,
                 problem: {
                     select: {
@@ -50,7 +51,8 @@ export async function getSubmissions(problemId: number, contestId?: number) {
             runTime: submission.runTime,
             memory: submission.memory,
             testCasesPassed: submission.testCasesPassed,
-            testCaseCount: submission.problem._count.testcases
+            points: submission.points,
+            testCaseCount: submission?.problem?._count.testcases ?? 0
         }));
 
         return {

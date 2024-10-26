@@ -15,6 +15,7 @@ export type Submission = {
     runTime: number | null;
     memory: number | null;
     testCasesPassed: number | null;
+    points: number;
     testCaseCount: number;
 };
 type SubmissionResponse = {
@@ -55,6 +56,7 @@ export function ProblemSubmissions({ problemId, contestId }: { problemId: number
                     {submissionList?.submissions?.map((submission) => (
                         <SubmissionInfoCard
                             key={submission.id}
+                            points={submission.points}
                             submittedCode={submission.submittedCode}
                             status={submission.status}
                             createdAt={submission.createdAt}

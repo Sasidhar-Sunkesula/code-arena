@@ -1,6 +1,6 @@
 import { Button } from "@repo/ui/shad";
 import { Submission } from "./ProblemSubmissions";
-import { Cpu, Timer } from "lucide-react";
+import { CircleDollarSign, Cpu, Timer } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -12,7 +12,7 @@ import {
 
 type SubmissionInfoProps = Omit<Submission, "id">;
 
-const SubmissionInfoCard: React.FC<SubmissionInfoProps> = ({ status, submittedCode, testCaseCount, createdAt, runTime, memory, testCasesPassed }) => {
+const SubmissionInfoCard: React.FC<SubmissionInfoProps> = ({ points, status, submittedCode, testCaseCount, createdAt, runTime, memory, testCasesPassed }) => {
     return (
         <div className="border-2 rounded-md py-2 px-4 flex items-center justify-between">
             <div className="space-y-1">
@@ -39,23 +39,29 @@ const SubmissionInfoCard: React.FC<SubmissionInfoProps> = ({ status, submittedCo
                     {((memory ?? 0) / 1024).toFixed(1)} MB
                 </div>
             </div>
-            <Dialog>
-                <DialogTrigger>
-                    <Button>View Code</Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-xl">
-                    <DialogHeader className="space-y-6">
-                        <DialogTitle>Submitted Code</DialogTitle>
-                        <DialogDescription className="p-2 dark:text-primary">
-                            <pre>
-                                <code>
-                                    {submittedCode}
-                                </code>
-                            </pre>
-                        </DialogDescription>
-                    </DialogHeader>
-                </DialogContent>
-            </Dialog>
+            <div className="space-y-1">
+                <div className="flex items-center gap-x-1">
+                    <CircleDollarSign className="w-4" />
+                    <span className="text-sm font-medium">Points : {points}</span>
+                </div>
+                <Dialog>
+                    <DialogTrigger>
+                        <Button size={"sm"} className="text-xs">View Code</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-xl">
+                        <DialogHeader className="space-y-6">
+                            <DialogTitle>Submitted Code</DialogTitle>
+                            <DialogDescription className="p-2 dark:text-primary">
+                                <pre>
+                                    <code>
+                                        {submittedCode}
+                                    </code>
+                                </pre>
+                            </DialogDescription>
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
+            </div>
         </div>
     );
 };

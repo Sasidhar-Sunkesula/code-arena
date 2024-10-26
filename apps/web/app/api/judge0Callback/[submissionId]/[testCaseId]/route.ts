@@ -1,6 +1,7 @@
 import prisma from "@repo/db/client";
 import { NextRequest, NextResponse } from "next/server";
 import { SubmissionStatus } from "@prisma/client";
+import { getPoints } from "@/app/actions/getPoints";
 
 function mapStatusDescriptionToEnum(description: string): SubmissionStatus {
     switch (description) {
@@ -78,21 +79,28 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
         // Fetch the submission to get the problemId
         const submission = await prisma.submission.findUnique({
             where: { id: submissionId },
-            select: { problemId: true }
+            include: {
+                problem: {
+                    select: {
+                        id: true,
+                        difficultyLevel: true
+                    }
+                }
+            }
         });
 
         if (!submission) {
             throw new Error("Submission not found")
         }
 
-        const problemId = submission.problemId;
+        const problemDetails = submission.problem
         // Fetch all test case results for the submission
         const testCaseResults = await prisma.testCaseResult.findMany({
             where: { submissionId: submissionId }
         });
         // Check if all test case results have been received
         const totalTestCases = await prisma.testCase.count({
-            where: { problemId: problemId }
+            where: { problemId: problemDetails?.id }
         });
         if (testCaseResults.length === totalTestCases) {
             // Calculate average memory and runtime
@@ -116,7 +124,8 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
                     status: overallStatus,
                     memory: averageMemory,
                     runTime: averageTime,
-                    testCasesPassed: testCasesPassed
+                    testCasesPassed: testCasesPassed,
+                    points: problemDetails && getPoints(problemDetails.difficultyLevel)
                 }
             });
         }

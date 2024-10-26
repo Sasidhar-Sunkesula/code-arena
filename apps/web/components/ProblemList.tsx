@@ -66,7 +66,7 @@ export function ProblemList({ problems, contestId, userId }: ProblemListProps) {
                             return (
                                 <TableRow key={problem.id}>
                                     <TableCell className="font-medium">
-                                        <Link href={`/solve/${problem.id}${contestId ? `?contestId=${contestId}` : ''}`}>
+                                        <Link className="font-semibold hover:underline" href={`/solve/${problem.id}${contestId ? `?contestId=${contestId}` : ''}`}>
                                             {problem.name}
                                         </Link>
                                     </TableCell>

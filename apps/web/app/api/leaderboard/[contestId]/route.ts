@@ -30,7 +30,6 @@ export async function GET() {
 
         return NextResponse.json({ message: value });
     } catch (err) {
-        console.error('Error:', err);
         return NextResponse.json({ error: 'Error connecting to Redis' }, { status: 500 });
     }
 }

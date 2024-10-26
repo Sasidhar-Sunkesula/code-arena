@@ -86,6 +86,7 @@ model Submission {
   submittedCode   String
   submissionType  SubmissionType   @default(REGULAR)
   languageId      Int
+  points          Int?
   createdAt       DateTime
   runTime         Float?
   memory          Float?
