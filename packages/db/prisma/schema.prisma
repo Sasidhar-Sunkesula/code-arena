@@ -84,7 +84,6 @@ model Submission {
   id              Int              @id @default(autoincrement())
   status          SubmissionStatus
   submittedCode   String
-  submissionType  SubmissionType   @default(REGULAR)
   languageId      Int
   points          Int?
   createdAt       DateTime
@@ -164,10 +163,4 @@ enum SubmissionStatus {
   RuntimeErrorOther   @map("Runtime Error (Other)")
   InternalError       @map("Internal Error")
   ExecFormatError     @map("Exec Format Error")
-}
-
-enum SubmissionType {
-  REGULAR
-  CONFIRMATION_TEST
-  DEMO
 }

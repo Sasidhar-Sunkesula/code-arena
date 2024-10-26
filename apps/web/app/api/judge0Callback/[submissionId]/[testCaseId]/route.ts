@@ -1,7 +1,7 @@
 import prisma from "@repo/db/client";
 import { NextRequest, NextResponse } from "next/server";
 import { SubmissionStatus } from "@prisma/client";
-import { getPoints } from "@/app/actions/getPoints";
+import { calculatePoints } from "@/app/actions/calculatePoints";
 
 function mapStatusDescriptionToEnum(description: string): SubmissionStatus {
     switch (description) {
@@ -125,7 +125,7 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
                     memory: averageMemory,
                     runTime: averageTime,
                     testCasesPassed: testCasesPassed,
-                    points: problemDetails && getPoints(problemDetails.difficultyLevel)
+                    points: problemDetails && calculatePoints(problemDetails.difficultyLevel)
                 }
             });
         }

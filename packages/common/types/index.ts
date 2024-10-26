@@ -12,9 +12,8 @@ export type ContestFormType = z.infer<typeof contestFormSchema>;
 export type SubmitCodeSchema = z.infer<typeof submitCodeSchema>;
 
 export enum SubmissionType {
-    REGULAR = "REGULAR",
-    CONFIRMATION_TEST = "CONFIRMATION_TEST",
-    DEMO = "DEMO"
+    RUN = "RUN",
+    SUBMIT = "SUBMIT",
 }
 
 export enum ContestLevel {

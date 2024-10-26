@@ -1,6 +1,6 @@
 import { DifficultyLevel } from "@prisma/client/edge";
 
-export function getPoints(problemDifficulty: DifficultyLevel, incorrectSubmissions?: number) {
+export function calculatePoints(problemDifficulty: DifficultyLevel, incorrectSubmissions?: number) {
     // Calculate points
     let points = 0;
     if (problemDifficulty === DifficultyLevel.EASY) {
