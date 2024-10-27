@@ -5,14 +5,14 @@ import { SubmissionData } from './CodeEditor';
 import { TestCaseResults } from './TestCaseResults';
 
 interface ResultDisplayProps {
-    submissionPending: boolean;
+    submissionPending: { run: boolean, submit: boolean };
     submissionResults: SubmissionData | null
 }
 export function ResultDisplay({ submissionPending, submissionResults }: ResultDisplayProps) {
     return (
         <div className='border-2 rounded-lg p-3'>
             {
-                submissionPending
+                submissionPending.run || submissionPending.submit
                     ? <div className='flex min-h-40 justify-center items-center'>
                         <Loader2 className='animate-spin w-6' />
                     </div>

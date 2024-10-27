@@ -11,7 +11,7 @@ export function TestCaseResults({ submissionResults }: { submissionResults: Subm
         return (
             <div className='flex flex-col gap-y-3'>
                 <div className='font-semibold text-xl'>{submissionResults.status}</div>
-                <div className="text-destructive font-medium">
+                <div className="text-destructive bg-red-50 text-sm tracking-wider p-2">
                     {syntaxError.stderr}
                 </div>
             </div>
@@ -50,7 +50,7 @@ export function TestCaseResults({ submissionResults }: { submissionResults: Subm
                             {result.stderr && result.status !== "Accepted" ? (
                                 <>
                                     <CodeBlock title="Status" content={result.status} />
-                                    <div className="text-destructive font-medium">
+                                    <div className="text-destructive bg-red-50 text-sm tracking-wider p-2">
                                         {result.stderr}
                                     </div>
                                 </>

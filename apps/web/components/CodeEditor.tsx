@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { LanguageSelector } from './LanguageSelector'
-import { SubmitCode } from "@/components/SubmitCode"
+import { SubmitCode } from './SubmitCode'
 import toast, { Toaster } from 'react-hot-toast';
 import { TestCaseResult, Submission, TestCase } from "@prisma/client";
 import { ResultDisplay } from './ResultDisplay'
@@ -11,7 +11,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/shad'
 import { Loader2Icon } from 'lucide-react'
 import { ProblemSubmissions } from './ProblemSubmissions'
 import { SubmissionType } from '@repo/common/types'
-import { RunCode } from './RunCode'
 
 export interface Language {
     id: number;
@@ -36,7 +35,7 @@ export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPl
     const [selectedLanguage, setSelectedLanguage] = useState(boilerPlates[0]?.language.monacoName || "")
     const boilerPlateOfSelectedLang = boilerPlates.find((item) => item.language.monacoName === selectedLanguage)
     const [fullCode, setFullCode] = useState<string>(boilerPlateOfSelectedLang?.boilerPlateCode || "")
-    const [submissionPending, setSubmissionPending] = useState(false);
+    const [submissionPending, setSubmissionPending] = useState<{ run: boolean, submit: boolean }>({ run: false, submit: false });
     const [submissionResults, setSubmissionResults] = useState<SubmissionData | null>(null);
     const [submitClicked, setSubmitClicked] = useState(false);
 
@@ -97,7 +96,7 @@ export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPl
             {
                 boilerPlateOfSelectedLang?.languageId || boilerPlateOfSelectedLang?.problemId
                     ? <div className="flex items-center gap-x-3 justify-end">
-                        <RunCode
+                        <SubmitCode
                             text="Run"
                             type={SubmissionType.RUN}
                             problemId={boilerPlateOfSelectedLang.problemId}

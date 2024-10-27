@@ -42,8 +42,6 @@ export async function POST(req: NextRequest) {
                 testCase: {
                     ...testCases[index]
                 },
-                stdout: submission.stdout ? Buffer.from(submission.stdout, 'base64').toString('utf-8') : null,
-                stderr: submission.stderr ? Buffer.from(submission.stderr, 'base64').toString('utf-8') : null,
                 time: parseFloat(submission.time),
                 status: mapStatusDescriptionToEnum(submission.status.description)
             };
