@@ -9,11 +9,11 @@ import { SubmissionData } from "./CodeEditor";
 import { useSession } from "next-auth/react";
 import { SubmissionType, SubmitCodeSchema } from "@repo/common/types";
 
-type CodeSubmitButtonProps = {
+type SubmitCodeProps = {
     text: string;
     type: SubmissionType;
     fullCode: string;
-    problemId?: number;
+    problemId: number;
     contestId?: string;
     languageId: number;
     submissionPending: boolean;
@@ -22,7 +22,7 @@ type CodeSubmitButtonProps = {
     setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function CodeSubmitButton({
+export function SubmitCode({
     text,
     fullCode,
     languageId,
@@ -33,7 +33,7 @@ export function CodeSubmitButton({
     submissionPending,
     setSubmissionResults,
     setSubmitClicked
-}: CodeSubmitButtonProps) {
+}: SubmitCodeProps) {
     const [submissionId, setSubmissionId] = useState<number | null>(null);
     const session = useSession();
 
@@ -48,7 +48,7 @@ export function CodeSubmitButton({
             };
             setSubmitClicked(true);
             setSubmissionPending(true);
-            const submissionResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/submitCode`, {
+            const submissionResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/submit`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -69,7 +69,7 @@ export function CodeSubmitButton({
         if (submissionPending && submissionId) {
             const intervalId = setInterval(async () => {
                 try {
-                    const resultResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/checkStatus/${submissionId}`);
+                    const resultResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/check/submit/${submissionId}`);
                     if (!resultResponse.ok) {
                         const errorData = await resultResponse.json();
                         throw new Error(errorData.msg);

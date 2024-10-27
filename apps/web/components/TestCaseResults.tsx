@@ -31,11 +31,11 @@ export function TestCaseResults({ submissionResults }: { submissionResults: Subm
                     </div>
                 </div>
             </div>
-            <Tabs defaultValue={submissionResults.testCaseResults[0]?.id.toString()} className="w-full space-y-3">
+            <Tabs defaultValue="0" className="w-full space-y-3">
                 <TabsList className="space-x-3">
                     {
                         submissionResults.testCaseResults.map((result, index) => (
-                            <TabsTrigger key={result.id} value={result.id.toString()}>
+                            <TabsTrigger key={index} value={index.toString()}>
                                 {result.status === "Accepted"
                                     ? <Check className="w-5 mr-1 text-green-500" />
                                     : <X className="w-5 mr-1" />}
@@ -45,8 +45,8 @@ export function TestCaseResults({ submissionResults }: { submissionResults: Subm
                     }
                 </TabsList>
                 {
-                    submissionResults.testCaseResults.map((result) => (
-                        <TabsContent key={result.id} value={result.id.toString()} className="flex flex-col gap-y-3">
+                    submissionResults.testCaseResults.map((result, index) => (
+                        <TabsContent key={index} value={index.toString()} className="flex flex-col gap-y-3">
                             {result.stderr && result.status !== "Accepted" ? (
                                 <>
                                     <CodeBlock title="Status" content={result.status} />

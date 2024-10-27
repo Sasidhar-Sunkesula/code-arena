@@ -2,8 +2,9 @@ import prisma from "@repo/db/client";
 import { NextRequest, NextResponse } from "next/server";
 import { SubmissionStatus } from "@prisma/client";
 import { calculatePoints } from "@/app/actions/calculatePoints";
+import { SubmissionResult } from "@repo/common/types";
 
-function mapStatusDescriptionToEnum(description: string): SubmissionStatus {
+export function mapStatusDescriptionToEnum(description: string): SubmissionStatus {
     switch (description) {
         case "In Queue":
             return SubmissionStatus.InQueue;
@@ -37,21 +38,9 @@ function mapStatusDescriptionToEnum(description: string): SubmissionStatus {
             throw new Error(`Unknown status description: ${description}`);
     }
 }
-interface Status {
-    id: number,
-    description: string
-}
-
-interface Body {
-    stdout: string | null,  // Puts in base64
-    time: string,
-    memory: number,
-    stderr: string | null,  // Puts in base64
-    status: Status
-}
 
 export async function PUT(req: NextRequest, { params }: { params: { submissionId: string, testCaseId: string } }) {
-    const body: Body = await req.json();
+    const body: SubmissionResult = await req.json();
     const submissionId = parseInt(params.submissionId);
     const testCaseId = parseInt(params.testCaseId);
 

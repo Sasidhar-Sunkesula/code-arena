@@ -113,7 +113,6 @@ This is the content of problem two. Solve the problem by multiplying two numbers
     const contest1 = await prisma.contest.create({
         data: {
             name: 'Basic Booster',
-            noOfProblems: 2,
             level: 'BEGINNER',
             closesOn: new Date('2024-09-15'),
             problems: {

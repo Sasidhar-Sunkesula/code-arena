@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { LanguageSelector } from './LanguageSelector'
-import { CodeSubmitButton } from "@/components/CodeSubmitButton"
+import { SubmitCode } from "@/components/SubmitCode"
 import toast, { Toaster } from 'react-hot-toast';
 import { TestCaseResult, Submission, TestCase } from "@prisma/client";
 import { ResultDisplay } from './ResultDisplay'
@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/shad'
 import { Loader2Icon } from 'lucide-react'
 import { ProblemSubmissions } from './ProblemSubmissions'
 import { SubmissionType } from '@repo/common/types'
+import { RunCode } from './RunCode'
 
 export interface Language {
     id: number;
@@ -95,10 +96,21 @@ export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPl
             </Tabs>
             {
                 boilerPlateOfSelectedLang?.languageId || boilerPlateOfSelectedLang?.problemId
-                    ? <div className="flex justify-end">
-                        <CodeSubmitButton
+                    ? <div className="flex items-center gap-x-3 justify-end">
+                        <RunCode
+                            text="Run"
+                            type={SubmissionType.RUN}
+                            problemId={boilerPlateOfSelectedLang.problemId}
+                            languageId={boilerPlateOfSelectedLang.languageId}
+                            fullCode={fullCode}
+                            submissionPending={submissionPending}
+                            setSubmissionPending={setSubmissionPending}
+                            setSubmissionResults={setSubmissionResults}
+                            setSubmitClicked={setSubmitClicked}
+                        />
+                        <SubmitCode
                             text="Submit"
-                            type={SubmissionType.REGULAR}
+                            type={SubmissionType.SUBMIT}
                             contestId={contestId}
                             problemId={boilerPlateOfSelectedLang.problemId}
                             languageId={boilerPlateOfSelectedLang.languageId}

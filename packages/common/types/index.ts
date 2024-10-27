@@ -21,3 +21,16 @@ export enum ContestLevel {
     INTERMEDIATE = "INTERMEDIATE",
     ADVANCED = "ADVANCED"
 }
+
+interface Status {
+    id: number,
+    description: string
+}
+
+export interface SubmissionResult {
+    stdout: string | null,  // Puts in base64
+    time: string,
+    memory: number,
+    stderr: string | null,  // Puts in base64
+    status: Status
+}

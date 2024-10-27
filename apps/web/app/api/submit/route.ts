@@ -14,15 +14,8 @@ export interface BatchItem {
     callback_url: string
 }
 export async function POST(req: NextRequest) {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-        return NextResponse.json({
-            msg: "You must be logged in to submit a problem"
-        }, {
-            status: 401
-        })
-    }
     try {
+        const session = await getServerSession(authOptions);
         const validatedInput = submitCodeSchema.parse(await req.json());
         const testCases = await prisma.testCase.findMany({
             where: {
@@ -41,6 +34,13 @@ export async function POST(req: NextRequest) {
             throw new Error("Error in finding the selected language from the db")
         }
         if (validatedInput.type === SubmissionType.SUBMIT) {
+            if (!session || !session.user) {
+                return NextResponse.json({
+                    msg: "You must be logged in to submit a problem"
+                }, {
+                    status: 401
+                });
+            }
             const newSubmission = await prisma.submission.create({
                 data: {
                     status: "Processing",

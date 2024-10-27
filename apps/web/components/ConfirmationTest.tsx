@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Label, Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/shad";
 import { Editor } from "@monaco-editor/react";
 import { CheckCircle2, Loader2Icon } from "lucide-react";
-import { CodeSubmitButton } from "./CodeSubmitButton";
+import { CodeSubmitButton } from "./SubmitCode";
 import { SubmissionType } from "@repo/common/types";
 import { Language, SubmissionData } from "./CodeEditor";
 import { ResultDisplay } from "./ResultDisplay";

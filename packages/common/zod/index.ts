@@ -70,7 +70,7 @@ export const paramsSchema = z.object({
 });
 
 export const submitCodeSchema = z.object({
-    problemId: z.number().optional(),
+    problemId: z.number(),
     submittedCode: z.string({ message: "Code should not be empty" }),
     languageId: z.number({ message: "Language Id is required" }),
     contestId: z.number().optional(),
