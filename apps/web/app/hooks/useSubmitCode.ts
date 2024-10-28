@@ -1,22 +1,20 @@
 import { useEffect, useState } from "react";
 import toast from 'react-hot-toast';
-import { SubmissionData } from "@/components/CodeEditor";
+import { SubmissionData, SubmissionPendingObj } from "@/components/CodeEditor";
 import { SubmissionType, SubmitCodeSchema } from "@repo/common/types";
 
 type UseSubmitCodeProps = {
     fullCode: string;
     languageId: number;
-    problemId: number;
+    problemId?: number;
     contestId?: string;
     type: SubmissionType;
-    submissionPending: {
-        run: boolean;
-        submit: boolean;
-    }
-    setSubmissionPending: React.Dispatch<React.SetStateAction<{
-        run: boolean;
-        submit: boolean;
-    }>>;
+    testCases?: {
+        input: string;
+        expectedOutput: string;
+    }[];
+    submissionPending: SubmissionPendingObj
+    setSubmissionPending: React.Dispatch<React.SetStateAction<SubmissionPendingObj>>;
     setSubmissionResults: React.Dispatch<React.SetStateAction<SubmissionData | null>>;
     setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -32,6 +30,7 @@ export function useSubmitCode({
     contestId,
     submissionPending,
     type,
+    testCases,
     setSubmissionPending,
     setSubmissionResults,
     setSubmitClicked
@@ -47,6 +46,7 @@ export function useSubmitCode({
                 submittedCode: fullCode,
                 languageId: languageId,
                 type: type,
+                testCases: testCases,
                 ...(contestId && !isNaN(parseInt(contestId)) ? { contestId: parseInt(contestId) } : {})
             };
             setSubmitClicked(true);

@@ -31,11 +31,12 @@ type TestCaseWithResult = TestCaseResult & {
 export type SubmissionData = Submission & {
     testCaseResults: TestCaseWithResult[]
 }
+export type SubmissionPendingObj = { run: boolean, submit: boolean }
 export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPlateWithLanguage[], contestId?: string }) {
     const [selectedLanguage, setSelectedLanguage] = useState(boilerPlates[0]?.language.monacoName || "")
     const boilerPlateOfSelectedLang = boilerPlates.find((item) => item.language.monacoName === selectedLanguage)
     const [fullCode, setFullCode] = useState<string>(boilerPlateOfSelectedLang?.boilerPlateCode || "")
-    const [submissionPending, setSubmissionPending] = useState<{ run: boolean, submit: boolean }>({ run: false, submit: false });
+    const [submissionPending, setSubmissionPending] = useState<SubmissionPendingObj>({ run: false, submit: false });
     const [submissionResults, setSubmissionResults] = useState<SubmissionData | null>(null);
     const [submitClicked, setSubmitClicked] = useState(false);
 

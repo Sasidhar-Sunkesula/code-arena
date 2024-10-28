@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { Label, Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/shad";
 import { Editor } from "@monaco-editor/react";
 import { CheckCircle2, Loader2Icon } from "lucide-react";
-import { CodeSubmitButton } from "./SubmitCode";
+import { SubmitCode } from "./SubmitCode";
 import { SubmissionType } from "@repo/common/types";
-import { Language, SubmissionData } from "./CodeEditor";
+import { Language, SubmissionData, SubmissionPendingObj } from "./CodeEditor";
 import { ResultDisplay } from "./ResultDisplay";
 import toast, { Toaster } from "react-hot-toast";
 import { BoilerplateCodes } from "./ProblemContributionForm";
@@ -14,17 +14,21 @@ import { BoilerplateCodes } from "./ProblemContributionForm";
 interface ConfirmationTestProps {
     boilerplateCodes: BoilerplateCodes;
     languages: Language[];
+    testCases: {
+        input: string;
+        expectedOutput: string;
+    }[];
     setAllDone: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function ConfirmationTest({ boilerplateCodes, languages, setAllDone }: ConfirmationTestProps) {
+export function ConfirmationTest({ boilerplateCodes, testCases, languages, setAllDone }: ConfirmationTestProps) {
     // Filter languages to only include those with non-empty boilerplate code
     const filteredLanguages = Object.keys(boilerplateCodes).filter(
         (language) => boilerplateCodes[language]?.trim() !== ""
     );
     const [selectedLanguage, setSelectedLanguage] = useState<string>(filteredLanguages[0] ?? "");
     const [code, setCode] = useState<BoilerplateCodes>(boilerplateCodes);
-    const [submissionPending, setSubmissionPending] = useState(false);
+    const [submissionPending, setSubmissionPending] = useState<SubmissionPendingObj>({ run: false, submit: false });
     const [submissionResults, setSubmissionResults] = useState<SubmissionData | null>(null);
     const [submitClicked, setSubmitClicked] = useState(false);
     const selectedLangInfo = languages.find((lang) => lang.judge0Name === selectedLanguage)
@@ -103,9 +107,10 @@ export function ConfirmationTest({ boilerplateCodes, languages, setAllDone }: Co
                 {
                     selectedLangInfo && code[selectedLanguage]
                         ? <div className="flex justify-end">
-                            <CodeSubmitButton
-                                text="Submit"
-                                type={SubmissionType.CONFIRMATION_TEST}
+                            <SubmitCode
+                                text="Run"
+                                testCases={testCases}
+                                type={SubmissionType.RUN}
                                 languageId={selectedLangInfo.id}
                                 fullCode={code[selectedLanguage]}
                                 submissionPending={submissionPending}

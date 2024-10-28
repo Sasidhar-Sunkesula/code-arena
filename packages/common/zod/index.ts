@@ -1,4 +1,4 @@
-import { number, z } from "zod"
+import { z } from "zod"
 import { ContestLevel, DifficultyLevel, SubmissionType } from "../types";
 
 export const problemFormSchema = z.object({
@@ -17,7 +17,7 @@ export const problemFormSchema = z.object({
     ),
     testCases: z.array(z.object({
         input: z.string().min(1, { message: "Input is required" }),
-        expected_output: z.string().min(1, { message: "Expected output is required" })
+        expectedOutput: z.string().min(1, { message: "Expected output is required" })
     })).min(4, { message: "At least 4 test cases are required" }),
     difficultyLevel: z.nativeEnum(DifficultyLevel)
 });
@@ -70,7 +70,11 @@ export const paramsSchema = z.object({
 });
 
 export const submitCodeSchema = z.object({
-    problemId: z.number(),
+    problemId: z.number().optional(),
+    testCases: z.array(z.object({
+        input: z.string(),
+        expectedOutput: z.string()
+    })).optional(),
     submittedCode: z.string({ message: "Code should not be empty" }),
     languageId: z.number({ message: "Language Id is required" }),
     contestId: z.number().optional(),

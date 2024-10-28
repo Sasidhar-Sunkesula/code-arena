@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
             const createTestCases = await prisma.testCase.createMany({
                 data: validatedBody.testCases.map(testCase => ({
                     input: testCase.input,
-                    expectedOutput: testCase.expected_output,
+                    expectedOutput: testCase.expectedOutput,
                     problemId: createProblem.id
                 }))
             });

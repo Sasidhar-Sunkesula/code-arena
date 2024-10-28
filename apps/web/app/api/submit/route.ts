@@ -13,18 +13,21 @@ export interface BatchItem {
     expected_output: string,
     callback_url: string
 }
+async function fetchTestCases(problemId: number) {
+    const testCases = await prisma.testCase.findMany({
+        where: {
+            problemId: problemId
+        }
+    });
+    if (!testCases || testCases.length === 0) {
+        throw new Error("Unable to find the test cases for this problem");
+    }
+    return testCases;
+}
 export async function POST(req: NextRequest) {
     try {
         const session = await getServerSession(authOptions);
         const validatedInput = submitCodeSchema.parse(await req.json());
-        const testCases = await prisma.testCase.findMany({
-            where: {
-                problemId: validatedInput.problemId
-            }
-        })
-        if (!testCases || testCases.length === 0) {
-            throw new Error("Unable to find the test cases for this problem");
-        }
         const selectedLanguage = await prisma.language.findUnique({
             where: {
                 id: validatedInput.languageId
@@ -33,6 +36,10 @@ export async function POST(req: NextRequest) {
         if (!selectedLanguage) {
             throw new Error("Error in finding the selected language from the db")
         }
+        if (!validatedInput.problemId) {
+            throw new Error("Problem Id is required for making a submission")
+        }
+        const testCases = await fetchTestCases(validatedInput.problemId);
         if (validatedInput.type === SubmissionType.SUBMIT) {
             if (!session || !session.user) {
                 return NextResponse.json({
@@ -40,6 +47,9 @@ export async function POST(req: NextRequest) {
                 }, {
                     status: 401
                 });
+            }
+            if (!validatedInput.problemId) {
+                throw new Error("Problem Id is required for making a submission")
             }
             const newSubmission = await prisma.submission.create({
                 data: {
@@ -83,6 +93,14 @@ export async function POST(req: NextRequest) {
                 status: 201
             })
         } else if (validatedInput.type === SubmissionType.RUN) {
+            let testCases;
+            if (validatedInput.problemId) {
+                testCases = await fetchTestCases(validatedInput.problemId);
+            } else if (validatedInput.testCases) {
+                testCases = validatedInput.testCases;
+            } else {
+                throw new Error("No test cases provided");
+            }
             const inputForJudge: Omit<BatchItem, "callback_url">[] = testCases.map((testCase) => {
                 return {
                     language_id: selectedLanguage.judge0Id,

@@ -2,7 +2,7 @@
 
 import { Toaster } from 'react-hot-toast';
 import React from "react";
-import { SubmissionData } from "./CodeEditor";
+import { SubmissionData, SubmissionPendingObj } from "./CodeEditor";
 import { SubmissionType } from "@repo/common/types";
 import { Badge, Button } from "@repo/ui/shad";
 import { Play, ArrowRight } from "lucide-react";
@@ -13,17 +13,15 @@ type SubmitCodeProps = {
     text: string;
     type: SubmissionType;
     fullCode: string;
-    problemId: number;
+    problemId?: number;
     contestId?: string;
+    testCases?: {
+        input: string;
+        expectedOutput: string;
+    }[];
     languageId: number;
-    submissionPending: {
-        run: boolean;
-        submit: boolean;
-    }
-    setSubmissionPending: React.Dispatch<React.SetStateAction<{
-        run: boolean;
-        submit: boolean;
-    }>>;
+    submissionPending: SubmissionPendingObj
+    setSubmissionPending: React.Dispatch<React.SetStateAction<SubmissionPendingObj>>;
     setSubmissionResults: React.Dispatch<React.SetStateAction<SubmissionData | null>>;
     setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -35,6 +33,7 @@ export function SubmitCode({
     problemId,
     contestId,
     type,
+    testCases,
     setSubmissionPending,
     submissionPending,
     setSubmissionResults,
@@ -45,6 +44,7 @@ export function SubmitCode({
         fullCode,
         languageId,
         problemId,
+        testCases,
         contestId,
         type,
         submissionPending,

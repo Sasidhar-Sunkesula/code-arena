@@ -8,20 +8,19 @@ interface NavigationButtonsProps {
     trigger: UseFormTrigger<any>;
     allDone: boolean;
 }
-
+const getFieldsToValidate = (step: number) => {
+    switch (step) {
+        case 1:
+            return ["userName", "problemName", "content", "difficultyLevel"];
+        case 2:
+            return ["boilerplateCodes"];
+        case 3:
+            return ["testCases"];
+        default:
+            return [];
+    }
+};
 export function NavigationButtons({ step, setStep, loading, trigger, allDone }: NavigationButtonsProps) {
-    const getFieldsToValidate = (step: number) => {
-        switch (step) {
-            case 1:
-                return ["userName", "problemName", "content", "difficultyLevel"];
-            case 2:
-                return ["boilerplateCodes"];
-            case 3:
-                return ["testCases"];
-            default:
-                return [];
-        }
-    };
     const handleNext = async () => {
         const fieldsToValidate = getFieldsToValidate(step);
         const isValid = await trigger(fieldsToValidate, { shouldFocus: true });

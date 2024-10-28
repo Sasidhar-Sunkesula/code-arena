@@ -66,10 +66,10 @@ export function ProblemContributionForm({
             content: '',
             boilerplateCodes: boilerplateCodes,
             testCases: [
-                { input: '', expected_output: '' },
-                { input: '', expected_output: '' },
-                { input: '', expected_output: '' },
-                { input: '', expected_output: '' },
+                { input: '', expectedOutput: '' },
+                { input: '', expectedOutput: '' },
+                { input: '', expectedOutput: '' },
+                { input: '', expectedOutput: '' },
             ],
             difficultyLevel: DifficultyLevel.EASY,
         },
@@ -150,6 +150,7 @@ export function ProblemContributionForm({
                         languages={languages}
                         boilerplateCodes={boilerplateCodes}
                         setAllDone={setAllDone}
+                        testCases={form.watch("testCases")}
                     />
                 )}
                 <NavigationButtons

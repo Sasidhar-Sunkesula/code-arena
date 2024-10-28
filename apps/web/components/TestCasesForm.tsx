@@ -12,7 +12,7 @@ interface TestCasesFormProps {
         boilerplateCodes: Record<string, string>;
         testCases: {
             input: string;
-            expected_output: string;
+            expectedOutput: string;
         }[];
     }, "testCases", "id">[];
     append: UseFieldArrayAppend<{
@@ -22,7 +22,7 @@ interface TestCasesFormProps {
         boilerplateCodes: Record<string, string>;
         testCases: {
             input: string;
-            expected_output: string;
+            expectedOutput: string;
         }[];
         difficultyLevel: DifficultyLevel;
     }, "testCases">
@@ -51,7 +51,7 @@ export function TestCasesForm({ control, fields, append, remove }: TestCasesForm
                         />
                         <FormField
                             control={control}
-                            name={`testCases.${index}.expected_output`}
+                            name={`testCases.${index}.expectedOutput`}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Expected Output</FormLabel>
@@ -69,7 +69,7 @@ export function TestCasesForm({ control, fields, append, remove }: TestCasesForm
                     </div>
                 ))}
             </div>
-            <Button type="button" onClick={() => append({ input: "", expected_output: "" })}>
+            <Button type="button" onClick={() => append({ input: "", expectedOutput: "" })}>
                 <Plus className="w-5 mr-2" />
                 Add Test Case
             </Button>
