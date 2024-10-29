@@ -106,6 +106,11 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
             // Count the number of test cases passed
             const testCasesPassed = testCaseResults.filter(result => result.status === SubmissionStatus.Accepted).length;
 
+            // Calculate points if the problem details are available and the overall status is "Accepted"
+            const points = problemDetails && overallStatus === SubmissionStatus.Accepted
+                ? calculatePoints(problemDetails.difficultyLevel)
+                : null;
+
             // Update the submission with the calculated values
             await prisma.submission.update({
                 where: { id: submissionId },
@@ -114,7 +119,7 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
                     memory: averageMemory,
                     runTime: averageTime,
                     testCasesPassed: testCasesPassed,
-                    points: problemDetails && calculatePoints(problemDetails.difficultyLevel)
+                    points: points
                 }
             });
         }

@@ -9,7 +9,7 @@ export async function getSubmissions(problemId: number, contestId?: number) {
         const session = await getServerSession(authOptions);
         if (!session?.user || !session.user?.id) {
             return {
-                message: "Please login to view your submissions"
+                msg: "Please login to view your submissions"
             };
         }
 
@@ -17,7 +17,6 @@ export async function getSubmissions(problemId: number, contestId?: number) {
             where: {
                 problemId: problemId,
                 contestId: contestId,
-                submissionType: "REGULAR"
             },
             orderBy: {
                 createdAt: 'desc'
@@ -60,7 +59,7 @@ export async function getSubmissions(problemId: number, contestId?: number) {
         };
     } catch (error) {
         return {
-            message: "An error occurred while fetching submissions. Please try again later."
+            msg: "An error occurred while fetching submissions. Please try again later."
         };
     }
 }

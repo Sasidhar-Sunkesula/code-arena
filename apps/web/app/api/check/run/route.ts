@@ -1,10 +1,10 @@
 import { SubmissionResult } from "@repo/common/types";
 import { checkStatusSchema } from "@repo/common/zod";
 import { NextRequest, NextResponse } from "next/server";
-import { ZodError } from "zod"
 import { SubmissionStatus } from "@prisma/client";
 import { mapStatusDescriptionToEnum } from "../../judge0Callback/[submissionId]/[testCaseId]/route";
 import prisma from "@repo/db/client";
+import { ZodError } from "zod";
 
 export async function POST(req: NextRequest) {
     try {

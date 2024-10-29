@@ -15,12 +15,12 @@ export type Submission = {
     runTime: number | null;
     memory: number | null;
     testCasesPassed: number | null;
-    points: number;
+    points: number | null;
     testCaseCount: number;
 };
 type SubmissionResponse = {
-    message?: string;
-    submissions?: Submission[];
+    msg?: string;
+    submissions?: Submission[]
 };
 export function ProblemSubmissions({ problemId, contestId }: { problemId: number, contestId?: number }) {
     const [submissionList, setSubmissionList] = useState<SubmissionResponse | null>(null);
@@ -29,6 +29,9 @@ export function ProblemSubmissions({ problemId, contestId }: { problemId: number
         async function fetchSubmissions() {
             try {
                 const submissions = await getSubmissions(problemId, contestId);
+                if (submissions?.msg) {
+                    throw new Error(submissions.msg)
+                }
                 setSubmissionList(submissions);
             } catch (error) {
                 toast.error(error instanceof Error ? error.message : "Error while fetching submissions")
