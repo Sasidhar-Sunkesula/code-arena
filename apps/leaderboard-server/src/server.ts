@@ -1,13 +1,12 @@
 import express, { Response } from "express"
 import cors from "cors"
 import { createClient } from "redis";
-import z from "zod";
+import z, { ZodError } from "zod";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
 const redisHost = process.env.REDIS_HOST || 'localhost';
 const redisPort = process.env.REDIS_PORT || '6379';
@@ -23,18 +22,41 @@ client.connect();
 
 let clients: { id: number, res: Response }[] = [];
 
-const urlSchema = z.number({
-    message: "Contest Id must be a valid number"
+const scoreSchema = z.object({
+    userId: z.string(),
+    score: z.number()
 })
 
-app.get("/api/leaderboard/:contestId", (req, res: any) => {
+app.post("/api/leaderboard/:contestId", async (req, res: any) => {
     const { contestId } = req.params;
-    const result = urlSchema.safeParse(Number(contestId))
-    if (!result.success) {
-        return res.status(400).json({
-            msg: result.error.errors
-        })
+    try {
+        const validBody = scoreSchema.parse(req.body);
+        const { userId, score } = validBody;
+        await client.zAdd(`leaderboard:${contestId}`, { score, value: userId });
+        res.json({ msg: "Score added successfully" });
+
+        // Broadcast the updated leaderboard
+        const leaderboard = await client.zRangeWithScores(`leaderboard:${contestId}`, 0, -1, { REV: true });
+        sendEvent(leaderboard);
+    } catch (err) {
+        if (err instanceof ZodError) {
+            return res.status(400).json({
+                msg: err.errors[0]?.message
+            });
+        } else if (err instanceof Error) {
+            return res.status(500).json({
+                msg: err.message
+            });
+        } else {
+            return res.status(500).json({
+                msg: "An unknown error occurred while adding the score"
+            });
+        }
     }
+})
+
+app.get("/api/leaderboard/:contestId", async (req, res: any) => {
+    const { contestId } = req.params;
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
@@ -48,6 +70,13 @@ app.get("/api/leaderboard/:contestId", (req, res: any) => {
     };
     clients.push(newClient);
 
+    // Send the initial leaderboard data
+    try {
+        const leaderboard = await client.zRangeWithScores(`leaderboard:${contestId}`, 0, -1, { REV: true });
+        res.write(`data: ${JSON.stringify(leaderboard)}\n\n`);
+    } catch (err) {
+        console.error('Error retrieving initial leaderboard:', err);
+    }
     // Heartbeat to keep the connection alive
     const keepAliveInterval = setInterval(() => {
         res.write(': keep-alive\n\n');
