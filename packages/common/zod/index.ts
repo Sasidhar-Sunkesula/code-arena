@@ -98,3 +98,8 @@ export const checkStatusSchema = z.object({
     problemId: z.number(),
     submissionTokens: z.array(z.string())
 })
+
+// export const scoreSchema = z.object({
+//     userId: z.string(),
+//     score: z.number()
+// })

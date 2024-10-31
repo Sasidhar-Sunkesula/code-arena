@@ -2,7 +2,7 @@ import prisma from "@repo/db/client";
 import { NextRequest, NextResponse } from "next/server";
 import { SubmissionStatus } from "@prisma/client";
 import { calculatePoints } from "@/app/actions/calculatePoints";
-import { SubmissionResult } from "@repo/common/types";
+import { ScoreSchemaType, SubmissionResult } from "@repo/common/types";
 
 export function mapStatusDescriptionToEnum(description: string): SubmissionStatus {
     switch (description) {
@@ -43,7 +43,9 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
     const body: SubmissionResult = await req.json();
     const submissionId = parseInt(params.submissionId);
     const testCaseId = parseInt(params.testCaseId);
-
+    const searchParams = req.nextUrl.searchParams;
+    const contestId = searchParams.get('contestId');
+    const userId = searchParams.get('userId');
     if (isNaN(submissionId) || isNaN(testCaseId)) {
         return NextResponse.json({ error: "Invalid submission ID or test case ID" }, { status: 400 });
     }
@@ -109,7 +111,7 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
             // Calculate points if the problem details are available and the overall status is "Accepted"
             const points = problemDetails && overallStatus === SubmissionStatus.Accepted
                 ? calculatePoints(problemDetails.difficultyLevel)
-                : null;
+                : 0;
 
             // Update the submission with the calculated values
             await prisma.submission.update({
@@ -122,6 +124,25 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
                     points: points
                 }
             });
+            
+            // Add the score to leaderboard only if it is a contest
+            if (contestId && userId) {
+                const reqBody: ScoreSchemaType = {
+                    score: points,
+                    userId: userId
+                }
+                const response = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/${contestId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(reqBody)
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.msg)
+                }
+            }
         }
         return NextResponse.json({
             msg: "Success"

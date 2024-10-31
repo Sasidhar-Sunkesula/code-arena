@@ -8,7 +8,9 @@
     "JUDGE0_URL",
     "NEXT_PUBLIC_BASE_URL",
     "REDIS_HOST",
-    "REDIS_PORT"
+    "REDIS_PORT",
+    "NEXTAUTH_URL",
+    "LEADERBOARD_SERVER_URL"
   ],
   "globalDependencies": [
     "**/.env.*local",

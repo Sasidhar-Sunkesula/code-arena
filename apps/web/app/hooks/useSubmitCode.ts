@@ -111,7 +111,7 @@ export function useSubmitCode({
                             clearInterval(intervalId);
                             setSubmissionPending(prev => ({ ...prev, submit: false }))
                             setSubmissionResults(submissionResult.data);
-                            submissionResult.data.status === "Accepted" && toast.success("Problem Submitted!")
+                            submissionResult.data.status === "Accepted" && toast.success("Problem Accepted!")
                         }
                     }
                 } catch (error) {

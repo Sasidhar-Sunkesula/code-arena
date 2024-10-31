@@ -66,7 +66,13 @@ export async function POST(req: NextRequest) {
                 throw new Error("Error in creating the submission record")
             }
             const inputForJudge: BatchItem[] = testCases.map((testCase) => {
-                const callbackUrl = `http://host.docker.internal:3000/api/judge0Callback/${newSubmission.id}/${testCase.id}/${validatedInput.contestId}`;
+                const baseUrl = `http://host.docker.internal:3000/api/judge0Callback/${newSubmission.id}/${testCase.id}`;
+                const queryParams = new URLSearchParams();
+                if (validatedInput.contestId) {
+                    queryParams.append('contestId', validatedInput.contestId.toString());
+                    queryParams.append('userId', session.user.id);
+                }
+                const callbackUrl = `${baseUrl}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
                 return {
                     language_id: selectedLanguage.judge0Id,
                     source_code: validatedInput.submittedCode,

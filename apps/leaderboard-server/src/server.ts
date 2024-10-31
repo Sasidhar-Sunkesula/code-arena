@@ -1,7 +1,7 @@
 import express, { Response } from "express"
 import cors from "cors"
 import { createClient } from "redis";
-import z, { ZodError } from "zod";
+import { z, ZodError } from "zod";
 
 const app = express();
 
@@ -104,7 +104,7 @@ process.on('SIGTERM', () => {
     clients.forEach(client => client.res.end());
     client.quit();
 });
-const PORT = 8000;
+const PORT = 3001;
 
 app.listen(PORT, () => {
     console.log(`Leader board event endpoint is at http://localhost:${PORT}`)

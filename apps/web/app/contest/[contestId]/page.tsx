@@ -67,6 +67,7 @@ export default async function ContestInfo({ params }: { params: { contestId: str
                     </div>
                     <div>
                         <ContestDetails
+                            contestId={contestId}
                             name={contestData.name}
                             problemCount={contestData._count.problems}
                             endTime={contestData.closesOn}
