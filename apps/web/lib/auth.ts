@@ -11,9 +11,8 @@ declare module "next-auth" {
     interface Session {
         user: {
             id: string;
-            name?: string | null;
-            email?: string | null;
-            image?: string | null;
+            name: string | null;
+            email: string;
         }
     }
 }
@@ -39,7 +38,7 @@ export const authOptions: NextAuthOptions = {
                             return {
                                 id: existingUser.id,
                                 name: existingUser.name,
-                                email: existingUser.email
+                                email: existingUser.email,
                             }
                         }
                         return null;
@@ -50,7 +49,6 @@ export const authOptions: NextAuthOptions = {
                             data: {
                                 email: validatedCredentials.email,
                                 password: hash,
-                                name: ""
                             }
                         });
                         return {
@@ -72,7 +70,7 @@ export const authOptions: NextAuthOptions = {
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID || "",
             clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-            allowDangerousEmailAccountLinking: true,
+            allowDangerousEmailAccountLinking: true, // Allows users to link multiple authentication methods to a single account.
         }),
     ],
     secret: process.env.NEXTAUTH_SECRET,

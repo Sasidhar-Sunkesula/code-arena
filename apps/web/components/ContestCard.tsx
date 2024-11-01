@@ -1,7 +1,7 @@
-import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "@repo/ui/shad"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@repo/ui/shad"
 import { CalendarIcon, HashIcon, LayersIcon } from "lucide-react"
 import { ContestLevel } from "@prisma/client";
-import Link from "next/link";
+import { ContestRegister } from "./ContestRegister";
 
 interface ContestCardProps {
     id: number;
@@ -36,9 +36,7 @@ export function ContestCard({ id, name, level, closesOn, _count }: ContestCardPr
                 </div>
             </CardContent>
             <CardFooter className="px-4">
-                <Button className="w-full" asChild>
-                    <Link href={`/contest/${id}`}>Participate</Link>
-                </Button>
+                <ContestRegister />
             </CardFooter>
         </Card>
     )

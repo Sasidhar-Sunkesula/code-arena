@@ -2,7 +2,7 @@ import prisma from "@repo/db/client";
 import { NextRequest, NextResponse } from "next/server";
 import { SubmissionStatus } from "@prisma/client";
 import { calculatePoints } from "@/app/actions/calculatePoints";
-import { ScoreSchemaType, SubmissionResult } from "@repo/common/types";
+import { SubmissionResult } from "@repo/common/types";
 
 export function mapStatusDescriptionToEnum(description: string): SubmissionStatus {
     switch (description) {
@@ -124,12 +124,12 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
                     points: points
                 }
             });
-            
+
             // Add the score to leaderboard only if it is a contest
             if (contestId && userId) {
-                const reqBody: ScoreSchemaType = {
+                const reqBody = {
+                    userId: userId,
                     score: points,
-                    userId: userId
                 }
                 const response = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/${contestId}`, {
                     method: "POST",

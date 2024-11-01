@@ -1,5 +1,4 @@
 
-
 export default function ContestLeaderboard({ params }: { params: { contestId: string } }) {
     return (
         <div>

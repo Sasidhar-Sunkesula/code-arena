@@ -24,17 +24,26 @@ let clients: { id: number, res: Response }[] = [];
 
 const scoreSchema = z.object({
     userId: z.string(),
-    score: z.number()
+    score: z.number(),
+    userName: z.string(),
+    country: z.string()
 })
 
 app.post("/api/leaderboard/:contestId", async (req, res: any) => {
     const { contestId } = req.params;
     try {
         const validBody = scoreSchema.parse(req.body);
-        const { userId, score } = validBody;
-        await client.zAdd(`leaderboard:${contestId}`, { score, value: userId });
-        res.json({ msg: "Score added successfully" });
+        const { userId, score, country, userName } = validBody;
 
+        // Add the user ID and score to the sorted set for the contest
+        await client.zAdd(`leaderboard:${contestId}`, { score, value: userId });
+
+        // Store the user details in a hash map
+        await client.hSet(`userId:${userId}`, {
+            userName: userName,
+            country: country,
+        })
+        res.json({ msg: "Score added successfully" });
         // Broadcast the updated leaderboard
         const leaderboard = await client.zRangeWithScores(`leaderboard:${contestId}`, 0, -1, { REV: true });
         sendEvent(leaderboard);
@@ -72,7 +81,7 @@ app.get("/api/leaderboard/:contestId", async (req, res: any) => {
 
     // Send the initial leaderboard data
     try {
-        const leaderboard = await client.zRangeWithScores(`leaderboard:${contestId}`, 0, -1, { REV: true });
+        const leaderboard = await getLeaderboardWithDetails(contestId);
         res.write(`data: ${JSON.stringify(leaderboard)}\n\n`);
     } catch (err) {
         console.error('Error retrieving initial leaderboard:', err);
@@ -87,6 +96,23 @@ app.get("/api/leaderboard/:contestId", async (req, res: any) => {
         clients = clients.filter(client => client.id !== clientId);
     });
 })
+
+async function getLeaderboardWithDetails(contestId: string) {
+    const redisLeaderboard = await client.zRangeWithScores(`leaderboard:${contestId}`, 0, -1, { REV: true });
+
+    const leaderboardData = await Promise.all(redisLeaderboard.map(async (entry, index) => {
+        const userDetails = await client.hGetAll(`user:${entry.value}`);
+        return {
+            userId: entry.value,
+            username: userDetails.userName || 'Unknown',
+            score: entry.score,
+            rank: index + 1,
+            country: userDetails.country || 'N/A'
+        };
+    }));
+
+    return leaderboardData;
+}
 
 function sendEvent(data: any) {
     clients.forEach(client => {
