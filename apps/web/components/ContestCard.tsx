@@ -1,7 +1,8 @@
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@repo/ui/shad"
+import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "@repo/ui/shad"
 import { CalendarIcon, HashIcon, LayersIcon } from "lucide-react"
 import { ContestLevel } from "@prisma/client";
 import { ContestRegister } from "./ContestRegister";
+import Link from "next/link";
 
 interface ContestCardProps {
     id: number;
@@ -10,10 +11,12 @@ interface ContestCardProps {
     closesOn: Date;
     _count: {
         problems: number
-    }
+    },
+    isRegistered: boolean;
+    type: "open" | "upcoming";
 }
 
-export function ContestCard({ id, name, level, closesOn, _count }: ContestCardProps) {
+export function ContestCard({ id, isRegistered, type, name, level, closesOn, _count }: ContestCardProps) {
     return (
         <Card className="md:w-10/12">
             <CardHeader className="p-4">
@@ -36,7 +39,15 @@ export function ContestCard({ id, name, level, closesOn, _count }: ContestCardPr
                 </div>
             </CardContent>
             <CardFooter className="px-4">
-                <ContestRegister />
+                {
+                    isRegistered
+                        ? type === "open"
+                            ? <Link href={`/contest/${id}`}>
+                                <Button>Participate</Button>
+                            </Link>
+                            : <Button className="w-full md:w-28" disabled>Registered!</Button>
+                        : <ContestRegister contestId={id} />
+                }
             </CardFooter>
         </Card>
     )
