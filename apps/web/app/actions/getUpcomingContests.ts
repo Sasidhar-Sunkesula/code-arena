@@ -31,9 +31,13 @@ export async function getUpcomingContests(userId?: string) {
                 startsOn: "asc", // Order by start date ascending
             },
         });
+        const formattedContests = contests.map(contest => ({
+            ...contest,
+            isRegistered: contest.users.length > 0 ? true : false
+        }))
         return {
             status: 200,
-            contests
+            contests: formattedContests
         }
     } catch (error) {
         return {

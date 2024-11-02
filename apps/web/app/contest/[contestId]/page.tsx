@@ -3,10 +3,30 @@ import { ContestDetails } from "@/components/ContestDetails"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import prisma from "@repo/db/client";
+import { redirect } from "next/navigation";
 
 export default async function ContestInfo({ params }: { params: { contestId: string } }) {
     const contestId = parseInt(params.contestId);
     const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+        return redirect("/api/auth/signin")
+    }
+    const userId = session.user.id;
+    const isRegistered = await prisma.userContest.findUnique({
+        where: {
+            userId_contestId: {
+                userId: userId,
+                contestId: contestId
+            }
+        }
+    })
+    if (!isRegistered) {
+        return (
+            <div className="md:h-96 my-auto flex justify-center items-center font-medium">
+                You haven't registered for this contest. Thank you for your interest!
+            </div>
+        )
+    }
     const contestData = await prisma.contest.findUnique({
         where: {
             id: contestId
@@ -24,14 +44,14 @@ export default async function ContestInfo({ params }: { params: { contestId: str
                                     submissions: true // Count total submissions for each problem
                                 }
                             },
-                            submissions: session?.user?.id ? {
+                            submissions: {
                                 where: {
-                                    userId: session.user.id
+                                    userId
                                 },
                                 select: {
                                     status: true
                                 }
-                            } : false // Include user submissions only if user is logged in
+                            }
                         }
                     }
                 }
@@ -44,7 +64,7 @@ export default async function ContestInfo({ params }: { params: { contestId: str
         }
     });
     // Flatten the submissions array and include problemId
-    const submissions = (session?.user?.id && contestData)
+    const submissions = contestData
         ? contestData.problems.flatMap((problemData) =>
             problemData.problem.submissions.map((submission) => ({
                 ...submission,
@@ -62,7 +82,7 @@ export default async function ContestInfo({ params }: { params: { contestId: str
                         <ProblemList
                             problems={contestData.problems.map((problemData) => problemData.problem)}
                             contestId={contestId}
-                            userId={session?.user?.id || null}
+                            userId={userId}
                         />
                     </div>
                     <div>

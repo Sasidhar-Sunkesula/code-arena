@@ -1,15 +1,22 @@
 import { HeroSection } from "@/components/HeroSection";
-import { UpcomingContests } from "@/components/ContestList";
+import { ContestList } from "@/components/ContestList";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import toast, { Toaster } from "react-hot-toast";
+import { getOpenContests } from "./actions/getCurrentContests";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession(authOptions);
+  const openContests = await getOpenContests(session?.user.id);
+  if (!openContests.contests) {
+    return toast.error("Unable to fetch contests at the moment")
+  }
   return (
     <div>
+      <Toaster />
       <HeroSection />
-      <div className="px-4 md:px-8">
-        <h2 className="text-3xl font-bold">Upcoming Contests</h2>
-      </div>
       <section className="px-4 py-2 md:px-8 md:py-4">
-        <UpcomingContests />
+        <ContestList type="open" session={session} contests={openContests.contests} />
       </section>
     </div>
   );

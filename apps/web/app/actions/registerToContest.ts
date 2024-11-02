@@ -4,6 +4,21 @@ import prisma from "@repo/db/client"
 
 export async function registerToContest(userId: string, contestId: number) {
     try {
+        const currentDate = new Date();
+        const isOpenToRegister = await prisma.contest.findUnique({
+            where: {
+                id: contestId,
+                startsOn: {
+                    gte: currentDate
+                }
+            }
+        })
+        if (!isOpenToRegister) {
+            return {
+                status: 400,
+                msg: "Registration is closed for this contest.",
+            };
+        }
         await prisma.userContest.create({
             data: {
                 userId,

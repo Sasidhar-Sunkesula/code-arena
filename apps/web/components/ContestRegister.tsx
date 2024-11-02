@@ -28,8 +28,6 @@ export function ContestRegister({ contestId }: { contestId: number }) {
             const response = await isProfileUpdated();
             if (response.status === 200 && !response.isUpdated) {
                 setShowProfileUpdate(true);
-            } else if (response.status !== 200 && response.msg) {
-                toast.error(response.msg);
             }
         } catch {
             toast.error("An error occurred while checking your profile.");
@@ -46,8 +44,9 @@ export function ContestRegister({ contestId }: { contestId: number }) {
             await checkProfile();
             const response = await registerToContest(session.data.user.id, contestId);
             if (response.status === 200) {
-                toast.success(response.msg);
                 setIsRegistered(true)
+                toast.success(response.msg);
+                return;
             } else {
                 throw new Error(response.msg);
             }
@@ -57,12 +56,14 @@ export function ContestRegister({ contestId }: { contestId: number }) {
             setLoading(false);
         }
     }
-    
+
     return (
         <div>
             <Toaster />
             <Button className="w-full md:w-28" onClick={handleParticipate} disabled={loading || isRegistered}>
-                {loading ? <Loader2Icon className="w-5 animate-spin" /> : isRegistered ? "Registered!" : "Register"}
+                {loading
+                    ? <Loader2Icon className="w-5 animate-spin" />
+                    : isRegistered ? "Registered!" : "Register"}
             </Button>
             {showProfileUpdate && <ProfileUpdate open={showProfileUpdate} onOpenChange={setShowProfileUpdate} />}
         </div>
