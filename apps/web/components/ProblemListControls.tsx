@@ -25,7 +25,7 @@ export function ProblemListControls() {
         async function fetchProblems() {
             try {
                 const data = await getProblems(searchKey, page, limit);
-                if (data?.formattedProblemList && data?.problemCount) {
+                if (data.formattedProblemList && data.problemCount) {
                     setProblemList(data)
                 }
                 else if (data.msg) {
@@ -42,7 +42,7 @@ export function ProblemListControls() {
 
     if (loading) {
         return (
-            <div className="h-28 text-sm border flex justify-center items-center">
+            <div className="md:h-28 text-sm border flex justify-center items-center">
                 <Loader2 className="w-4 animate-spin" />
             </div>
         )

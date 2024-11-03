@@ -17,3 +17,4 @@ export * from "./shad/ui/textarea";
 export * from "./shad/ui/calendar";
 export * from "./shad/ui/popover";
 export * from "./shad/ui/command";
+export * from "./shad/ui/alert-dialog";

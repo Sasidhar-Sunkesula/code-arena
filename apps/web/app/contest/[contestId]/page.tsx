@@ -39,17 +39,13 @@ export default async function ContestInfo({ params }: { params: { contestId: str
                             id: true,
                             name: true,
                             difficultyLevel: true,
-                            _count: {
-                                select: {
-                                    submissions: true // Count total submissions for each problem
-                                }
-                            },
                             submissions: {
                                 where: {
-                                    userId
+                                    contestId: contestId // Get only contest specific submissions
                                 },
                                 select: {
-                                    status: true
+                                    status: true,
+                                    userId: true // Include userId to filter user's submissions later
                                 }
                             }
                         }
@@ -63,38 +59,65 @@ export default async function ContestInfo({ params }: { params: { contestId: str
             }
         }
     });
-    // Flatten the submissions array and include problemId
-    const submissions = contestData
-        ? contestData.problems.flatMap((problemData) =>
-            problemData.problem.submissions.map((submission) => ({
-                ...submission,
-                problemId: problemData.problem.id
-            }))
+    if (!contestData) {
+        return (
+            <div className="font-bold text-destructive">
+                Contest with id - {contestId} not found
+            </div>
         )
-        : [];
+    }
+    if (contestData.startsOn > new Date()) {
+        return (
+            <div className="md:h-96 my-auto flex justify-center items-center font-medium">
+                You are early for this contest. Thank you for your interest!
+            </div>
+        )
+    }
+    // Calculate acceptance rate for each problem
+    const problemsWithAcceptanceRate = contestData.problems.map((problemData) => {
+        const totalSubmissions = problemData.problem.submissions.length;
+        const acceptedSubmissions = problemData.problem.submissions.filter(submission => submission.status === "Accepted").length;
+        const acceptanceRate = totalSubmissions > 0
+            ? (acceptedSubmissions / totalSubmissions * 100).toFixed(2) + ' %'
+            : '0.00 %';
+
+        return {
+            ...problemData.problem,
+            acceptanceRate,
+            totalSubmissions
+        };
+    });
+
+    // Flatten the submissions array and include problemId
+    const submissions = contestData.problems.flatMap((problemData) =>
+        problemData.problem.submissions.map((submission) => ({
+            ...submission,
+            problemId: problemData.problem.id
+        }))
+    );
+
     return (
-        !contestData
-            ? <div className="font-bold text-destructive">Contest with id - {contestId} not found</div>
-            : <div className="container mx-auto px-2 py-8">
-                <h1 className="text-3xl font-bold mb-8">{contestData.name}</h1>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-14">
-                    <div className="md:col-span-2">
-                        <ProblemList
-                            problems={contestData.problems.map((problemData) => problemData.problem)}
-                            contestId={contestId}
-                            userId={userId}
-                        />
-                    </div>
-                    <div>
-                        <ContestDetails
-                            contestId={contestId}
-                            name={contestData.name}
-                            problemCount={contestData._count.problems}
-                            endTime={contestData.closesOn}
-                            submissions={submissions}
-                        />
-                    </div>
+        <div className="container mx-auto px-2 py-8">
+            <h1 className="text-3xl font-bold mb-8">{contestData.name}</h1>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-14">
+                <div className="md:col-span-2">
+                    <ProblemList
+                        problems={problemsWithAcceptanceRate}
+                        contestId={contestId}
+                        userId={userId}
+                    />
+                </div>
+                <div>
+                    <ContestDetails
+                        contestId={contestId}
+                        contributedBy={contestData.contributedBy}
+                        name={contestData.name}
+                        problemCount={contestData._count.problems}
+                        endTime={contestData.closesOn}
+                        submissions={submissions}
+                    />
                 </div>
             </div>
+        </div>
     )
 }

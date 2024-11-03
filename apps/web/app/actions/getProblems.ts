@@ -27,12 +27,9 @@ export async function getProblems(searchKey: string, page: number, limit: number
                     }
                 },
                 submissions: {
-                    where: {
-                        status: "Accepted",
-                        ...(session?.user.id && { userId: session.user.id })
-                    },
                     select: {
-                        status: true // Just to check if there is any accepted submission
+                        status: true,
+                        userId: true // Include userId to filter user's submissions later
                     }
                 }
             }
@@ -45,13 +42,22 @@ export async function getProblems(searchKey: string, page: number, limit: number
                 }
             }
         });
-        const formattedProblemList = problemList.map(problem => ({
-            id: problem.id,
-            name: problem.name,
-            difficultyLevel: problem.difficultyLevel,
-            _count: problem._count,
-            submissions: session?.user.id ? problem.submissions : []
-        }));
+        const formattedProblemList = problemList.map(problem => {
+            const totalSubmissions = problem._count.submissions;
+            const acceptedSubmissions = problem.submissions.filter(submission => submission.status === "Accepted").length;
+            const acceptanceRate = totalSubmissions > 0
+                ? (acceptedSubmissions / totalSubmissions * 100).toFixed(2) + ' %'
+                : 'NA';
+
+            return {
+                id: problem.id,
+                name: problem.name,
+                difficultyLevel: problem.difficultyLevel,
+                totalSubmissions,
+                acceptanceRate,
+                submissions: session?.user.id ? problem.submissions : []
+            };
+        });
         return {
             formattedProblemList,
             problemCount

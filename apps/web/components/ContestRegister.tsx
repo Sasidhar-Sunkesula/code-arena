@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@repo/ui/shad";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, Button } from "@repo/ui/shad";
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation";
 import { ProfileUpdate } from "./ProfileUpdate";
@@ -8,7 +8,7 @@ import { isProfileUpdated } from "@/app/actions/isProfileUpdated";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { registerToContest } from "@/app/actions/registerToContest";
-import { Loader2Icon } from "lucide-react";
+import { ArrowRight, Loader2Icon } from "lucide-react";
 
 export function ContestRegister({ contestId }: { contestId: number }) {
     const session = useSession();
@@ -56,15 +56,34 @@ export function ContestRegister({ contestId }: { contestId: number }) {
             setLoading(false);
         }
     }
-
     return (
         <div>
             <Toaster />
-            <Button className="w-full md:w-28" onClick={handleParticipate} disabled={loading || isRegistered}>
-                {loading
-                    ? <Loader2Icon className="w-5 animate-spin" />
-                    : isRegistered ? "Registered!" : "Register"}
-            </Button>
+            <AlertDialog>
+                <AlertDialogTrigger asChild>
+                    <Button disabled={isRegistered}>
+                        Register
+                        <ArrowRight className="w-5 ml-1" />
+                    </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure you want to register for the contest?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            If you change your mind, Make sure to un-register to prevent loss of contest rating.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction disabled={loading} onClick={handleParticipate}>
+                            {loading
+                                ? <Loader2Icon className="w-5 animate-spin" />
+                                : "Continue"
+                            }
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
             {showProfileUpdate && <ProfileUpdate open={showProfileUpdate} onOpenChange={setShowProfileUpdate} />}
         </div>
     )

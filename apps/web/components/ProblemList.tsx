@@ -2,20 +2,20 @@ import * as React from "react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Badge } from "@repo/ui/shad";
 import { DifficultyLevel, SubmissionStatus } from "@prisma/client";
 import Link from "next/link";
-import { Check, CircleXIcon } from "lucide-react";
+import { Check, CircleAlert } from "lucide-react";
 
 export interface Problem {
     id: number;
     name: string;
     difficultyLevel: DifficultyLevel;
-    _count: {
-        submissions: number;
-    };
     submissions: Submission[];
+    acceptanceRate: string;
+    totalSubmissions: number;
 }
 
 interface Submission {
     status: SubmissionStatus;
+    userId: string;
 }
 
 export interface ProblemListProps {
@@ -29,15 +29,8 @@ const levelColor = {
     MEDIUM: "text-yellow-500 bg-yellow-50 dark:bg-yellow-800",
     HARD: "text-red-500 bg-red-50 dark:bg-red-800",
 };
-const calculateAcceptanceRate = (submissions: Submission[], totalSubmissions: number) => {
-    const acceptedSubmissions = submissions.filter((submission) => submission.status === "Accepted").length;
-    const acceptanceRate = totalSubmissions > 0
-        ? (acceptedSubmissions / totalSubmissions * 100).toFixed(2) + ' %'
-        : 'NA';
-    return acceptanceRate
-}
-export function ProblemList({ problems, contestId, userId }: ProblemListProps) {
 
+export function ProblemList({ problems, contestId, userId }: ProblemListProps) {
     return (
         <div>
             <Table>
@@ -53,15 +46,16 @@ export function ProblemList({ problems, contestId, userId }: ProblemListProps) {
                 <TableBody>
                     {problems.length > 0 &&
                         problems.map((problem) => {
+                            const userSubmissions = problem.submissions.filter(submission => submission.userId === userId);
                             let statusIcon;
                             if (userId === null) {
                                 statusIcon = "NA";
-                            } else if (problem._count.submissions === 0) {
+                            } else if (userSubmissions.length === 0) {
                                 statusIcon = null; // Show nothing if there are no submissions
-                            } else if (problem.submissions?.some(submission => submission.status === "Accepted")) {
+                            } else if (userSubmissions.some(submission => submission.status === "Accepted")) {
                                 statusIcon = <Check className="w-5" />;
                             } else {
-                                statusIcon = <CircleXIcon className="text-yellow-500 w-5" />;
+                                statusIcon = <CircleAlert className="text-yellow-500 w-5" />;
                             }
                             return (
                                 <TableRow key={problem.id}>
@@ -76,10 +70,8 @@ export function ProblemList({ problems, contestId, userId }: ProblemListProps) {
                                             {problem.difficultyLevel}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell>{problem._count.submissions}</TableCell>
-                                    <TableCell>
-                                        {calculateAcceptanceRate(problem.submissions, problem._count.submissions)}
-                                    </TableCell>
+                                    <TableCell>{problem.totalSubmissions}</TableCell>
+                                    <TableCell>{problem.acceptanceRate}</TableCell>
                                 </TableRow>
                             );
                         })

@@ -1,14 +1,16 @@
-"use server"
+"use server";
 
 import prisma from "@repo/db/client";
 
-export async function getUpcomingContests(userId?: string) {
+export async function getEndedContests(userId?: string) {
     try {
         const currentDate = new Date();
-        const contests = await prisma.contest.findMany({
+
+        // Fetch all ended contests
+        const allContests = await prisma.contest.findMany({
             where: {
-                startsOn: {
-                    gt: currentDate, // Contest has not started yet
+                closesOn: {
+                    lt: currentDate, // Contest has ended
                 },
             },
             include: {
@@ -26,23 +28,28 @@ export async function getUpcomingContests(userId?: string) {
                     },
                 } : false,
             },
-            take: 10,
             orderBy: {
-                startsOn: "asc", // Order by start date ascending
+                closesOn: "desc",
             },
         });
-        const formattedContests = contests.map(contest => ({
+
+        // Map contests to include isRegistered flag
+        const contests = allContests.map(contest => ({
             ...contest,
-            isRegistered: userId ? contest.users.length > 0 : false
-        }))
+            isRegistered: userId ? contest.users.length > 0 : false,
+        }));
+
+        // Remove users object from contests
+        const sanitizedContests = contests.map(({ users, ...rest }) => rest);
+
         return {
             status: 200,
-            contests: formattedContests
-        }
+            contests: sanitizedContests,
+        };
     } catch (error) {
         return {
             status: 500,
-            msg: error instanceof Error ? error.message : "Unable to fetch contests"
-        }
+            msg: error instanceof Error ? error.message : "Unable to fetch contests",
+        };
     }
-} 
+}

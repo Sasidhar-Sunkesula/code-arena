@@ -32,7 +32,7 @@ export async function registerToContest(userId: string, contestId: number) {
     } catch (error) {
         return {
             status: 500,
-            msg: error instanceof Error ? error.message : "An unknown error occurred while registering for the contest",
+            msg: "Unable to register for the contest",
         };
     }
 }
