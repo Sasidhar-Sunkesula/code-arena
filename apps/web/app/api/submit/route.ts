@@ -100,8 +100,10 @@ export async function POST(req: NextRequest) {
             })
         } else if (validatedInput.type === SubmissionType.RUN) {
             let testCases;
+            // If problemId is present, user is running a problem.
             if (validatedInput.problemId) {
                 testCases = await fetchTestCases(validatedInput.problemId);
+                // If test cases were given, then user is testing his problem 
             } else if (validatedInput.testCases) {
                 testCases = validatedInput.testCases;
             } else {
@@ -136,7 +138,7 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         if (error instanceof ZodError) {
             return NextResponse.json({
-                msg: error.errors
+                msg: error.errors[0]?.message
             }, {
                 status: 400
             })

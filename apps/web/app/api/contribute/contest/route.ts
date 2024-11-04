@@ -19,9 +19,6 @@ export async function POST(req: NextRequest) {
                     id: true
                 }
             })
-            if (!createContest?.id) {
-                throw new Error("Unable to create an entry in contest")
-            }
             const contestId = createContest.id;
             const problemIdsWithContestId = validatedBody.problemIds.map(problemId => ({
                 contestId,
@@ -32,6 +29,11 @@ export async function POST(req: NextRequest) {
             })
             return { createContest, contestProblems }
         })
+        const leaderboardResponse = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/initialize/${result.createContest.id}`);
+        if (!leaderboardResponse.ok) {
+            const errorData = await leaderboardResponse.json();
+            throw new Error(errorData.msg)
+        }
         return NextResponse.json({
             createdContestId: result.createContest.id
         }, {
@@ -40,7 +42,7 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         if (error instanceof ZodError) {
             return NextResponse.json({
-                msg: error.errors
+                msg: error.errors[0]?.message
             }, {
                 status: 400
             })

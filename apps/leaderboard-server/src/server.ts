@@ -29,6 +29,8 @@ const scoreSchema = z.object({
     country: z.string()
 })
 
+const registeredUsers = z.array(scoreSchema);
+
 app.post("/api/leaderboard/:contestId", async (req, res: any) => {
     const { contestId } = req.params;
     try {
@@ -59,6 +61,48 @@ app.post("/api/leaderboard/:contestId", async (req, res: any) => {
         } else {
             return res.status(500).json({
                 msg: "An unknown error occurred while adding the score"
+            });
+        }
+    }
+})
+
+app.post("/api/leaderboard/initialize/:contestId", async (req, res: any) => {
+    const { contestId } = req.params;
+    try {
+        const validBody = registeredUsers.parse(req.body);
+        // Initialize Redis Sorted Set and Hash Map
+
+        /* A pipeline allows you to batch multiple Redis commands and execute them in a single round-trip to the Redis server. 
+         This can improve performance by reducing the number of network requests.
+        */
+
+        const pipeline = client.multi();
+        validBody.forEach(user => {
+            // Add user to the sorted set with an initial score
+            pipeline.zAdd(`leaderboard:${contestId}`, { score: user.score, value: user.userId });
+
+            // Store user details in a hash map
+            pipeline.hSet(`user:${user.userId}`, {
+                userName: user.userName,
+                country: user.country
+            });
+        });
+        // This line executes all the commands in the pipeline
+        await pipeline.exec();
+
+        res.json({ msg: "Leaderboard initialized successfully" });
+    } catch (err) {
+        if (err instanceof ZodError) {
+            return res.status(400).json({
+                msg: err.errors[0]?.message
+            });
+        } else if (err instanceof Error) {
+            return res.status(500).json({
+                msg: err.message
+            });
+        } else {
+            return res.status(500).json({
+                msg: "An unknown error occurred while initializing the leaderboard for the contest"
             });
         }
     }

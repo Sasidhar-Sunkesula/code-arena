@@ -127,9 +127,21 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
 
             // Add the score to leaderboard only if it is a contest
             if (contestId && userId) {
+                // Fetch user details
+                const user = await prisma.user.findUnique({
+                    where: {
+                        id: userId
+                    }, select: {
+                        location: true,
+                        name: true
+                    }
+                })
+                if (!user) throw new Error("Unable to get the user details to add in the leaderboard")
                 const reqBody = {
                     userId: userId,
                     score: points,
+                    country: user.location,
+                    userName: user.name
                 }
                 const response = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/${contestId}`, {
                     method: "POST",

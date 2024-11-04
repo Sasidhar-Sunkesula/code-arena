@@ -36,7 +36,7 @@ export async function GET(req: NextRequest, { params }: { params: { submissionId
     } catch (error) {
         if (error instanceof ZodError) {
             return NextResponse.json({
-                msg: error.errors
+                msg: error.errors[0]?.message
             }, {
                 status: 400
             })
