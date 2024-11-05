@@ -2,7 +2,7 @@ import prisma from "@repo/db/client";
 import { NextRequest, NextResponse } from "next/server";
 import { SubmissionStatus } from "@prisma/client";
 import { calculatePoints } from "@/app/actions/calculatePoints";
-import { SubmissionResult } from "@repo/common/types";
+import { ScoreSchema, SubmissionResult } from "@repo/common/types";
 
 export function mapStatusDescriptionToEnum(description: string): SubmissionStatus {
     switch (description) {
@@ -137,11 +137,11 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
                     }
                 })
                 if (!user) throw new Error("Unable to get the user details to add in the leaderboard")
-                const reqBody = {
+                const reqBody: ScoreSchema = {
                     userId: userId,
                     score: points,
-                    country: user.location,
-                    userName: user.name
+                    country: user.location || "Unknown",
+                    userName: user.name || "NA"
                 }
                 const response = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/${contestId}`, {
                     method: "POST",

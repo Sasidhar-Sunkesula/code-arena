@@ -35,17 +35,25 @@ export const contestFormSchema = z.object({
         .max(50, { message: "User name must be at most 50 characters." }),
     difficultyLevel: z.nativeEnum(ContestLevel),
     problemIds: z.array(z.number()),
-    startsOn: z.date({
+    startsOn: z.string({
         required_error: "A start date is required."
-    }).refine(date => normalizeDate(date) >= normalizeDate(new Date()), {
+    }).refine(dateStr => {
+        const date = new Date(dateStr);
+        return !isNaN(date.getTime()) && normalizeDate(date) >= normalizeDate(new Date());
+    }, {
         message: "Start date cannot be in the past."
     }),
-    endsOn: z.date({
+    endsOn: z.string({
         required_error: "An end date is required."
+    }).refine(dateStr => {
+        const date = new Date(dateStr);
+        return !isNaN(date.getTime()) && normalizeDate(date) >= normalizeDate(new Date());
+    }, {
+        message: "End date cannot be in the past."
     })
 }).superRefine((data, ctx) => {
-    const normalizedStartsOn = normalizeDate(data.startsOn);
-    const normalizedEndsOn = normalizeDate(data.endsOn);
+    const normalizedStartsOn = normalizeDate(new Date(data.startsOn));
+    const normalizedEndsOn = normalizeDate(new Date(data.endsOn));
 
     if (normalizedEndsOn < normalizedStartsOn) {
         ctx.addIssue({
@@ -99,7 +107,9 @@ export const checkStatusSchema = z.object({
     submissionTokens: z.array(z.string())
 })
 
-// export const scoreSchema = z.object({
-//     userId: z.string(),
-//     score: z.number()
-// })
+export const scoreSchema = z.object({
+    userId: z.string(),
+    score: z.number(),
+    userName: z.string(),
+    country: z.string()
+})

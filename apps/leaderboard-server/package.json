@@ -5,8 +5,8 @@
   "scripts": {
     "start": "node dist/server.js",
     "clean": "rm -rf dist",
-    "build": "tsup",
-    "dev": "tsup --watch --onSuccess \"node dist/server.js\""
+    "build": "npx esbuild ./src/server.ts  --bundle --platform=node --outfile=./dist/server.js",
+    "dev": "nodemon --watch src --exec \"npx esbuild ./src/server.ts --bundle --platform=node --outfile=./dist/server.js && node dist/server.js\""
   },
   "keywords": [],
   "author": "",
@@ -20,6 +20,7 @@
     "redis": "^4.7.0"
   },
   "devDependencies": {
-    "tsup": "^8.3.5"
+    "nodemon": "^3.1.7",
+    "esbuild": "^0.24.0"
   }
 }

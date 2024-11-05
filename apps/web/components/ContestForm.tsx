@@ -23,8 +23,8 @@ export function ContestForm() {
             userName: '',
             contestName: '',
             difficultyLevel: ContestLevel.BEGINNER,
-            startsOn: new Date(),
-            endsOn: new Date(),
+            startsOn: new Date().toISOString(),
+            endsOn: "",
             problemIds: []
         },
     });

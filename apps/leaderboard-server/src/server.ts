@@ -1,7 +1,9 @@
 import express, { Response } from "express"
 import cors from "cors"
 import { createClient } from "redis";
-import { z, ZodError } from "zod";
+import { ZodError } from "zod";
+import { scoreSchema } from "@repo/common/zod";
+import { ActionType } from "@repo/common/types";
 
 const app = express();
 
@@ -22,17 +24,12 @@ client.connect();
 
 let clients: { id: number, res: Response }[] = [];
 
-const scoreSchema = z.object({
-    userId: z.string(),
-    score: z.number(),
-    userName: z.string(),
-    country: z.string()
-})
-
-const registeredUsers = z.array(scoreSchema);
-
 app.post("/api/leaderboard/:contestId", async (req, res: any) => {
     const { contestId } = req.params;
+    const { type } = req.query;
+    if (!type || (type !== ActionType.New && type !== ActionType.Update)) {
+        return res.status(400).json({ msg: "Invalid type parameter" });
+    }
     try {
         const validBody = scoreSchema.parse(req.body);
         const { userId, score, country, userName } = validBody;
@@ -40,15 +37,17 @@ app.post("/api/leaderboard/:contestId", async (req, res: any) => {
         // Add the user ID and score to the sorted set for the contest
         await client.zAdd(`leaderboard:${contestId}`, { score, value: userId });
 
-        // Store the user details in a hash map
-        await client.hSet(`userId:${userId}`, {
-            userName: userName,
-            country: country,
-        })
+        // Store the user details in redis hash data structure 
+        const userDetails = JSON.stringify({ userName, country });
+        await client.hSet(`userDetails:${contestId}`, userId, userDetails);
+
         res.json({ msg: "Score added successfully" });
-        // Broadcast the updated leaderboard
-        const leaderboard = await client.zRangeWithScores(`leaderboard:${contestId}`, 0, -1, { REV: true });
-        sendEvent(leaderboard);
+
+        // Broadcast the updated leaderboard only if the action is 'update'
+        if (type === ActionType.Update) {
+            const leaderboard = await client.zRangeWithScores(`leaderboard:${contestId}`, 0, -1, { REV: true });
+            sendEvent(leaderboard);
+        }
     } catch (err) {
         if (err instanceof ZodError) {
             return res.status(400).json({
@@ -61,48 +60,6 @@ app.post("/api/leaderboard/:contestId", async (req, res: any) => {
         } else {
             return res.status(500).json({
                 msg: "An unknown error occurred while adding the score"
-            });
-        }
-    }
-})
-
-app.post("/api/leaderboard/initialize/:contestId", async (req, res: any) => {
-    const { contestId } = req.params;
-    try {
-        const validBody = registeredUsers.parse(req.body);
-        // Initialize Redis Sorted Set and Hash Map
-
-        /* A pipeline allows you to batch multiple Redis commands and execute them in a single round-trip to the Redis server. 
-         This can improve performance by reducing the number of network requests.
-        */
-
-        const pipeline = client.multi();
-        validBody.forEach(user => {
-            // Add user to the sorted set with an initial score
-            pipeline.zAdd(`leaderboard:${contestId}`, { score: user.score, value: user.userId });
-
-            // Store user details in a hash map
-            pipeline.hSet(`user:${user.userId}`, {
-                userName: user.userName,
-                country: user.country
-            });
-        });
-        // This line executes all the commands in the pipeline
-        await pipeline.exec();
-
-        res.json({ msg: "Leaderboard initialized successfully" });
-    } catch (err) {
-        if (err instanceof ZodError) {
-            return res.status(400).json({
-                msg: err.errors[0]?.message
-            });
-        } else if (err instanceof Error) {
-            return res.status(500).json({
-                msg: err.message
-            });
-        } else {
-            return res.status(500).json({
-                msg: "An unknown error occurred while initializing the leaderboard for the contest"
             });
         }
     }
@@ -125,7 +82,7 @@ app.get("/api/leaderboard/:contestId", async (req, res: any) => {
 
     // Send the initial leaderboard data
     try {
-        const leaderboard = await getLeaderboardWithDetails(contestId);
+        const leaderboard = await getLeaderboardWithDetails(parseInt(contestId));
         res.write(`data: ${JSON.stringify(leaderboard)}\n\n`);
     } catch (err) {
         console.error('Error retrieving initial leaderboard:', err);
@@ -141,19 +98,21 @@ app.get("/api/leaderboard/:contestId", async (req, res: any) => {
     });
 })
 
-async function getLeaderboardWithDetails(contestId: string) {
+async function getLeaderboardWithDetails(contestId: number) {
     const redisLeaderboard = await client.zRangeWithScores(`leaderboard:${contestId}`, 0, -1, { REV: true });
+    const userDetails = await client.hGetAll(`userDetails:${contestId}`);
+    const leaderboardData = redisLeaderboard.map((user, index) => {
+        const userDetailJson = userDetails[user.value];
+        const userDetail = userDetailJson ? JSON.parse(userDetailJson) : {};
 
-    const leaderboardData = await Promise.all(redisLeaderboard.map(async (entry, index) => {
-        const userDetails = await client.hGetAll(`user:${entry.value}`);
         return {
-            userId: entry.value,
-            username: userDetails.userName || 'Unknown',
-            score: entry.score,
+            userId: user.value,
+            username: userDetail.userName || 'Unknown',
+            score: user.score,
             rank: index + 1,
-            country: userDetails.country || 'N/A'
+            country: userDetail.country || 'N/A'
         };
-    }));
+    });
 
     return leaderboardData;
 }

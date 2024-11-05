@@ -1,5 +1,6 @@
 "use server"
 
+import { ActionType, ScoreSchema } from "@repo/common/types";
 import prisma from "@repo/db/client"
 
 export async function registerToContest(userId: string, contestId: number) {
@@ -19,6 +20,32 @@ export async function registerToContest(userId: string, contestId: number) {
                 msg: "Registration is closed for this contest.",
             };
         }
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }, select: {
+                name: true,
+                location: true
+            }
+        })
+        if (!user) throw new Error("Unable to get the user details")
+        const reqBody: ScoreSchema = {
+            userId: userId,
+            userName: user.name || "Unknown",
+            score: 0,
+            country: user.location || "NA"
+        }
+        const leaderboardResponse = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/${contestId}?type=${ActionType.New}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(reqBody)
+        })
+        if (!leaderboardResponse.ok) {
+            const errorData = await leaderboardResponse.json();
+            throw new Error(errorData.msg)
+        }
         await prisma.userContest.create({
             data: {
                 userId,
@@ -32,7 +59,7 @@ export async function registerToContest(userId: string, contestId: number) {
     } catch (error) {
         return {
             status: 500,
-            msg: "Unable to register for the contest",
+            msg: error instanceof Error ? error.message : "Unable to register for the contest",
         };
     }
 }

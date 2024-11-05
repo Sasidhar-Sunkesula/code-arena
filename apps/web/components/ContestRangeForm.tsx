@@ -1,22 +1,23 @@
-"use client"
+"use client";
 
 import { ContestFormType } from "@repo/common/types";
 import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Button } from "@repo/ui/shad";
 import { Control, UseFormWatch } from "react-hook-form";
-import { Calendar as CalendarIcon } from "lucide-react"
-import { cn } from "@repo/ui/utils"
-import { Calendar } from "@repo/ui/shad"
+import { Calendar as CalendarIcon } from "lucide-react";
+import { cn } from "@repo/ui/utils";
+import { Calendar } from "@repo/ui/shad";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@repo/ui/shad"
-import { format } from "date-fns"
+} from "@repo/ui/shad";
+import { format, parseISO } from "date-fns";
 
 interface ContestRangeFormProps {
     control: Control<ContestFormType, any>;
-    watch: UseFormWatch<ContestFormType>
+    watch: UseFormWatch<ContestFormType>;
 }
+
 export function ContestRangeForm({ control, watch }: ContestRangeFormProps) {
     const startsOn = watch("startsOn");
     return (
@@ -38,7 +39,7 @@ export function ContestRangeForm({ control, watch }: ContestRangeFormProps) {
                                         )}
                                     >
                                         {field.value ? (
-                                            format(field.value, "PPP")
+                                            format(parseISO(field.value), "PPP")
                                         ) : (
                                             <span>Pick a date</span>
                                         )}
@@ -49,8 +50,8 @@ export function ContestRangeForm({ control, watch }: ContestRangeFormProps) {
                             <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
                                     mode="single"
-                                    selected={field.value}
-                                    onSelect={field.onChange}
+                                    selected={field.value ? parseISO(field.value) : undefined}
+                                    onSelect={(date) => field.onChange(date ? date.toISOString() : "")}
                                     disabled={(date) =>
                                         date < new Date("1900-01-01") || date < new Date()
                                     }
@@ -82,7 +83,7 @@ export function ContestRangeForm({ control, watch }: ContestRangeFormProps) {
                                         )}
                                     >
                                         {field.value ? (
-                                            format(field.value, "PPP")
+                                            format(parseISO(field.value), "PPP")
                                         ) : (
                                             <span>Pick a date</span>
                                         )}
@@ -93,10 +94,10 @@ export function ContestRangeForm({ control, watch }: ContestRangeFormProps) {
                             <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
                                     mode="single"
-                                    selected={field.value}
-                                    onSelect={field.onChange}
+                                    selected={field.value ? parseISO(field.value) : undefined}
+                                    onSelect={(date) => field.onChange(date ? date.toISOString() : "")}
                                     disabled={(date) =>
-                                        date < new Date("1900-01-01") || date < startsOn || date < new Date()
+                                        date < new Date("1900-01-01") || date < parseISO(startsOn) || date < new Date()
                                     }
                                     initialFocus
                                 />

@@ -6,14 +6,17 @@ import { ZodError } from "zod";
 export async function POST(req: NextRequest) {
     try {
         const validatedBody = contestFormSchema.parse(await req.json());
+        // Convert string dates to Date objects
+        const startsOn = new Date(validatedBody.startsOn);
+        const endsOn = new Date(validatedBody.endsOn);
         const result = await prisma.$transaction(async () => {
             const createContest = await prisma.contest.create({
                 data: {
                     name: validatedBody.contestName,
                     contributedBy: validatedBody.userName,
                     level: validatedBody.difficultyLevel,
-                    startsOn: validatedBody.startsOn,
-                    closesOn: validatedBody.endsOn
+                    startsOn: startsOn,
+                    closesOn: endsOn
                 },
                 select: {
                     id: true
@@ -24,16 +27,11 @@ export async function POST(req: NextRequest) {
                 contestId,
                 problemId
             }));
-            const contestProblems = await prisma.contestProblem.createMany({
+            await prisma.contestProblem.createMany({
                 data: problemIdsWithContestId
             })
-            return { createContest, contestProblems }
+            return { createContest }
         })
-        const leaderboardResponse = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/initialize/${result.createContest.id}`);
-        if (!leaderboardResponse.ok) {
-            const errorData = await leaderboardResponse.json();
-            throw new Error(errorData.msg)
-        }
         return NextResponse.json({
             createdContestId: result.createContest.id
         }, {
@@ -53,10 +51,12 @@ export async function POST(req: NextRequest) {
                 status: 500
             })
         }
-        return NextResponse.json({
-            msg: "An unknown error occurred"
-        }, {
-            status: 500
-        })
+        else {
+            return NextResponse.json({
+                msg: "An unknown error occurred"
+            }, {
+                status: 500
+            })
+        }
     }
 }
