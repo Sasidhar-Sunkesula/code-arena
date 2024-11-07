@@ -18,3 +18,4 @@ export * from "./shad/ui/calendar";
 export * from "./shad/ui/popover";
 export * from "./shad/ui/command";
 export * from "./shad/ui/alert-dialog";
+export * from "./shad/ui/time-picker";

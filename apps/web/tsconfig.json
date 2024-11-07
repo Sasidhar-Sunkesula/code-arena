@@ -21,6 +21,6 @@
     ".next/types/**/*.ts",
     "postcss.config.js",
     "tailwind.config.js"
-  ],
+, "../../packages/ui/src/shad/ui/time-picker-utils.tsx"  ],
   "exclude": ["node_modules"]
 }

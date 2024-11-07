@@ -12,7 +12,7 @@ import { ContestBasicDetails } from "./ContestBasicDetails"
 import { ContestProblemSelection } from "./ContestProblemSelection"
 import { ContestSelectedProblems } from "./ContestSelectedProblems"
 import { useState } from "react"
-import { Loader2 } from "lucide-react"
+import { SendHorizontal } from "lucide-react"
 
 export function ContestForm() {
     const [selectedProblems, setSelectedProblems] = useState<{ id: number, name: string }[]>([]);
@@ -50,7 +50,7 @@ export function ContestForm() {
                 const errorData = await response.json();
                 throw new Error(errorData.msg)
             }
-            toast.success("Contest created successfully! Thank you for your contribution")
+            toast.success("Contest created successfully. Thank you for your contribution!")
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "An error occurred while creating the contest.");
         } finally {
@@ -73,6 +73,7 @@ export function ContestForm() {
                         <div className="w-full md:w-6/12">
                             <ContestProblemSelection
                                 control={form.control}
+                                selectedProblems={selectedProblems}
                                 setSelectedProblems={setSelectedProblems}
                             />
                         </div>
@@ -86,10 +87,13 @@ export function ContestForm() {
                         </div>
                     </div>
                 </div>
-                <Button disabled={loading} type="submit">
+                <Button disabled={loading} size={"lg"} type="submit">
                     {loading
-                        ? <Loader2 className="animate-spin w-4" />
-                        : "Submit"
+                        ? "Adding"
+                        : <span className="flex items-center">
+                            Submit
+                            <SendHorizontal className="w-4 ml-1" />
+                        </span>
                     }
                 </Button>
             </form>

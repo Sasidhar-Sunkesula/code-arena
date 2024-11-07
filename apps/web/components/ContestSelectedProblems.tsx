@@ -8,7 +8,7 @@ interface ContestSelectedProblemsProps {
     watch: UseFormWatch<ContestFormType>;
     setValue: UseFormSetValue<ContestFormType>;
     selectedProblems: { id: number, name: string }[];
-    setSelectedProblems: React.Dispatch<React.SetStateAction<{ id: number, name: string }[]>>;
+    setSelectedProblems: React.Dispatch<React.SetStateAction<{ id: number; name: string }[]>>
 }
 
 export function ContestSelectedProblems({ watch, selectedProblems, setValue, setSelectedProblems }: ContestSelectedProblemsProps) {

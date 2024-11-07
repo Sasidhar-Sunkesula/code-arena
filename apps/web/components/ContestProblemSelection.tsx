@@ -1,14 +1,15 @@
 import { searchProblems } from "@/app/actions/searchProblems";
 import { ContestFormType } from "@repo/common/types";
 import { Button, FormDescription, FormField, FormItem, FormLabel, FormMessage, Input } from "@repo/ui/shad";
-import { Loader2 } from "lucide-react";
+import { Loader2, PlusIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Control } from "react-hook-form";
 import toast from "react-hot-toast";
 
 interface ContestProblemSelectionProps {
+    selectedProblems: { id: number; name: string }[]
     control: Control<ContestFormType, any>;
-    setSelectedProblems: React.Dispatch<React.SetStateAction<{ id: number, name: string }[]>>;
+    setSelectedProblems: React.Dispatch<React.SetStateAction<{ id: number; name: string }[]>>
 }
 export function ContestProblemSelection({ control, setSelectedProblems }: ContestProblemSelectionProps) {
     const [searchKey, setSearchKey] = useState("");
@@ -51,27 +52,33 @@ export function ContestProblemSelection({ control, setSelectedProblems }: Contes
                         />
                         <div className={`border rounded-sm space-y-1 min-h-48 flex 
                                 ${searchKey.trim() && !loading && searchResults.length > 0
-                                ? "flex-col justify-start p-1"
+                                ? "flex-col justify-start p-2"
                                 : "flex-row justify-center items-center"}`}
                         >
                             {!searchKey.trim() && <div className="text-sm">Search something at first</div>}
                             {searchKey.trim() && loading && <Loader2 className="animate-spin w-4" />}
                             {searchKey.trim() && !loading && searchResults.length > 0 && (
-                                searchResults.map(result => (
-                                    <Button
-                                        variant={"outline"}
-                                        key={result.id}
-                                        onClick={() => {
-                                            const newProblemIds = [...field.value, result.id];
-                                            field.onChange(newProblemIds);
-                                            setSelectedProblems(prev => [...prev, result])
-                                        }}
-                                        className="w-full"
-                                    >
-                                        {result.name}
-                                    </Button>
-                                ))
-                            )}
+                                searchResults.map(result => {
+                                    const isAdded = field.value.includes(result.id)
+                                    return (
+                                        <div className="px-8 py-1 flex items-center border justify-between">
+                                            <span className="text-sm">{result.name}</span>
+                                            <Button
+                                                disabled={isAdded}
+                                                key={result.id}
+                                                onClick={() => {
+                                                    const newProblemIds = [...field.value, result.id];
+                                                    !isAdded && field.onChange(newProblemIds);
+                                                    setSelectedProblems(prev => isAdded ? prev : [...prev, result]);
+                                                }}
+                                            >
+                                                {isAdded ? "Added" : "Add"}
+                                                <PlusIcon className="w-4 ml-1" />
+                                            </Button>
+                                        </div>
+                                    )
+                                }
+                                ))}
                             {searchKey.trim() && !loading && searchResults.length === 0 && <div className="text-sm">No results found</div>}
                         </div>
                     </div>

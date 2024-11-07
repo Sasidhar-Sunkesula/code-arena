@@ -1,7 +1,5 @@
-"use client";
-
 import { ContestFormType } from "@repo/common/types";
-import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Button } from "@repo/ui/shad";
+import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Button, TimePicker } from "@repo/ui/shad";
 import { Control, UseFormWatch } from "react-hook-form";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@repo/ui/utils";
@@ -11,13 +9,17 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@repo/ui/shad";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 
 interface ContestRangeFormProps {
     control: Control<ContestFormType, any>;
     watch: UseFormWatch<ContestFormType>;
 }
-
+const normalizeDate = (date: Date) => {
+    const normalizedDate = new Date(date);
+    normalizedDate.setHours(0, 0, 0, 0);
+    return normalizedDate;
+};
 export function ContestRangeForm({ control, watch }: ContestRangeFormProps) {
     const startsOn = watch("startsOn");
     return (
@@ -32,6 +34,7 @@ export function ContestRangeForm({ control, watch }: ContestRangeFormProps) {
                             <PopoverTrigger asChild>
                                 <FormControl>
                                     <Button
+                                        suppressHydrationWarning
                                         variant={"outline"}
                                         className={cn(
                                             "w-[240px] pl-3 text-left font-normal",
@@ -39,7 +42,7 @@ export function ContestRangeForm({ control, watch }: ContestRangeFormProps) {
                                         )}
                                     >
                                         {field.value ? (
-                                            format(parseISO(field.value), "PPP")
+                                            format(field.value, "PPP HH:mm")
                                         ) : (
                                             <span>Pick a date</span>
                                         )}
@@ -50,13 +53,17 @@ export function ContestRangeForm({ control, watch }: ContestRangeFormProps) {
                             <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
                                     mode="single"
-                                    selected={field.value ? parseISO(field.value) : undefined}
-                                    onSelect={(date) => field.onChange(date ? date.toISOString() : "")}
-                                    disabled={(date) =>
-                                        date < new Date("1900-01-01") || date < new Date()
-                                    }
+                                    selected={new Date(field.value)}
+                                    onSelect={(date) => field.onChange(date ? date.toLocaleString() : "")}
+                                    disabled={(date) => normalizeDate(date) < normalizeDate(new Date())}
                                     initialFocus
                                 />
+                                <div className="p-3 border-t border-border">
+                                    <TimePicker
+                                        setDate={(date) => field.onChange(date ? date.toLocaleString() : undefined)}
+                                        date={field.value ? new Date(field.value) : undefined}
+                                    />
+                                </div>
                             </PopoverContent>
                         </Popover>
                         <FormDescription>
@@ -83,7 +90,7 @@ export function ContestRangeForm({ control, watch }: ContestRangeFormProps) {
                                         )}
                                     >
                                         {field.value ? (
-                                            format(parseISO(field.value), "PPP")
+                                            format(field.value, "PPP HH:mm")
                                         ) : (
                                             <span>Pick a date</span>
                                         )}
@@ -94,13 +101,17 @@ export function ContestRangeForm({ control, watch }: ContestRangeFormProps) {
                             <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
                                     mode="single"
-                                    selected={field.value ? parseISO(field.value) : undefined}
-                                    onSelect={(date) => field.onChange(date ? date.toISOString() : "")}
-                                    disabled={(date) =>
-                                        date < new Date("1900-01-01") || date < parseISO(startsOn) || date < new Date()
-                                    }
+                                    selected={new Date(field.value)}
+                                    onSelect={(date) => field.onChange(date ? date.toLocaleString() : "")}
+                                    disabled={(date) => normalizeDate(date) < normalizeDate(new Date(startsOn)) || normalizeDate(date) < normalizeDate(new Date())}
                                     initialFocus
                                 />
+                                <div className="p-3 border-t border-border">
+                                    <TimePicker
+                                        setDate={(date) => field.onChange(date ? date.toLocaleString() : undefined)}
+                                        date={field.value ? new Date(field.value) : undefined}
+                                    />
+                                </div>
                             </PopoverContent>
                         </Popover>
                         <FormDescription>
