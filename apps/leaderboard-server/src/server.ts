@@ -4,7 +4,9 @@ import { createClient } from "redis";
 import { ZodError } from "zod";
 import { scoreSchema } from "@repo/common/zod";
 import { ActionType } from "@repo/common/types";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
 
 app.use(cors());
@@ -106,7 +108,6 @@ async function getLeaderboardWithDetails(contestId: number) {
         const userDetail = userDetailJson ? JSON.parse(userDetailJson) : {};
 
         return {
-            userId: user.value,
             username: userDetail.userName || 'Unknown',
             score: user.score,
             rank: index + 1,
