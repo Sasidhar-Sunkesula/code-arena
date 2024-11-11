@@ -19,7 +19,7 @@ export default async function ProblemSolvingPage({ params, searchParams }: { par
   if (!problemData) {
     return (
       <div className="min-h-screen flex justify-center items-center text-destructive font-medium text-xl">
-        Contest with id - {problemId} not found
+        Problem with id - {problemId} not found
       </div>
     )
   }

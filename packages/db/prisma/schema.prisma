@@ -121,6 +121,7 @@ model TestCaseResult {
 
 model BoilerPlate {
   id              Int      @id @default(autoincrement())
+  initialFunction String
   boilerPlateCode String
   languageId      Int      @unique
   problemId       Int

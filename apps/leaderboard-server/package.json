@@ -6,7 +6,7 @@
     "start": "node dist/server.js",
     "clean": "rm -rf dist",
     "build": "npx esbuild ./src/server.ts  --bundle --platform=node --outfile=./dist/server.js",
-    "dev": "nodemon --watch src --exec \"npx esbuild ./src/server.ts --bundle --platform=node --outfile=./dist/server.js && node dist/server.js\""
+    "dev": "nodemon"
   },
   "keywords": [],
   "author": "",

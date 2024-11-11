@@ -166,11 +166,12 @@ async function deleteAll() {
 async function addBoilerPlate() {
     await prisma.boilerPlate.update({
         data: {
-            boilerPlateCode: `function sum(a, b) {
-// Implement this function
-}
-// Read input from stdin (this part is handled by the boilerplate)
-const readline = require('readline');
+            initialFunction:
+                `function sum(a, b) {
+  // Implement this function
+}`,
+            boilerPlateCode:
+                `const readline = require('readline');
 const rl = readline.createInterface({
 input: process.stdin,
 output: process.stdout,
@@ -186,10 +187,9 @@ const b = parseInt(input[1]);
 console.log(sum(a, b)); // Call the user's function
 rl.close();
 }
-});
-`
+});`
         }, where: {
-            id: 2
+            id: 11
         }
     })
     console.log("bpc updated");
@@ -288,7 +288,7 @@ async function addLanguages() {
         });
     }
 }
-addLanguages()
+addBoilerPlate()
     .catch((e) => {
         console.error(e);
         process.exit(1);

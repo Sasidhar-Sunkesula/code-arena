@@ -20,6 +20,7 @@ export interface Language {
 }
 interface BoilerPlateWithLanguage {
     id: number;
+    initialFunction: string;
     boilerPlateCode: string;
     languageId: number;
     problemId: number;
@@ -35,13 +36,13 @@ export type SubmissionPendingObj = { run: boolean, submit: boolean }
 export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPlateWithLanguage[], contestId?: string }) {
     const [selectedLanguage, setSelectedLanguage] = useState(boilerPlates[0]?.language.monacoName || "")
     const boilerPlateOfSelectedLang = boilerPlates.find((item) => item.language.monacoName === selectedLanguage)
-    const [fullCode, setFullCode] = useState<string>(boilerPlateOfSelectedLang?.boilerPlateCode || "")
+    const [fullCode, setFullCode] = useState<string>(boilerPlateOfSelectedLang?.initialFunction || "")
     const [submissionPending, setSubmissionPending] = useState<SubmissionPendingObj>({ run: false, submit: false });
     const [submissionResults, setSubmissionResults] = useState<SubmissionData | null>(null);
     const [submitClicked, setSubmitClicked] = useState(false);
 
     useEffect(() => {
-        setFullCode(boilerPlateOfSelectedLang?.boilerPlateCode || "")
+        setFullCode(boilerPlateOfSelectedLang?.initialFunction || "")
     }, [boilerPlateOfSelectedLang])
 
     return (

@@ -24,7 +24,7 @@ client.on('connect', () => console.log('Connected to Redis'));
 
 client.connect();
 
-let clients: { id: number, res: Response }[] = [];
+let clients: Response[] = [];
 
 app.post("/api/leaderboard/:contestId", async (req, res: any) => {
     const { contestId } = req.params;
@@ -43,13 +43,14 @@ app.post("/api/leaderboard/:contestId", async (req, res: any) => {
         const userDetails = JSON.stringify({ userName, country });
         await client.hSet(`userDetails:${contestId}`, userId, userDetails);
 
-        res.json({ msg: "Score added successfully" });
-
-        // Broadcast the updated leaderboard only if the action is 'update'
+        // Broadcast the updated leaderboard to all the connected clients, only if the action is 'update'
         if (type === ActionType.Update) {
-            const leaderboard = await client.zRangeWithScores(`leaderboard:${contestId}`, 0, -1, { REV: true });
+            const leaderboard = await getLeaderboardWithDetails(parseInt(contestId));
             sendEvent(leaderboard);
+            return res.json({ msg: "Leaderboard updated successfully" });
         }
+
+        return res.json({ msg: "Score added successfully" });
     } catch (err) {
         if (err instanceof ZodError) {
             return res.status(400).json({
@@ -75,12 +76,7 @@ app.get("/api/leaderboard/:contestId", async (req, res: any) => {
     // Immediately send the HTTP headers to the client.
     res.flushHeaders();
 
-    const clientId = Date.now();
-    const newClient = {
-        id: clientId,
-        res: res
-    };
-    clients.push(newClient);
+    clients.push(res);
 
     // Send the initial leaderboard data
     try {
@@ -96,7 +92,7 @@ app.get("/api/leaderboard/:contestId", async (req, res: any) => {
 
     req.on('close', () => {
         clearInterval(keepAliveInterval);
-        clients = clients.filter(client => client.id !== clientId);
+        clients = clients.filter(client => client !== res);
     });
 })
 
@@ -121,7 +117,7 @@ async function getLeaderboardWithDetails(contestId: number) {
 function sendEvent(data: any) {
     clients.forEach(client => {
         try {
-            client.res.write(`data: ${JSON.stringify(data)}\n\n`);
+            client.write(`data: ${JSON.stringify(data)}\n\n`);
         } catch (err) {
             console.error('Error sending event:', err);
         }
@@ -131,11 +127,11 @@ function sendEvent(data: any) {
 // Graceful shutdown
 process.on('SIGTERM', () => {
     console.log('SIGTERM signal received: closing HTTP server');
-    clients.forEach(client => client.res.end());
+    clients.forEach(client => client.end());
     client.quit();
 });
 const PORT = 3001;
 
 app.listen(PORT, () => {
-    console.log(`Leader board event endpoint is at http://localhost:${PORT}`)
+    console.log(`Leaderboard event endpoint is at http://localhost:${PORT}`)
 })

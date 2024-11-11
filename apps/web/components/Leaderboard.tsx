@@ -31,15 +31,17 @@ export function LeaderBoardDisplay({ contestId }: { contestId: string }) {
         }
         eventSource.onerror = () => {
             eventSource.close() // Close the connection if an error occurs
+            setLoading(false)
         }
 
         return () => {
             eventSource.close()
+            setLoading(false)
         };
     }, [])
     if (loading) {
         return (
-            <div className="h-96 flex justify-center items-center">
+            <div className="md:h-96 flex justify-center items-center">
                 <Loader2 className="w-5 animate-spin" />
             </div>
         )
@@ -72,7 +74,9 @@ export function LeaderBoardDisplay({ contestId }: { contestId: string }) {
                 <Toaster />
             </>
         ) : (
-            <div>Unable to fetch data</div>
+            <div className="md:h-96 flex justify-center items-center text-sm">
+                Unable to fetch leaderboard data
+            </div>
         )
     )
 }

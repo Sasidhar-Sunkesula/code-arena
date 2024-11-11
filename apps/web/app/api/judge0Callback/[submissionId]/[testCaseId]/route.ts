@@ -2,7 +2,7 @@ import prisma from "@repo/db/client";
 import { NextRequest, NextResponse } from "next/server";
 import { SubmissionStatus } from "@prisma/client";
 import { calculatePoints } from "@/app/actions/calculatePoints";
-import { ScoreSchema, SubmissionResult } from "@repo/common/types";
+import { ActionType, ScoreSchema, SubmissionResult } from "@repo/common/types";
 
 export function mapStatusDescriptionToEnum(description: string): SubmissionStatus {
     switch (description) {
@@ -143,7 +143,7 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
                     country: user.location || "Unknown",
                     userName: user.name || "NA"
                 }
-                const response = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/${contestId}`, {
+                const response = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/${contestId}?type=${ActionType.Update}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
