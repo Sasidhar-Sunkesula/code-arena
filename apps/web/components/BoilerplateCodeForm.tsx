@@ -2,30 +2,20 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescripti
 import { Editor } from "@monaco-editor/react";
 import { Check, ChevronsUpDown, Loader2Icon } from "lucide-react";
 import { Control } from "react-hook-form";
-import { BoilerplateCodes } from "./ProblemContributionForm";
 import { ProblemFormType } from "@repo/common/types";
 import { cn } from "@repo/ui/utils";
+import { useState } from "react";
+import { Language } from "./CodeEditor";
+import { Boilerplate } from "./ProblemContributionForm";
 
 interface BoilerplateCodeFormProps {
     control: Control<ProblemFormType, any>;
-    selectedLanguage: string;
-    handleLanguageChange: (language: string) => void;
-    boilerplateCodes: BoilerplateCodes;
-    handleBoilerplateChange: (value: string) => void;
-    languages: {
-        id: number;
-        judge0Name: string;
-    }[];
+    languages: Language[];
 }
 
-export function BoilerplateCodeForm({
-    control,
-    selectedLanguage,
-    boilerplateCodes,
-    handleLanguageChange,
-    handleBoilerplateChange,
-    languages
-}: BoilerplateCodeFormProps) {
+export function BoilerplateCodeForm({ control, languages }: BoilerplateCodeFormProps) {
+    const [selectedLanguageIndex, setSelectedLanguageIndex] = useState<number | null>(null);
+
     return (
         <FormField
             control={control}
@@ -43,13 +33,11 @@ export function BoilerplateCodeForm({
                                             role="combobox"
                                             className={cn(
                                                 "w-[250px] justify-between",
-                                                !selectedLanguage && "text-muted-foreground"
+                                                selectedLanguageIndex === null && "text-muted-foreground"
                                             )}
                                         >
-                                            {selectedLanguage
-                                                ? languages.find(
-                                                    (language) => language.judge0Name === selectedLanguage
-                                                )?.judge0Name
+                                            {selectedLanguageIndex !== null
+                                                ? languages[selectedLanguageIndex]?.judge0Name
                                                 : "Select language"}
                                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                         </Button>
@@ -61,16 +49,27 @@ export function BoilerplateCodeForm({
                                         <CommandList>
                                             <CommandEmpty>No language found.</CommandEmpty>
                                             <CommandGroup>
-                                                {languages.map((language) => (
+                                                {languages.map((language, index) => (
                                                     <CommandItem
                                                         value={language.judge0Name}
                                                         key={language.id}
-                                                        onSelect={handleLanguageChange}
+                                                        onSelect={() => {
+                                                            setSelectedLanguageIndex(index);
+                                                            // Add the language to boilerplateCodes if not already present
+                                                            if (!field.value.some(bpc => bpc.judge0Name === language.judge0Name)) {
+                                                                const newBoilerplate: Boilerplate = {
+                                                                    judge0Name: language.judge0Name,
+                                                                    initialFunction: "",
+                                                                    callerCode: ""
+                                                                };
+                                                                field.onChange([...field.value, newBoilerplate]);
+                                                            }
+                                                        }}
                                                     >
                                                         <Check
                                                             className={cn(
                                                                 "mr-2 h-4 w-4",
-                                                                language.judge0Name === selectedLanguage
+                                                                selectedLanguageIndex === index
                                                                     ? "opacity-100"
                                                                     : "opacity-0"
                                                             )}
@@ -89,19 +88,23 @@ export function BoilerplateCodeForm({
                         </FormDescription>
                     </div>
                     <div className="space-y-2">
-                        <FormLabel>Boilerplate Code</FormLabel>
+                        <FormLabel>Boilerplate Function</FormLabel>
                         <FormControl>
                             <Editor
-                                height={"50vh"}
+                                height={"20vh"}
                                 width={"45vw"}
-                                language={selectedLanguage}
-                                value={boilerplateCodes[selectedLanguage]}
+                                language={selectedLanguageIndex !== null ? languages[selectedLanguageIndex]?.monacoName : ""}
+                                value={selectedLanguageIndex !== null ? field.value.find(bpc => bpc.judge0Name === languages[selectedLanguageIndex]?.judge0Name)?.initialFunction : ""}
                                 onChange={(value) => {
-                                    handleBoilerplateChange(value || "");
-                                    field.onChange({
-                                        ...field.value,
-                                        [selectedLanguage]: value || ""
-                                    });
+                                    if (selectedLanguageIndex !== null && languages[selectedLanguageIndex]?.id !== undefined) {
+                                        const updatedBoilerPlates = field.value.map((bpc) => {
+                                            if (bpc.judge0Name === languages[selectedLanguageIndex]?.judge0Name) {
+                                                return { ...bpc, initialFunction: value || "" };
+                                            }
+                                            return bpc;
+                                        });
+                                        field.onChange(updatedBoilerPlates)
+                                    }
                                 }}
                                 theme="vs-dark"
                                 loading={<Loader2Icon className='w-5 animate-spin' />}
@@ -117,12 +120,57 @@ export function BoilerplateCodeForm({
                                     roundedSelection: false,
                                     scrollBeyondLastLine: false,
                                     automaticLayout: true,
-                                    selectOnLineNumbers: true
+                                    selectOnLineNumbers: true,
+                                    readOnly: selectedLanguageIndex === null,
+                                    readOnlyMessage: { value: "Please select a language first!", isTrusted: true }
                                 }}
                             />
                         </FormControl>
                         <FormDescription>
-                            The boiler plate code should contain a function that user has to implement and the input handling code for that function. The input handling code should also call the function.
+                            The boiler plate code should only contain a function that user has to implement.
+                        </FormDescription>
+                    </div>
+                    <div className="space-y-2">
+                        <FormLabel>Caller Code</FormLabel>
+                        <FormControl>
+                            <Editor
+                                height={"35vh"}
+                                width={"45vw"}
+                                language={selectedLanguageIndex !== null ? languages[selectedLanguageIndex]?.monacoName : ""}
+                                value={selectedLanguageIndex !== null ? field.value.find((bpc) => bpc.judge0Name === languages[selectedLanguageIndex]?.judge0Name)?.callerCode : ""}
+                                onChange={(value) => {
+                                    if (selectedLanguageIndex !== null && languages[selectedLanguageIndex]?.id !== undefined) {
+                                        const updatedBoilerPlates = field.value.map((bpc) => {
+                                            if (bpc.judge0Name === languages[selectedLanguageIndex]?.judge0Name) {
+                                                return { ...bpc, callerCode: value || "" };
+                                            }
+                                            return bpc;
+                                        });
+                                        field.onChange(updatedBoilerPlates)
+                                    }
+                                }}
+                                theme="vs-dark"
+                                loading={<Loader2Icon className='w-5 animate-spin' />}
+                                options={{
+                                    minimap: { enabled: false },
+                                    fontSize: 16,
+                                    padding: {
+                                        top: 6,
+                                        bottom: 4
+                                    },
+                                    smoothScrolling: true,
+                                    lineNumbers: 'on',
+                                    roundedSelection: false,
+                                    scrollBeyondLastLine: false,
+                                    automaticLayout: true,
+                                    selectOnLineNumbers: true,
+                                    readOnly: selectedLanguageIndex === null,
+                                    readOnlyMessage: { value: "Please select a language first!", isTrusted: true }
+                                }}
+                            />
+                        </FormControl>
+                        <FormDescription>
+                            This is the input handling code for that function it should also call the function.
                         </FormDescription>
                     </div>
                     <FormMessage />

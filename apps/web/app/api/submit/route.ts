@@ -24,10 +24,11 @@ async function fetchTestCases(problemId: number) {
     }
     return testCases;
 }
-async function fetchBoilerPlate(problemId: number) {
+async function fetchBoilerPlate(problemId: number, languageId: number) {
     const boilerPlateCode = await prisma.boilerPlate.findFirst({
         where: {
-            problemId: problemId
+            problemId: problemId,
+            languageId: languageId
         }, select: {
             boilerPlateCode: true,
             languageId: true
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest) {
                     contestId: validatedInput?.contestId
                 }
             })
-            const boilerPlate = await fetchBoilerPlate(validatedInput.problemId);
+            const boilerPlate = await fetchBoilerPlate(validatedInput.problemId, validatedInput.languageId);
             const inputForJudge: BatchItem[] = testCases.map((testCase) => {
                 const baseUrl = `http://host.docker.internal:3000/api/judge0Callback/${newSubmission.id}/${testCase.id}`;
                 const queryParams = new URLSearchParams();
@@ -112,19 +113,21 @@ export async function POST(req: NextRequest) {
             })
         } else if (validatedInput.type === SubmissionType.RUN) {
             let testCases;
-            let boilerPlate: any;
+            let boilerPlate: { languageId: number; boilerPlateCode: string }
+            let fullCode: string;
             // If problemId is present, user is running a problem.
             if (validatedInput.problemId) {
                 testCases = await fetchTestCases(validatedInput.problemId);
-                boilerPlate = await fetchBoilerPlate(validatedInput.problemId);
+                boilerPlate = await fetchBoilerPlate(validatedInput.problemId, validatedInput.languageId);
+                fullCode = `${validatedInput.submittedCode.trim()}\n${boilerPlate.boilerPlateCode.trim()}`;
                 // If test cases were given, then user is testing his problem 
             } else if (validatedInput.testCases) {
                 testCases = validatedInput.testCases;
+                fullCode = validatedInput.submittedCode;
             } else {
                 throw new Error("No test cases provided");
             }
-            const fullCode = `${validatedInput.submittedCode.trim()}\n${boilerPlate.boilerPlateCode.trim()}`;
-            const inputForJudge: Omit<BatchItem, "callback_url">[] = testCases.map((testCase) => {
+            const inputForJudge: Omit<BatchItem, "callback_url">[] = testCases.map(testCase => {
                 return {
                     language_id: selectedLanguage.judge0Id,
                     source_code: fullCode,

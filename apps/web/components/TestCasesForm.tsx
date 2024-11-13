@@ -1,35 +1,17 @@
-import { DifficultyLevel, ProblemFormType } from "@repo/common/types";
+import { ProblemFormType } from "@repo/common/types";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription, Textarea, Button } from "@repo/ui/shad";
 import { CircleMinus, Plus } from "lucide-react";
-import { Control, FieldArrayWithId, UseFieldArrayAppend, UseFieldArrayRemove } from "react-hook-form";
+import { Control, useFieldArray } from "react-hook-form";
 
 interface TestCasesFormProps {
     control: Control<ProblemFormType, any>;
-    fields: FieldArrayWithId<{
-        problemName: string;
-        userName: string;
-        content: string;
-        boilerplateCodes: Record<string, string>;
-        testCases: {
-            input: string;
-            expectedOutput: string;
-        }[];
-    }, "testCases", "id">[];
-    append: UseFieldArrayAppend<{
-        problemName: string;
-        userName: string;
-        content: string;
-        boilerplateCodes: Record<string, string>;
-        testCases: {
-            input: string;
-            expectedOutput: string;
-        }[];
-        difficultyLevel: DifficultyLevel;
-    }, "testCases">
-    remove: UseFieldArrayRemove;
 }
 
-export function TestCasesForm({ control, fields, append, remove }: TestCasesFormProps) {
+export function TestCasesForm({ control }: TestCasesFormProps) {
+    const { fields, append, remove } = useFieldArray({
+        control: control,
+        name: "testCases"
+    });
     return (
         <div className="space-y-4">
             <FormLabel>Test Cases</FormLabel>

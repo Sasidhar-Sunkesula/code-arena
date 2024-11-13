@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { number, z } from "zod"
 import { ContestLevel, DifficultyLevel, SubmissionType } from "../types";
 
 export const problemFormSchema = z.object({
@@ -11,8 +11,12 @@ export const problemFormSchema = z.object({
     content: z.string()
         .min(50, { message: "Content must be at least 50 characters." })
         .max(750, { message: "Content must be at most 750 characters." }),
-    boilerplateCodes: z.record(z.string()).refine(
-        (codes) => Object.values(codes).some((code) => code.trim().length > 50),
+    boilerplateCodes: z.array(z.object({
+        judge0Name: z.string(),
+        initialFunction: z.string(),
+        callerCode: z.string()
+    })).refine(
+        (codes) => codes.some(code => code.initialFunction.trim().length > 0 && code.callerCode.trim().length > 0),
         { message: "At least one boilerplate code must be provided." }
     ),
     testCases: z.array(z.object({

@@ -16,23 +16,25 @@ export async function POST(req: NextRequest) {
                 }
             });
 
-            const boilerplateData = await Promise.all(
-                Object.entries(validatedBody.boilerplateCodes).map(async ([languageName, code]) => {
-                    const language = await prisma.language.findFirst({
-                        where: { judge0Name: languageName }
-                    });
-
-                    if (!language) {
-                        throw new Error(`Language not found: ${languageName}`);
+            const boilerplateData = await Promise.all(validatedBody.boilerplateCodes.map(async (bpc) => {
+                const language = await prisma.language.findFirst({
+                    where: {
+                        judge0Name: bpc.judge0Name
+                    },
+                    select: {
+                        id: true
                     }
-
-                    return {
-                        languageId: language.id,
-                        boilerPlateCode: code,
-                        problemId: createProblem.id
-                    };
                 })
-            );
+                if (!language) {
+                    throw new Error('Incorrect language name')
+                }
+                return {
+                    initialFunction: bpc.initialFunction,
+                    boilerPlateCode: bpc.callerCode,
+                    problemId: createProblem.id,
+                    languageId: language.id,
+                }
+            }));
 
             const createBoilerplateCodes = await prisma.boilerPlate.createMany({
                 data: boilerplateData

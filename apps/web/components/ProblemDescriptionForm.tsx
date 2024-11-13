@@ -6,11 +6,9 @@ import { ProblemFormType } from "@repo/common/types";
 
 interface ProblemDescriptionFormProps {
     control: Control<ProblemFormType, any>;
-    description: string;
-    setDescription: React.Dispatch<React.SetStateAction<string>>
 }
 
-export function ProblemDescriptionForm({ control, description, setDescription }: ProblemDescriptionFormProps) {
+export function ProblemDescriptionForm({ control }: ProblemDescriptionFormProps) {
     return (
         <FormField
             control={control}
@@ -33,11 +31,8 @@ export function ProblemDescriptionForm({ control, description, setDescription }:
                     <div className="h-3"></div>
                     <FormControl>
                         <MDEditor
-                            value={description}
-                            onChange={(value) => {
-                                setDescription(value || "");
-                                field.onChange(value);
-                            }}
+                            value={field.value}
+                            onChange={field.onChange}
                             previewOptions={{
                                 rehypePlugins: [[rehypeSanitize]],
                             }}
