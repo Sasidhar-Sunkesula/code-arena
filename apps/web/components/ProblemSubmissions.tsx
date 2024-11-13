@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import toast, { Toaster } from 'react-hot-toast';
 import { SubmissionStatus } from "@prisma/client";
 import SubmissionInfoCard from "./SubmissionInfoCard";
+import { useSession } from "next-auth/react";
 
 export type Submission = {
     id: number;
@@ -25,6 +26,7 @@ type SubmissionResponse = {
 export function ProblemSubmissions({ problemId, contestId }: { problemId: number, contestId?: number }) {
     const [submissionList, setSubmissionList] = useState<SubmissionResponse | null>(null);
     const [loading, setLoading] = useState(true);
+    const { data: session } = useSession();
     useEffect(() => {
         async function fetchSubmissions() {
             try {
@@ -39,8 +41,16 @@ export function ProblemSubmissions({ problemId, contestId }: { problemId: number
                 setLoading(false)
             }
         }
-        fetchSubmissions()
+        session && session.user && fetchSubmissions()
     }, []);
+
+    if (!session || !session.user) {
+        return (
+            <div className="flex justify-center border items-center w-full text-destructive font-medium md:min-h-96">
+                Login to view your submissions
+            </div>
+        )
+    }
     if (loading) {
         return (
             <div className="flex justify-center items-center w-full md:min-h-96">
@@ -52,25 +62,29 @@ export function ProblemSubmissions({ problemId, contestId }: { problemId: number
         <div>
             <Toaster />
             {!submissionList ? (
-                <div className="md:h-[450px] border p-2 text-destructive font-semibold flex justify-center items-center">Error while fetching submissions</div>
-            ) : (
-                <div className="space-y-2 md:h-[450px] overflow-y-auto">
-                    {contestId && <p className="text-sm text-center">Submissions shown here are contest specific.</p>}
-                    {submissionList?.submissions?.map((submission) => (
-                        <SubmissionInfoCard
-                            key={submission.id}
-                            points={submission.points}
-                            submittedCode={submission.submittedCode}
-                            status={submission.status}
-                            createdAt={submission.createdAt}
-                            runTime={submission.runTime}
-                            memory={submission.memory}
-                            testCasesPassed={submission.testCasesPassed}
-                            testCaseCount={submission.testCaseCount}
-                        />
-                    ))}
-                </div>
-            )}
+                <div className="md:h-[50vh] border p-2 text-destructive font-medium flex justify-center items-center">Error while fetching submissions</div>
+            ) :
+                submissionList.submissions?.length === 0
+                    ? <div className="md:h-[50vh] border p-2 font-semibold flex justify-center items-center">No submissions yet!</div>
+                    : (
+                        <div className="space-y-2 md:h-[450px] overflow-y-auto">
+                            {contestId && <p className="text-sm text-center">Submissions shown here are contest specific.</p>}
+                            {submissionList?.submissions?.map((submission) => (
+                                <SubmissionInfoCard
+                                    key={submission.id}
+                                    points={submission.points}
+                                    submittedCode={submission.submittedCode}
+                                    status={submission.status}
+                                    createdAt={submission.createdAt}
+                                    runTime={submission.runTime}
+                                    memory={submission.memory}
+                                    testCasesPassed={submission.testCasesPassed}
+                                    testCaseCount={submission.testCaseCount}
+                                />
+                            ))}
+                        </div>
+                    )
+            }
         </div>
     )
 }

@@ -52,9 +52,10 @@ export async function POST(req: NextRequest) {
             throw new Error("Error in finding the selected language from the db")
         }
         if (validatedInput.type === SubmissionType.SUBMIT) {
-            if (!session || !session.user) {
+            const userId = session?.user?.id || validatedInput.tempId;
+            if (!userId) {
                 return NextResponse.json({
-                    msg: "You must be logged in to submit a problem"
+                    msg: "You need credibility to submit a problem!"
                 }, {
                     status: 401
                 });
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest) {
                     submittedCode: validatedInput.submittedCode,
                     languageId: selectedLanguage.id,
                     createdAt: new Date(),
-                    userId: session.user.id,
+                    userId: userId,
                     problemId: validatedInput.problemId,
                     contestId: validatedInput?.contestId
                 }
@@ -80,7 +81,7 @@ export async function POST(req: NextRequest) {
                 const queryParams = new URLSearchParams();
                 if (validatedInput.contestId) {
                     queryParams.append('contestId', validatedInput.contestId.toString());
-                    queryParams.append('userId', session.user.id);
+                    queryParams.append('userId', userId);
                 }
                 const callbackUrl = `${baseUrl}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
                 // ensure that there is exactly one newline between the user's code and the boilerplate code,

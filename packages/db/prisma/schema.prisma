@@ -123,18 +123,20 @@ model BoilerPlate {
   id              Int      @id @default(autoincrement())
   initialFunction String
   boilerPlateCode String
-  languageId      Int      @unique
+  languageId      Int
   problemId       Int
   language        Language @relation(fields: [languageId], references: [id])
   Problem         Problem  @relation(fields: [problemId], references: [id])
+
+  @@unique([languageId, problemId])
 }
 
 model Language {
-  id          Int          @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   judge0Name  String
   judge0Id    Int
   monacoName  String
-  boilerPlate BoilerPlate?
+  boilerPlate BoilerPlate[]
   submissions Submission[]
 }
 

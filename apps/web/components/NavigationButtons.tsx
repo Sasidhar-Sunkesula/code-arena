@@ -40,7 +40,7 @@ export function NavigationButtons({ step, setStep, loading, trigger, allDone }: 
                     <ArrowRight className="w-5 ml-2" />
                 </Button>
             )}
-            {(step === 4 && !allDone) && (<Button className="w-28" disabled={loading || !allDone} type="submit">
+            {step === 4 && (<Button className="w-28" disabled={loading || !allDone} type="submit">
                 {
                     loading
                         ? <Loader2 className="animate-spin" />

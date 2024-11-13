@@ -12,7 +12,20 @@ interface BoilerplateCodeFormProps {
     control: Control<ProblemFormType, any>;
     languages: Language[];
 }
-
+export const editorOptions = {
+    minimap: { enabled: false },
+    fontSize: 16,
+    padding: {
+        top: 6,
+        bottom: 4
+    },
+    smoothScrolling: true,
+    lineNumbers: 'on' as const,
+    roundedSelection: false,
+    scrollBeyondLastLine: false,
+    automaticLayout: true,
+    selectOnLineNumbers: true,
+};
 export function BoilerplateCodeForm({ control, languages }: BoilerplateCodeFormProps) {
     const [selectedLanguageIndex, setSelectedLanguageIndex] = useState<number | null>(null);
 
@@ -109,20 +122,9 @@ export function BoilerplateCodeForm({ control, languages }: BoilerplateCodeFormP
                                 theme="vs-dark"
                                 loading={<Loader2Icon className='w-5 animate-spin' />}
                                 options={{
-                                    minimap: { enabled: false },
-                                    fontSize: 16,
-                                    padding: {
-                                        top: 6,
-                                        bottom: 4
-                                    },
-                                    smoothScrolling: true,
-                                    lineNumbers: 'on',
-                                    roundedSelection: false,
-                                    scrollBeyondLastLine: false,
-                                    automaticLayout: true,
-                                    selectOnLineNumbers: true,
-                                    readOnly: selectedLanguageIndex === null,
-                                    readOnlyMessage: { value: "Please select a language first!", isTrusted: true }
+                                    ...editorOptions,
+                                    readOnlyMessage: { value: "Please select a language first!", isTrusted: true },
+                                    readOnly: selectedLanguageIndex === null
                                 }}
                             />
                         </FormControl>
@@ -152,20 +154,9 @@ export function BoilerplateCodeForm({ control, languages }: BoilerplateCodeFormP
                                 theme="vs-dark"
                                 loading={<Loader2Icon className='w-5 animate-spin' />}
                                 options={{
-                                    minimap: { enabled: false },
-                                    fontSize: 16,
-                                    padding: {
-                                        top: 6,
-                                        bottom: 4
-                                    },
-                                    smoothScrolling: true,
-                                    lineNumbers: 'on',
-                                    roundedSelection: false,
-                                    scrollBeyondLastLine: false,
-                                    automaticLayout: true,
-                                    selectOnLineNumbers: true,
-                                    readOnly: selectedLanguageIndex === null,
-                                    readOnlyMessage: { value: "Please select a language first!", isTrusted: true }
+                                    ...editorOptions,
+                                    readOnlyMessage: { value: "Please select a language first!", isTrusted: true },
+                                    readOnly: selectedLanguageIndex === null
                                 }}
                             />
                         </FormControl>

@@ -19,6 +19,8 @@ type SubmitCodeProps = {
         input: string;
         expectedOutput: string;
     }[];
+    tempId?: string;
+    userType?: string;
     languageId: number;
     submissionPending: SubmissionPendingObj
     setSubmissionPending: React.Dispatch<React.SetStateAction<SubmissionPendingObj>>;
@@ -33,6 +35,8 @@ export function SubmitCode({
     problemId,
     contestId,
     type,
+    tempId,
+    userType,
     testCases,
     setSubmissionPending,
     submissionPending,
@@ -47,6 +51,7 @@ export function SubmitCode({
         testCases,
         contestId,
         type,
+        tempId,
         submissionPending,
         setSubmissionPending,
         setSubmissionResults,
@@ -55,10 +60,10 @@ export function SubmitCode({
     return (
         <div className="flex items-center gap-3">
             <Toaster />
-            {type === SubmissionType.SUBMIT && !session.data?.user.id && (
+            {type === SubmissionType.SUBMIT && !session.data?.user && userType !== "demo" && (
                 <Badge className="text-sm">You must be logged in to submit a problem</Badge>
             )}
-            <Button disabled={submissionPending.run || submissionPending.submit || (type === SubmissionType.SUBMIT && !session.data?.user.id)} onClick={submitCode}>
+            <Button disabled={submissionPending.run || submissionPending.submit || (type === SubmissionType.SUBMIT && userType !== "demo" && !session.data?.user.id)} onClick={submitCode}>
                 {((type === SubmissionType.RUN && submissionPending.run) || (type === SubmissionType.SUBMIT && submissionPending.submit))
                     ? "Pending..."
                     : text

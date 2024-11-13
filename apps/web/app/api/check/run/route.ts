@@ -25,16 +25,24 @@ export async function POST(req: NextRequest) {
                 msg: "PENDING"
             })
         }
+        let testCases: {
+            input: string;
+            expectedOutput: string;
+        }[];
         // Get the input and expected output
-        const testCases = await prisma.testCase.findMany({
-            where: {
-                problemId: validatedInput.problemId
-            },
-            select: {
-                input: true,
-                expectedOutput: true
-            }
-        })
+        if (!validatedInput.testCases) {
+            testCases = await prisma.testCase.findMany({
+                where: {
+                    problemId: validatedInput.problemId
+                },
+                select: {
+                    input: true,
+                    expectedOutput: true
+                }
+            })
+        } else {
+            testCases = validatedInput.testCases
+        }
         // Modify the stdout, stderr, and time fields
         const formattedSubmissions = batchSubmissions.submissions.map((submission, index) => {
             return {

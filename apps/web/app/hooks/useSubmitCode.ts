@@ -9,19 +9,15 @@ type UseSubmitCodeProps = {
     problemId?: number;
     contestId?: string;
     type: SubmissionType;
-    testCases?: {
-        input: string;
-        expectedOutput: string;
-    }[];
+    tempId?: string;
+    testCases?: { input: string; expectedOutput: string }[];
     submissionPending: SubmissionPendingObj
     setSubmissionPending: React.Dispatch<React.SetStateAction<SubmissionPendingObj>>;
     setSubmissionResults: React.Dispatch<React.SetStateAction<SubmissionData | null>>;
     setSubmitClicked: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-type SubmissionToken = {
-    token: string;
-};
+type SubmissionToken = { token: string };
 
 export function useSubmitCode({
     fullCode,
@@ -30,6 +26,7 @@ export function useSubmitCode({
     contestId,
     submissionPending,
     type,
+    tempId,
     testCases,
     setSubmissionPending,
     setSubmissionResults,
@@ -46,6 +43,7 @@ export function useSubmitCode({
                 submittedCode: fullCode,
                 languageId: languageId,
                 type: type,
+                tempId: tempId,
                 testCases: testCases,
                 ...(contestId && !isNaN(parseInt(contestId)) ? { contestId: parseInt(contestId) } : {})
             };
@@ -87,6 +85,7 @@ export function useSubmitCode({
                             },
                             body: JSON.stringify({
                                 problemId: problemId,
+                                testCases: testCases,
                                 submissionTokens: submissionTokens.map((tokenObj) => tokenObj.token)
                             })
                         });

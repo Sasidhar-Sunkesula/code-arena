@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/shad'
 import { Loader2Icon } from 'lucide-react'
 import { ProblemSubmissions } from './ProblemSubmissions'
 import { SubmissionType } from '@repo/common/types'
+import { editorOptions } from './BoilerplateCodeForm'
 
 export interface Language {
     id: number;
@@ -33,7 +34,7 @@ export type SubmissionData = Submission & {
     testCaseResults: TestCaseWithResult[]
 }
 export type SubmissionPendingObj = { run: boolean, submit: boolean }
-export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPlateWithLanguage[], contestId?: string }) {
+export function CodeEditor({ userType, tempId, boilerPlates, contestId }: { userType?: string, tempId?: string, boilerPlates: BoilerPlateWithLanguage[], contestId?: string }) {
     const [selectedLanguage, setSelectedLanguage] = useState(boilerPlates[0]?.language.monacoName || "")
     const boilerPlateOfSelectedLang = boilerPlates.find((item) => item.language.monacoName === selectedLanguage)
     const [fullCode, setFullCode] = useState<string>(boilerPlateOfSelectedLang?.initialFunction || "")
@@ -69,20 +70,7 @@ export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPl
                         onChange={(value) => setFullCode(value || '')}
                         theme="vs-dark"
                         loading={<Loader2Icon className='w-5 animate-spin' />}
-                        options={{
-                            minimap: { enabled: false },
-                            fontSize: 16,
-                            padding: {
-                                top: 6,
-                                bottom: 4
-                            },
-                            smoothScrolling: true,
-                            lineNumbers: 'on',
-                            roundedSelection: false,
-                            scrollBeyondLastLine: false,
-                            automaticLayout: true,
-                            selectOnLineNumbers: true
-                        }}
+                        options={editorOptions}
                     />
                 </TabsContent>
                 <TabsContent value="submissions">
@@ -116,6 +104,8 @@ export function CodeEditor({ boilerPlates, contestId }: { boilerPlates: BoilerPl
                             problemId={boilerPlateOfSelectedLang.problemId}
                             languageId={boilerPlateOfSelectedLang.languageId}
                             fullCode={fullCode}
+                            tempId={tempId}
+                            userType={userType}
                             submissionPending={submissionPending}
                             setSubmissionPending={setSubmissionPending}
                             setSubmissionResults={setSubmissionResults}

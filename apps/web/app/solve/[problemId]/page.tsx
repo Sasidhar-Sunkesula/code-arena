@@ -2,7 +2,7 @@ import { MarkdownRenderer } from "@/components/MarkdownRenderer"
 import { CodeEditor } from "@/components/CodeEditor"
 import prisma from "@repo/db/client"
 
-export default async function ProblemSolvingPage({ params, searchParams }: { params: { problemId: string }, searchParams: { contestId: string | undefined } }) {
+export default async function ProblemSolvingPage({ params, searchParams }: { params: { problemId: string }, searchParams: { contestId?: string, tempId?: string, type?: string } }) {
   const problemId = parseInt(params.problemId);
   const problemData = await prisma.problem.findUnique({
     where: {
@@ -31,7 +31,7 @@ export default async function ProblemSolvingPage({ params, searchParams }: { par
           <MarkdownRenderer content={problemData.content} />
         </div>
         <div>
-          <CodeEditor boilerPlates={problemData.boilerPlate} contestId={searchParams?.contestId} />
+          <CodeEditor userType={searchParams.type} tempId={searchParams.tempId} boilerPlates={problemData.boilerPlate} contestId={searchParams?.contestId} />
         </div>
       </div>
     </div>

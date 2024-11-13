@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Label, Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/shad";
 import { Editor } from "@monaco-editor/react";
 import { CheckCircle2, Loader2Icon } from "lucide-react";
@@ -10,19 +10,17 @@ import { Language, SubmissionData, SubmissionPendingObj } from "./CodeEditor";
 import { ResultDisplay } from "./ResultDisplay";
 import toast, { Toaster } from "react-hot-toast";
 import { Boilerplate } from "./ProblemContributionForm";
+import { editorOptions } from "./BoilerplateCodeForm";
 
 interface ConfirmationTestProps {
     boilerplateCodes: Boilerplate[];
     languages: Language[];
-    testCases: {
-        input: string;
-        expectedOutput: string;
-    }[];
+    testCases: { input: string; expectedOutput: string }[];
     setAllDone: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export function ConfirmationTest({ boilerplateCodes, testCases, languages, setAllDone }: ConfirmationTestProps) {
-    const filteredBpc = boilerplateCodes.filter(bpc => bpc.callerCode.length > 50 && bpc.initialFunction.length > 50)
+    const filteredBpc = useMemo(() => boilerplateCodes.filter(bpc => bpc.callerCode.length > 50 && bpc.initialFunction.length > 50), [boilerplateCodes]);
     const [selectedLanguage, setSelectedLanguage] = useState<string>(filteredBpc[0]?.judge0Name!);
     const [code, setCode] = useState<string>(filteredBpc[0]?.initialFunction ?? "");
     const [submissionPending, setSubmissionPending] = useState<SubmissionPendingObj>({ run: false, submit: false });
@@ -32,7 +30,7 @@ export function ConfirmationTest({ boilerplateCodes, testCases, languages, setAl
     const acceptedLanguagesRef = useRef<Set<string>>(new Set());
 
     useEffect(() => {
-        if (submissionResults && submissionResults.status === "Accepted" && submissionResults.languageId === languages.find((lang) => lang.judge0Name === selectedLanguage)?.id) {
+        if (submissionResults && submissionResults.status === "Accepted") {
             if (!acceptedLanguagesRef.current.has(selectedLanguage)) {
                 acceptedLanguagesRef.current.add(selectedLanguage);
                 if (acceptedLanguagesRef.current.size === filteredBpc.length) {
@@ -41,6 +39,13 @@ export function ConfirmationTest({ boilerplateCodes, testCases, languages, setAl
             }
         }
     }, [submissionResults]);
+
+    useEffect(() => {
+        const selectedBpc = filteredBpc.find(bpc => bpc.judge0Name === selectedLanguage);
+        if (selectedBpc) {
+            setCode(selectedBpc.initialFunction);
+        }
+    }, [selectedLanguage]);
 
     return (
         <div className="space-y-4">
@@ -53,8 +58,8 @@ export function ConfirmationTest({ boilerplateCodes, testCases, languages, setAl
                 <TabsList>
                     {
                         filteredBpc.map(bpc => (
-                            <TabsTrigger key={bpc.judge0Name} value={selectedLanguage}>
-                                {selectedLanguage}
+                            <TabsTrigger key={bpc.judge0Name} value={bpc.judge0Name}>
+                                {bpc.judge0Name}
                                 {submissionResults && submissionResults.status === "Accepted" && submissionResults.languageId === selectedLangInfo?.id && (
                                     <CheckCircle2 className="w-5 text-green-500" />
                                 )}
@@ -64,31 +69,17 @@ export function ConfirmationTest({ boilerplateCodes, testCases, languages, setAl
                 </TabsList>
                 {
                     filteredBpc.map(bpc => (
-                        <TabsContent key={bpc.judge0Name} value={selectedLanguage} className="space-y-10">
+                        <TabsContent key={bpc.judge0Name} value={bpc.judge0Name} className="space-y-10">
                             <div>
                                 <Label>Boilerplate Function</Label>
                                 <Editor
                                     height={"20vh"}
-                                    width={"45vw"}
                                     language={selectedLangInfo?.monacoName}
                                     value={code}
                                     onChange={(value) => setCode(value ?? "")}
                                     theme="vs-dark"
                                     loading={<Loader2Icon className='w-5 animate-spin' />}
-                                    options={{
-                                        minimap: { enabled: false },
-                                        fontSize: 16,
-                                        padding: {
-                                            top: 6,
-                                            bottom: 4
-                                        },
-                                        smoothScrolling: true,
-                                        lineNumbers: 'on',
-                                        roundedSelection: false,
-                                        scrollBeyondLastLine: false,
-                                        automaticLayout: true,
-                                        selectOnLineNumbers: true
-                                    }}
+                                    options={editorOptions}
                                 />
                                 <p className="mt-2 text-sm text-gray-500">
                                     You should solve and test the problem with all the languages that you have submitted the boilerplate code.
@@ -98,24 +89,12 @@ export function ConfirmationTest({ boilerplateCodes, testCases, languages, setAl
                                 <Label>Caller Code</Label>
                                 <Editor
                                     height={"30vh"}
-                                    width={"45vw"}
                                     language={selectedLangInfo?.monacoName}
                                     value={bpc.callerCode}
                                     theme="vs-dark"
                                     loading={<Loader2Icon className='w-5 animate-spin' />}
                                     options={{
-                                        minimap: { enabled: false },
-                                        fontSize: 16,
-                                        padding: {
-                                            top: 6,
-                                            bottom: 4
-                                        },
-                                        smoothScrolling: true,
-                                        lineNumbers: 'on',
-                                        roundedSelection: false,
-                                        scrollBeyondLastLine: false,
-                                        automaticLayout: true,
-                                        selectOnLineNumbers: true,
+                                        ...editorOptions,
                                         readOnly: true,
                                         readOnlyMessage: { value: "To edit caller code please go back to step 2", isTrusted: true }
                                     }}

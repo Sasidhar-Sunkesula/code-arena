@@ -1,4 +1,4 @@
-import { number, z } from "zod"
+import { z } from "zod"
 import { ContestLevel, DifficultyLevel, SubmissionType } from "../types";
 
 export const problemFormSchema = z.object({
@@ -83,6 +83,7 @@ export const submitCodeSchema = z.object({
         input: z.string(),
         expectedOutput: z.string()
     })).optional(),
+    tempId: z.string().optional(),
     submittedCode: z.string({ message: "Code should not be empty" }),
     languageId: z.number({ message: "Language Id is required" }),
     contestId: z.number().optional(),
@@ -103,7 +104,11 @@ export const credentialSchema = z.object({
 })
 
 export const checkStatusSchema = z.object({
-    problemId: z.number(),
+    problemId: z.number().optional(),
+    testCases: z.array(z.object({
+        input: z.string(),
+        expectedOutput: z.string()
+    })).optional(),
     submissionTokens: z.array(z.string())
 })
 

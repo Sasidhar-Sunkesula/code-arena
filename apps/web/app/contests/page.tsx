@@ -1,12 +1,23 @@
 import { ContestList } from "@/components/ContestList";
 import { getUpcomingContests } from "../actions/getUpcomingContests";
-import { getServerSession } from "next-auth";
+import { getServerSession, Session } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getCurrentContests } from "../actions/getCurrentContests";
 import { getEndedContests } from "../actions/getEndedContests";
 import toast, { Toaster } from "react-hot-toast";
 import { LockKeyhole } from "lucide-react";
 
+export const renderContestSection = (session: Session | null, title: string, contests: any[], type: "current" | "upcoming" | "ended") => {
+    if (contests.length > 0) {
+        return (
+            <div className="space-y-3">
+                <h2 className="text-lg font-medium">{title}</h2>
+                <ContestList isLoggedIn={!!session?.user} type={type} contests={contests} />
+            </div>
+        );
+    }
+    return null;
+};
 export default async function ContestCatalog() {
     const session = await getServerSession(authOptions);
     const upcomingContests = await getUpcomingContests(session?.user?.id);
@@ -18,25 +29,13 @@ export default async function ContestCatalog() {
         return null;
     }
 
-    const renderContestSection = (title: string, contests: any[], type: "current" | "upcoming" | "ended") => {
-        if (contests.length > 0) {
-            return (
-                <div className="space-y-3">
-                    <h2 className="text-lg font-medium">{title}</h2>
-                    <ContestList isLoggedIn={!!session?.user} type={type} contests={contests} />
-                </div>
-            );
-        }
-        return null;
-    };
-
     return (
         <div className="px-8 py-6 space-y-9">
             <Toaster />
             {session?.user && currentContests.registeredContests && currentContests.unregisteredContests ? (
                 <>
-                    {renderContestSection("Registered Contests", currentContests.registeredContests, "current")}
-                    {renderContestSection("Open Contests", currentContests.unregisteredContests, "current")}
+                    {renderContestSection(session, "Registered Contests", currentContests.registeredContests, "current")}
+                    {renderContestSection(session, "Open Contests", currentContests.unregisteredContests, "current")}
                 </>
             ) : (
                 <>
@@ -46,11 +45,11 @@ export default async function ContestCatalog() {
                             Login to view your Registered Contests
                         </div>
                     </div>
-                    {renderContestSection("Open Contests", currentContests.contests || [], "current")}
+                    {renderContestSection(session, "Open Contests", currentContests.contests || [], "current")}
                 </>
             )}
-            {renderContestSection("Upcoming Contests", upcomingContests.contests || [], "upcoming")}
-            {renderContestSection("Ended Contests", endedContests.contests || [], "ended")}
+            {renderContestSection(session, "Upcoming Contests", upcomingContests.contests || [], "upcoming")}
+            {renderContestSection(session, "Ended Contests", endedContests.contests || [], "ended")}
         </div>
     );
 }
