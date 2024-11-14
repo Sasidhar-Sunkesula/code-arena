@@ -13,6 +13,7 @@ declare module "next-auth" {
             id: string;
             name: string | null;
             email: string;
+            image?: string;
         }
     }
 }
@@ -86,5 +87,7 @@ export const authOptions: NextAuthOptions = {
             }
             return session;
         }
-    },
+    }, pages: {
+        signIn: "/auth/signin",
+    }
 }
