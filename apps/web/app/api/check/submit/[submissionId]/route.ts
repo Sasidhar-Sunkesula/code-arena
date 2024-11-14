@@ -1,9 +1,9 @@
 import { paramsSchema } from "@repo/common/zod";
 import prisma from "@repo/db/client";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-export async function GET(req: NextRequest, { params }: { params: { submissionId: string } }) {
+export async function GET({ params }: { params: { submissionId: string } }) {
     try {
         const parseResult = paramsSchema.parse(params);
         const submissionId = parseInt(parseResult.submissionId);

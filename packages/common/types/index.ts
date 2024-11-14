@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { contestFormSchema, problemFormSchema, scoreSchema, submitCodeSchema } from "../zod";
+import { contestFormSchema, credentialSchema, problemFormSchema, scoreSchema, submitCodeSchema } from "../zod";
 
 export enum DifficultyLevel {
     EASY = "EASY",
@@ -11,6 +11,7 @@ export type ProblemFormType = z.infer<typeof problemFormSchema>;
 export type ContestFormType = z.infer<typeof contestFormSchema>;
 export type SubmitCodeSchema = z.infer<typeof submitCodeSchema>;
 export type ScoreSchema = z.infer<typeof scoreSchema>;
+export type CredentialSchema = z.infer<typeof credentialSchema>;
 
 export enum SubmissionType {
     RUN = "RUN",

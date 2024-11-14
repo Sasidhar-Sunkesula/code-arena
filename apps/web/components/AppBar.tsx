@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, ModeToggle } from "@repo/ui/shad"
+import { Avatar, AvatarFallback, AvatarImage, Button, ModeToggle } from "@repo/ui/shad"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -19,8 +19,7 @@ import {
     navigationMenuTriggerStyle
 } from "@repo/ui/shad";
 import { useState } from "react"
-import { Menu } from "lucide-react";
-import Image from "next/image";
+import { LogOut, Menu, Settings, User } from "lucide-react";
 import { Logo } from "./Logo";
 import { signIn, signOut } from "next-auth/react";
 import { Session } from "next-auth";
@@ -28,6 +27,7 @@ import Link from "next/link";
 
 export default function AppBar({ session }: { session: Session | null }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
     return (
         <header className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-md border-b">
             <div className="container mx-auto px-4">
@@ -68,28 +68,40 @@ export default function AppBar({ session }: { session: Session | null }) {
                     </NavigationMenu>
                     <div className="flex items-center space-x-4">
                         <ModeToggle />
-                        {session
+                        {session && session.user
                             ? <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <button className="h-10 w-10 flex justify-center border bg-secondary items-center rounded-full">
-                                        <Image
-                                            src="/placeholder.svg"
-                                            alt="User"
-                                            width={24}
-                                            height={24}
-                                            className="rounded-full"
-                                        />
-                                    </button>
+                                    <Avatar className="cursor-pointer">
+                                        <AvatarImage src={session.user.image} alt="@venky" />
+                                        <AvatarFallback>OM</AvatarFallback>
+                                    </Avatar>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
+                                <DropdownMenuContent className="w-40" align="end">
                                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem>Profile</DropdownMenuItem>
-                                    <DropdownMenuItem>Settings</DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <Link href={`/user/${session.user.username}`} className="flex items-center gap-x-2 cursor-default">
+                                            <User className="w-5" />
+                                            <span>Profile</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <Settings className="w-5 mr-2" />
+                                        <span>Settings</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => signOut()}>
+                                        <LogOut className="w-5 mr-2" />
+                                        <span>Logout</span>
+                                    </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                            : <Button onClick={() => signIn()}>Sign In</Button>
+                            : <>
+                                <Button onClick={() => signIn()}>Sign In</Button>
+                                <Link href="/auth/signup">
+                                    <Button>Sign Up</Button>
+                                </Link>
+                            </>
                         }
                         <Button
                             variant="ghost"

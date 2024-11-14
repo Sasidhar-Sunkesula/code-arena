@@ -6,7 +6,6 @@ import { Button } from "@repo/ui/shad"
 import {
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle,
 } from "@repo/ui/shad"
@@ -16,9 +15,11 @@ import { Icons } from "./Icons"
 import { useState } from "react"
 import { signIn } from "next-auth/react"
 import toast, { Toaster } from "react-hot-toast"
-import { EyeIcon, EyeOffIcon } from "lucide-react"
+import { TogglePasswordVisibility } from "./TogglePasswordVisibility";
+import { useRouter } from "next/navigation"
 
 export default function LoginForm() {
+    const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -29,26 +30,26 @@ export default function LoginForm() {
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        const loadId = toast.loading('Signing in...');
         if (!email || !password) {
             setRequiredError({
                 emailReq: email ? false : true,
                 passReq: password ? false : true,
             });
-            toast.dismiss(loadId);
             return;
         }
+        const loadId = toast.loading('Signing in...');
         const res = await signIn("credentials", {
             email: email,
             password: password,
-            redirect: true,
+            redirect: false,
         });
         toast.dismiss(loadId);
         if (!res?.error) {
+            router.push('/');
             toast.success('Signed In');
         } else {
             if (res.status === 401) {
-                toast.error('Invalid Credentials, try again!');
+                toast.error('Invalid Credentials, Try again!');
             } else if (res.status === 400) {
                 toast.error('Missing Credentials!');
             } else if (res.status === 404) {
@@ -60,9 +61,7 @@ export default function LoginForm() {
             }
         }
     }
-    function togglePasswordVisibility() {
-        setIsPasswordVisible(prev => !prev);
-    }
+
     function handleEmailChange(value: string) {
         setEmail(value);
         setRequiredError(prevState => ({
@@ -71,12 +70,9 @@ export default function LoginForm() {
         }));
     }
     return (
-        <Card className="mx-auto w-full md:w-3/12">
+        <Card className="mx-auto w-full md:w-3/12 space-y-4">
             <CardHeader>
-                <CardTitle className="text-2xl">Login</CardTitle>
-                <CardDescription>
-                    Enter your email below to login to your account
-                </CardDescription>
+                <CardTitle className="text-2xl text-center underline">Login</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 <form onSubmit={handleSubmit} className="grid gap-4">
@@ -94,12 +90,7 @@ export default function LoginForm() {
                         )}
                     </div>
                     <div className="grid gap-2">
-                        <div className="flex items-center">
-                            <Label htmlFor="password">Password</Label>
-                            <Link href="#" className="ml-auto inline-block text-sm underline">
-                                Forgot your password?
-                            </Link>
-                        </div>
+                        <Label htmlFor="password">Password</Label>
                         <div className="relative">
                             <Input
                                 value={password}
@@ -112,23 +103,11 @@ export default function LoginForm() {
                                     }));
                                     setPassword(e.target.value)
                                 }}
-                                onKeyDown={async (e) => {
-                                    if (e.key === "Enter") {
-                                        setIsPasswordVisible(false);
-                                    }
-                                }}
                             />
-                            <button
-                                type="button"
-                                className="absolute bottom-0 right-0 flex h-10 items-center px-4 text-neutral-500"
-                                onClick={togglePasswordVisibility}
-                            >
-                                {isPasswordVisible ? (
-                                    <EyeIcon className="h-5 w-5" />
-                                ) : (
-                                    <EyeOffIcon className="h-5 w-5" />
-                                )}
-                            </button>
+                            <TogglePasswordVisibility
+                                isPasswordVisible={isPasswordVisible}
+                                setIsPasswordVisible={setIsPasswordVisible}
+                            />
                         </div>
                         {requiredError.passReq && (
                             <span className="text-destructive text-sm">Password is required</span>
@@ -147,7 +126,7 @@ export default function LoginForm() {
                 </Button>
                 <div className="mt-4 text-center text-sm">
                     Don&apos;t have an account?{" "}
-                    <Link href="#" className="underline">
+                    <Link href="/auth/signup" className="underline">
                         Sign up
                     </Link>
                 </div>

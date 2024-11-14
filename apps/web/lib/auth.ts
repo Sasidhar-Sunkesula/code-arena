@@ -11,7 +11,7 @@ declare module "next-auth" {
     interface Session {
         user: {
             id: string;
-            name: string | null;
+            username: string;
             email: string;
             image?: string;
         }
@@ -38,26 +38,14 @@ export const authOptions: NextAuthOptions = {
                         if (passwordMatch) {
                             return {
                                 id: existingUser.id,
-                                name: existingUser.name,
+                                username: existingUser.fullName,
                                 email: existingUser.email,
+                                image: existingUser.image
                             }
                         }
                         return null;
-                    } else {
-                        const salt = await bcrypt.genSalt(10);
-                        const hash = await bcrypt.hash(validatedCredentials.password, salt);
-                        const newUser = await prisma.user.create({
-                            data: {
-                                email: validatedCredentials.email,
-                                password: hash,
-                            }
-                        });
-                        return {
-                            id: newUser.id,
-                            name: newUser.name,
-                            email: newUser.email
-                        }
                     }
+                    return null;
                 } catch (error) {
                     if (error instanceof ZodError) {
                         console.log(error.errors)

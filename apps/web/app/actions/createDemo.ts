@@ -6,11 +6,13 @@ import { ZodError } from "zod";
 export async function createDemo() {
     try {
         const demoEmail = "demo" + Math.floor(Math.random() * 654321) + "@gmail.com";
-        const demoPass = Math.floor(Math.random() * 654321).toString()
+        const demoUsername = Math.floor(Math.random() * 654321).toString();
+
         const demoUser = await prisma.user.create({
             data: {
                 email: demoEmail,
-                password: demoPass
+                password: "myDemoPassword",
+                username: demoUsername
             }
         })
         // Fetch all problem IDs
