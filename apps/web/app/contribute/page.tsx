@@ -2,7 +2,8 @@ import { ContestForm } from "@/components/ContestForm";
 import { ProblemForm } from "@/components/ProblemForm";
 import { searchParamsSchema } from "@repo/common/zod";
 
-export default function Contribute({ searchParams }: { searchParams: { type: string } }) {
+export default async function Contribute(props: { searchParams: Promise<{ type: string }> }) {
+    const searchParams = await props.searchParams;
     // Validate searchParams
     const result = searchParamsSchema.safeParse(searchParams);
     if (!result.success) {

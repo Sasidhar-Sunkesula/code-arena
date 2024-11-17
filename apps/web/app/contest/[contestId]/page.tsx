@@ -5,7 +5,8 @@ import { authOptions } from "@/lib/auth"
 import prisma from "@repo/db/client";
 import { redirect } from "next/navigation";
 
-export default async function ContestInfo({ params }: { params: { contestId: string } }) {
+export default async function ContestInfo(props: { params: Promise<{ contestId: string }> }) {
+    const params = await props.params;
     const contestId = parseInt(params.contestId);
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {

@@ -4,7 +4,11 @@ import prisma from "@repo/db/client"
 import { Badge } from "@repo/ui/shad";
 import Link from "next/link";
 
-export default async function ProblemSolvingPage({ params, searchParams }: { params: { problemId: string }, searchParams: { contestId?: string, tempId?: string, type?: string } }) {
+export default async function ProblemSolvingPage(
+  props: { params: Promise<{ problemId: string }>, searchParams: Promise<{ contestId?: string, tempId?: string, type?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const problemId = parseInt(params.problemId);
   const problemData = await prisma.problem.findUnique({
     where: {

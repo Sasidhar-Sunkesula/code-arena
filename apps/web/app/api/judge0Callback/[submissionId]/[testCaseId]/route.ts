@@ -39,7 +39,11 @@ export function mapStatusDescriptionToEnum(description: string): SubmissionStatu
     }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { submissionId: string, testCaseId: string } }) {
+export async function PUT(
+    req: NextRequest,
+    props: { params: Promise<{ submissionId: string, testCaseId: string }> }
+) {
+    const params = await props.params;
     const body: SubmissionResult = await req.json();
     const submissionId = parseInt(params.submissionId);
     const testCaseId = parseInt(params.testCaseId);
@@ -133,7 +137,7 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
                         id: userId
                     }, select: {
                         location: true,
-                        name: true
+                        username: true
                     }
                 })
                 if (!user) throw new Error("Unable to get the user details to add in the leaderboard")
@@ -141,7 +145,7 @@ export async function PUT(req: NextRequest, { params }: { params: { submissionId
                     userId: userId,
                     score: points,
                     country: user.location || "Unknown",
-                    userName: user.name || "NA"
+                    userName: user.username || "NA"
                 }
                 const response = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/${contestId}?type=${ActionType.Update}`, {
                     method: "POST",

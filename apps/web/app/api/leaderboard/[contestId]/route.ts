@@ -7,7 +7,8 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = 'force-dynamic';
 
 // Proxy API for SSE
-export async function GET(req: NextRequest, { params }: { params: { contestId: string } }) {
+export async function GET(req: NextRequest, props: { params: Promise<{ contestId: string }> }) {
+    const params = await props.params;
     const session = await getServerSession(authOptions);
     const contestId = parseInt(params.contestId);
     if (isNaN(contestId)) {

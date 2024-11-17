@@ -20,3 +20,4 @@ export * from "./shad/ui/command";
 export * from "./shad/ui/alert-dialog";
 export * from "./shad/ui/time-picker";
 export * from "./shad/ui/avatar";
+export * from "./shad/ui/chart";

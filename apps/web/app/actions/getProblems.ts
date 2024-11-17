@@ -23,11 +23,17 @@ export async function getProblems(searchKey: string, page: number, limit: number
                 difficultyLevel: true,
                 _count: {
                     select: {
-                        submissions: true // Count total submissions for each problem
+                        submissions: {
+                            where: {
+                                contestId: null
+                            }
+                        } // Count total submissions for each problem
                     }
                 },
                 submissions: {
-                    select: {
+                    where: {
+                        contestId: null
+                    }, select: {
                         status: true,
                         userId: true // Include userId to filter user's submissions later
                     }
