@@ -10,6 +10,7 @@
     "paths": {
       "@/*": ["./*"]
     },
+    "typeRoots": ["./types"],
     "declaration": false,
     "declarationMap": false
   },
@@ -20,7 +21,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "postcss.config.js",
-    "tailwind.config.js"
-, "../../packages/ui/src/shad/ui/time-picker-utils.tsx"  ],
+    "tailwind.config.js",
+    "../../packages/ui/src/shad/ui/time-picker-utils.tsx",
+    "types/next-auth.d.ts"
+  ],
   "exclude": ["node_modules"]
 }

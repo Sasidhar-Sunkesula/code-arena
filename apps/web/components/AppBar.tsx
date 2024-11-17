@@ -72,15 +72,15 @@ export default function AppBar({ session }: { session: Session | null }) {
                             ? <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Avatar className="cursor-pointer">
-                                        <AvatarImage src={session.user.image} alt="@venky" />
-                                        <AvatarFallback>OM</AvatarFallback>
+                                        {/* <AvatarImage src={session.user.image} alt="profile-img" /> */}
+                                        {/* <AvatarFallback>{session.user.name.slice(0, 2).toUpperCase()}</AvatarFallback> */}
                                     </Avatar>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-40" align="end">
                                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem>
-                                        <Link href={`/user/${session.user.username}`} className="flex items-center gap-x-2 cursor-default">
+                                        <Link href={`/user/${session.user.name}`} className="flex items-center gap-x-2 cursor-default">
                                             <User className="w-5" />
                                             <span>Profile</span>
                                         </Link>

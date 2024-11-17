@@ -4,7 +4,7 @@ import prisma from "@repo/db/client"
 export default async function Profile({ params }: { params: { userName: string } }) {
     const user = await prisma.user.findFirst({
         where: {
-            name: {
+            username: {
                 equals: params.userName,
                 mode: "insensitive"
             }
@@ -23,8 +23,8 @@ export default async function Profile({ params }: { params: { userName: string }
             <div className="col-span-1">
                 <UserDetails
                     imageUrl={"https://www.shutterstock.com/image-vector/person-gray-photo-placeholder-woman-600nw-1241538838.jpg"}
-                    userName={user.name}
-                    country={user.location}
+                    userName={user.username}
+                    country={user.location || ""}
                 />
             </div>
         </div>

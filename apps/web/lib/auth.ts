@@ -1,22 +1,11 @@
+import { credentialSchema } from '@repo/common/zod';
 import prisma from '@repo/db/client';
-import { NextAuthOptions, Session } from 'next-auth';
+import bcrypt from "bcrypt";
+import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from "next-auth/providers/google";
 import { ZodError } from 'zod';
-import bcrypt from "bcrypt";
-import { JWT } from 'next-auth/jwt';
-import { credentialSchema } from '@repo/common/zod';
 
-declare module "next-auth" {
-    interface Session {
-        user: {
-            id: string;
-            username: string;
-            email: string;
-            image?: string;
-        }
-    }
-}
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
@@ -28,7 +17,7 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
                 try {
                     const validatedCredentials = credentialSchema.parse(credentials);
-                    const existingUser = await prisma.user.findFirst({
+                    const existingUser = await prisma.user.findUnique({
                         where: {
                             email: validatedCredentials.email
                         }
@@ -38,8 +27,9 @@ export const authOptions: NextAuthOptions = {
                         if (passwordMatch) {
                             return {
                                 id: existingUser.id,
-                                username: existingUser.fullName,
                                 email: existingUser.email,
+                                userName: existingUser.username,
+                                fullName: existingUser.fullName,
                                 image: existingUser.image
                             }
                         }
@@ -64,18 +54,33 @@ export const authOptions: NextAuthOptions = {
     ],
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
-        jwt: ({ token }) => {
-            // This function is for debugging and we can look at what is being encoded in jwt 
-            // console.log(token)
-            return token
+        jwt: async ({ token }) => {
+            if (token.email) {
+                const dbUser = await prisma.user.findUnique({
+                    where: {
+                        email: token.email
+                    }
+                })
+                if (dbUser) {
+                    token.id = dbUser.id;
+                    token.email = dbUser.email;
+                    token.userName = dbUser.username;
+                    token.fullName = dbUser.fullName;
+                    token.image = dbUser.image;
+                }
+            }
+            return token;
         },
-        session: ({ session, token }: { session: Session, token: JWT }) => {
-            if (session && session.user) {
-                session.user.id = token.sub ?? ""
+        session: ({ session, token }) => {
+            if (session.user && token.id) {
+                session.user.id = token.id as string;
+                session.user.userName = token.userName as string;
+                session.user.fullName = token.fullName as string;
+                session.user.image = token.image as string | null
             }
             return session;
         }
     }, pages: {
         signIn: "/auth/signin",
     }
-}
+} satisfies NextAuthOptions;
