@@ -17,7 +17,7 @@ export function UserDetails({ imageUrl, userName, country, joinedOn }: { imageUr
                     <MapPin className="w-4 mr-2" />
                     <span>{country}</span>
                 </div>
-                <div>
+                <div suppressHydrationWarning>
                     <span>Joined on : </span>
                     <span>{joinedOn.toLocaleDateString()}</span>
                 </div>

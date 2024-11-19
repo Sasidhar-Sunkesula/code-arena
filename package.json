@@ -13,7 +13,8 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "date-fns": "^3.6.0"
   },
   "engines": {
     "node": ">=18"

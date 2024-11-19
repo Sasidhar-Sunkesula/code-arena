@@ -12,11 +12,11 @@ function getColorBasedOnLevel(type: DifficultyLevel) {
             return "text-gray-100"
     }
 }
-export function SolvedProblemsByLevel({ type, solved }: { type: DifficultyLevel, solved: number }) {
+export function SolvedProblemsByLevel({ type, solved, total }: { type: DifficultyLevel, solved: number, total: number }) {
     return (
         <div className="flex flex-col items-center gap-y-1 border px-8 py-1">
             <div className={`text-xs ${getColorBasedOnLevel(type)}`}>{type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}</div>
-            <div className="text-sm">{solved}</div>
+            <div className="text-sm font-medium">{solved} / {total}</div>
         </div>
     )
 }

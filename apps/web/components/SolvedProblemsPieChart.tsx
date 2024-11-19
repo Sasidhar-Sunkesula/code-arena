@@ -7,7 +7,7 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@repo/ui/shad"
-import { ChartData } from "./SolvedProblemsChartContainer"
+import { ChartData } from "@/app/user/[userName]/page";
 
 const chartConfig: {
     [key: string]: {
@@ -15,15 +15,15 @@ const chartConfig: {
         color: string
     }
 } = {
-    easy: {
+    EASY: {
         label: "Easy",
         color: "hsl(var(--chart-2))",
     },
-    medium: {
+    MEDIUM: {
         label: "Medium",
         color: "hsl(var(--chart-4))",
     },
-    hard: {
+    HARD: {
         label: "Hard",
         color: "hsl(var(--chart-1))",
     }
