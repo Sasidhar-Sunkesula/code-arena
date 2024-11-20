@@ -39,7 +39,7 @@ export function SolvedProblemsPieChart({ chartData, solved, totalProblems }: { c
     return (
         <ChartContainer
             config={chartConfig}
-            className="mx-auto aspect-square min-w-[240px] max-h-[250px]"
+            className="mx-auto aspect-square min-w-[240px] max-h-[240px]"
         >
             <PieChart>
                 <ChartTooltip
@@ -50,7 +50,7 @@ export function SolvedProblemsPieChart({ chartData, solved, totalProblems }: { c
                     data={chartDataWithFill}
                     dataKey="solved"
                     nameKey="level"
-                    innerRadius={84}
+                    innerRadius={85}
                     strokeWidth={10}
                 >
                     <Label

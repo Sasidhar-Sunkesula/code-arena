@@ -16,10 +16,8 @@ import { useState } from "react"
 import { signIn } from "next-auth/react"
 import toast, { Toaster } from "react-hot-toast"
 import { TogglePasswordVisibility } from "./TogglePasswordVisibility";
-import { useRouter } from "next/navigation"
 
 export default function LoginForm() {
-    const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -45,7 +43,7 @@ export default function LoginForm() {
         });
         toast.dismiss(loadId);
         if (!res?.error) {
-            router.push('/');
+            window.location.assign("/");
             toast.success('Signed In');
         } else {
             if (res.status === 401) {

@@ -4,9 +4,9 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "www.shutterstock.com",
+        hostname: "res.cloudinary.com",
         port: "",
-        pathname: "/image-vector/**",
+        pathname: "/**",
       },
     ],
   },

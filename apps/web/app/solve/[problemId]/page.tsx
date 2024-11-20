@@ -36,7 +36,7 @@ export default async function ProblemSolvingPage(
           <div className="flex items-start gap-x-5">
             <h1 className="text-xl font-medium mb-3 underline">{problemData.name}</h1>
             <Link className="hover:scale-105" href={`/user/${problemData.contributedBy.toLowerCase()}`}>
-              <Badge variant={"outline"} className="px-3 py-2 hover:text-blue-700 hover:underline">
+              <Badge variant={"outline"} className="px-3 py-2 hover:text-blue-700 dark:hover:text-blue-400 hover:underline">
                 <span>Contributed by :</span>
                 <span>&nbsp;{problemData.contributedBy}</span>
               </Badge>

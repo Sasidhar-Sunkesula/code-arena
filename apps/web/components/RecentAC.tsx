@@ -39,7 +39,7 @@ export function RecentAC({ problems }: {
                                         </Link>
                                     </TableCell>
                                     <TableCell>
-                                        {problem.difficultyLevel}
+                                        {problem.difficultyLevel.charAt(0).toUpperCase() + problem.difficultyLevel.slice(1).toLowerCase()}
                                     </TableCell>
                                     <TableCell>
                                         {format(problem.submittedOn, "yyyy-mm-dd")}

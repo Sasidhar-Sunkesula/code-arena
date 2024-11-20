@@ -10,7 +10,10 @@
     "REDIS_HOST",
     "REDIS_PORT",
     "NEXTAUTH_URL",
-    "LEADERBOARD_SERVER_URL"
+    "LEADERBOARD_SERVER_URL",
+    "CLOUDINARY_CLOUD_NAME",
+    "CLOUDINARY_API_KEY",
+    "CLOUDINARY_API_SECRET"
   ],
   "globalDependencies": [
     "**/.env.*local",
