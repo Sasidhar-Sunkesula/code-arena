@@ -18,7 +18,7 @@ export async function isProfileUpdated() {
         if (!user) {
             throw new Error("Unable to find the user")
         }
-        const isUpdated = user.name?.trim() && user.location?.trim() ? true : false;
+        const isUpdated = user.fullName?.trim() && user.location?.trim() ? true : false;
         return {
             status: 200,
             isUpdated: isUpdated

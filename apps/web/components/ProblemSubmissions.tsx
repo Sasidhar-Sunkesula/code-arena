@@ -53,7 +53,7 @@ export function ProblemSubmissions({ problemId, contestId }: { problemId: number
     }
     if (loading) {
         return (
-            <div className="flex justify-center items-center w-full md:min-h-96">
+                <div className="flex justify-center items-center w-full md:h-[60vh]">
                 <Loader2 className="w-5 animate-spin" />
             </div>
         )
@@ -61,15 +61,15 @@ export function ProblemSubmissions({ problemId, contestId }: { problemId: number
     return (
         <div>
             <Toaster />
-            {!submissionList ? (
-                <div className="md:h-[50vh] border p-2 text-destructive font-medium flex justify-center items-center">Error while fetching submissions</div>
+            {!submissionList || !submissionList.submissions ? (
+                <div className="md:h-[60vh] border p-2 text-destructive font-medium flex justify-center items-center">Error while fetching submissions</div>
             ) :
-                submissionList.submissions?.length === 0
-                    ? <div className="md:h-[50vh] border p-2 font-semibold flex justify-center items-center">No submissions yet!</div>
+                submissionList.submissions.length === 0
+                    ? <div className="md:h-[60vh] border p-2 font-semibold flex justify-center items-center">No submissions yet!</div>
                     : (
-                        <div className="space-y-2 md:h-[450px] overflow-y-auto">
+                        <div className="space-y-2 md:h-[60vh] overflow-y-auto">
                             {contestId && <p className="text-sm text-center">Submissions shown here are contest specific.</p>}
-                            {submissionList?.submissions?.map((submission) => (
+                            {submissionList.submissions.map((submission) => (
                                 <SubmissionInfoCard
                                     key={submission.id}
                                     points={submission.points}

@@ -7,16 +7,16 @@ import prisma from "@repo/db/client";
 export async function getSubmissions(problemId: number, contestId?: number) {
     try {
         const session = await getServerSession(authOptions);
-        if (!session?.user || !session.user?.id) {
+        if (!session || !session.user.id) {
             return {
                 msg: "Please login to view your submissions"
             };
-        }
-
+        }        
         const submissions = await prisma.submission.findMany({
             where: {
                 problemId: problemId,
                 contestId: contestId,
+                userId: session.user.id
             },
             orderBy: {
                 createdAt: 'desc'

@@ -56,18 +56,29 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         jwt: async ({ token }) => {
             if (token.email) {
-                const dbUser = await prisma.user.findUnique({
+                let dbUser = await prisma.user.findUnique({
                     where: {
                         email: token.email
                     }
                 })
-                if (dbUser) {
-                    token.id = dbUser.id;
-                    token.email = dbUser.email;
-                    token.userName = dbUser.username;
-                    token.fullName = dbUser.fullName;
-                    token.image = dbUser.image;
+                if (!dbUser) {
+                    const randomPassword = Math.random().toString(36).slice(-8);
+                    const hashedPassword = await bcrypt.hash(randomPassword, 10);
+                    dbUser = await prisma.user.create({
+                        data: {
+                            email: token.email,
+                            username: token.email.split("@")[0] ?? randomPassword,
+                            fullName: token.name,
+                            image: token.picture,
+                            password: hashedPassword
+                        }
+                    })
                 }
+                token.id = dbUser.id;
+                token.email = dbUser.email;
+                token.userName = dbUser.username;
+                token.fullName = dbUser.fullName;
+                token.image = dbUser.image;
             }
             return token;
         },

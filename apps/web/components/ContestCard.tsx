@@ -3,6 +3,7 @@ import { ArrowUpRight, ClockArrowDown, ClockArrowUp, Frown, HashIcon, LayersIcon
 import { ContestLevel } from "@prisma/client";
 import { ContestRegister } from "./ContestRegister";
 import Link from "next/link";
+import { formatDateToIST } from "@/lib/utils";
 
 interface ContestCardProps {
     id: number;
@@ -17,25 +18,6 @@ interface ContestCardProps {
     type: "current" | "upcoming" | "ended";
     isLoggedIn: boolean;
 }
-const formatDateToIST = (date: Date) => {
-    const optionsDate: Intl.DateTimeFormatOptions = {
-        day: '2-digit',
-        month: 'long', // full month name  
-        year: 'numeric'
-    };
-
-    const optionsTime: Intl.DateTimeFormatOptions = {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-        timeZone: "Asia/Kolkata"
-    };
-
-    const formattedDate = date.toLocaleDateString("en-IN", optionsDate);
-    const formattedTime = date.toLocaleTimeString("en-IN", optionsTime);
-
-    return `${formattedDate} ${formattedTime} IST`;
-};
 export function ContestCard({ id, startsOn, isRegistered, type, name, level, closesOn, _count, isLoggedIn }: ContestCardProps) {
     const renderActionButton = () => {
         if (!isLoggedIn) {

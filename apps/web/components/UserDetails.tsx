@@ -25,6 +25,7 @@ export function UserDetails({ id, createdAt, username, fullName, image, location
     const [profileImage, setProfileImage] = useState<File | null>(null);
     const [renderEdit, setRenderEdit] = useState(false);
     const [imageUrl, setImageUrl] = useState<string | null>(image);
+
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         try {
@@ -36,10 +37,12 @@ export function UserDetails({ id, createdAt, username, fullName, image, location
             }
             toast.dismiss(loadToast);
             toast.success(updateResponse.msg);
+            setRenderEdit(false);
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "Unable to update the profile")
         }
     }
+
     async function handleImageUpload() {
         if (!profileImage) {
             return;
@@ -60,7 +63,8 @@ export function UserDetails({ id, createdAt, username, fullName, image, location
                 throw new Error(result.error || 'Error uploading file');
             }
             toast.dismiss(loadToast);
-            setImageUrl(result.secure_url)
+            setImageUrl(result.secure_url);
+            setProfileImage(null);
             toast.success(result.msg || 'File uploaded successfully');
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "Unable to upload profile picture")
@@ -69,7 +73,9 @@ export function UserDetails({ id, createdAt, username, fullName, image, location
     const canEdit = session.data?.user && session.data.user.id === id;
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            setProfileImage(e.target.files[0]);
+            const file = e.target.files[0];
+            setProfileImage(file);
+            setImageUrl(URL.createObjectURL(file));
         } else {
             setProfileImage(null);
         }
@@ -78,11 +84,11 @@ export function UserDetails({ id, createdAt, username, fullName, image, location
         <div className="flex flex-col items-center gap-y-2 border py-4 rounded-sm shadow-sm">
             <div className="relative">
                 <Image
-                    src={imageUrl}
-                    alt="profile-image"
-                    width={200}
-                    height={200}
-                    className="rounded-full border-2"
+                    src={imageUrl ?? "https://res.cloudinary.com/no-code/image/upload/v1732130579/dummy.png"}
+                    alt="profile-img"
+                    width={180}
+                    height={180}
+                    className="rounded-full object-cover w-44 h-44"
                 />
                 {canEdit && (
                     <>
@@ -109,19 +115,19 @@ export function UserDetails({ id, createdAt, username, fullName, image, location
                                 <User className="w-4" />
                                 <Label>Name</Label>
                             </div>
-                            <div className="font-medium col-span-1">{fullName}</div>
+                            <div className="text-sm text-nowrap col-span-1">{userDetails.fullName}</div>
 
                             <div className="col-span-1 flex items-center gap-x-1">
                                 <Signature className="w-4" />
                                 <Label className="col-span-1">Username</Label>
                             </div>
-                            <div className="text-sm col-span-1">{username}</div>
+                            <div className="text-sm col-span-1">{userDetails.username}</div>
 
                             <div className="col-span-1 flex items-center gap-x-1">
                                 <MapPin className="w-4" />
                                 <Label className="col-span-1">Country</Label>
                             </div>
-                            <div className="text-sm col-span-1">{location}</div>
+                            <div className="text-sm col-span-1">{userDetails.location ?? "NA"}</div>
 
                             <div className="col-span-1 flex items-center gap-x-1">
                                 <CalendarCheck2 className="w-4" />

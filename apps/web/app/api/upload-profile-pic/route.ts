@@ -4,7 +4,6 @@ import { v2 as cloudinary } from 'cloudinary';
 import type { UploadApiResponse } from 'cloudinary';
 import { getServerSession } from 'next-auth';
 
-
 export async function POST(request: Request) {
     // Configuration
     cloudinary.config({

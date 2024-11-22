@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-
 import { Button } from "@repo/ui/shad"
 import {
     Card,
@@ -116,7 +115,7 @@ export default function LoginForm() {
                     </Button>
                 </form>
                 <Button onClick={async () => {
-                    await signIn("google");
+                    await signIn("google")
                 }}
                     variant="outline" className="w-full">
                     <Icons.google className="mr-2 h-4 w-4" />

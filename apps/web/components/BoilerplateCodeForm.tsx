@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Control } from "react-hook-form";
 import { Language } from "./CodeEditor";
 import { Boilerplate } from "./ProblemContributionForm";
+import { editor } from 'monaco-editor';
 
 interface BoilerplateCodeFormProps {
     control: Control<ProblemFormType, any>;
@@ -14,18 +15,22 @@ interface BoilerplateCodeFormProps {
 }
 export const editorOptions = {
     minimap: { enabled: false },
-    fontSize: 16,
+    fontSize: 17,
     padding: {
         top: 6,
         bottom: 4
     },
     smoothScrolling: true,
-    lineNumbers: 'on' as const,
+    lineNumbers: 'on',
+    cursorWidth: 3,
     roundedSelection: false,
     scrollBeyondLastLine: false,
     automaticLayout: true,
+    cursorBlinking: "expand",
+    cursorSmoothCaretAnimation: "on",
     selectOnLineNumbers: true,
-};
+} satisfies editor.IStandaloneEditorConstructionOptions;
+
 export function BoilerplateCodeForm({ control, languages }: BoilerplateCodeFormProps) {
     const [selectedLanguageIndex, setSelectedLanguageIndex] = useState<number | null>(null);
 

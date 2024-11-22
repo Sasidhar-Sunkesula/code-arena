@@ -13,8 +13,11 @@ export async function editProfile(userId: string, userDetails: { username: strin
                 msg: "You are unauthorized to edit profile"
             }
         }
-        const userNameExists = await prisma.user.findUnique({
+        const userNameExists = await prisma.user.findFirst({
             where: {
+                id: {
+                    not: userId
+                },
                 username: userDetails.username
             }
         })
