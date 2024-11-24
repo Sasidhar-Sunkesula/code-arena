@@ -39,5 +39,6 @@ export interface SubmissionResult {
 
 export enum ActionType {
     New = "new",
-    Update = "update"
+    Update = "update",
+    Remove = "remove"
 }

@@ -5,15 +5,16 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation";
 import { ProfileUpdate } from "./ProfileUpdate";
 import { isProfileUpdated } from "@/app/actions/isProfileUpdated";
+import { registerToContest } from "@/app/actions/registerToContest";
+import { unregisterFromContest } from "@/app/actions/unregisterFromContest"
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { registerToContest } from "@/app/actions/registerToContest";
 import { ArrowRight, Loader2Icon } from "lucide-react";
 
-export function ContestRegister({ contestId }: { contestId: number }) {
+export function ContestRegister({ contestId, initialIsRegistered }: { contestId: number, initialIsRegistered: boolean }) {
     const session = useSession();
     const [loading, setLoading] = useState(false);
-    const [isRegistered, setIsRegistered] = useState(false);
+    const [isRegistered, setIsRegistered] = useState(initialIsRegistered);
     const [showProfileUpdate, setShowProfileUpdate] = useState(false);
     const router = useRouter();
 
@@ -44,7 +45,7 @@ export function ContestRegister({ contestId }: { contestId: number }) {
             await checkProfile();
             const response = await registerToContest(session.data.user.id, contestId);
             if (response.status === 200) {
-                setIsRegistered(true)
+                setIsRegistered(true);
                 toast.success(response.msg);
                 return;
             } else {
@@ -56,26 +57,51 @@ export function ContestRegister({ contestId }: { contestId: number }) {
             setLoading(false);
         }
     }
+
+    async function handleUnregister() {
+        if (!session?.data?.user) {
+            router.push("/api/auth/signin");
+            return;
+        }
+        try {
+            setLoading(true);
+            const response = await unregisterFromContest(session.data.user.id, contestId);
+            if (response.status === 200) {
+                setIsRegistered(false);
+                toast.success(response.msg);
+                return;
+            } else {
+                throw new Error(response.msg);
+            }
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "An error occurred while unregistering from the contest.");
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <div>
             <Toaster />
             <AlertDialog>
                 <AlertDialogTrigger asChild>
-                    <Button disabled={isRegistered}>
-                        Register
+                    <Button disabled={loading}>
+                        {isRegistered ? "Unregister" : "Register"}
                         <ArrowRight className="w-5 ml-1" />
                     </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure you want to register for the contest?</AlertDialogTitle>
+                        <AlertDialogTitle>
+                            {isRegistered ? "Are you sure you want to unregister from the contest?" : "Are you sure you want to register for the contest?"}
+                        </AlertDialogTitle>
                         <AlertDialogDescription>
-                            If you change your mind, Make sure to un-register to prevent loss of contest rating.
+                            {isRegistered ? "If you change your mind, you can register again before the contest starts." : "If you change your mind, make sure to unregister to prevent loss of contest rating."}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction disabled={loading} onClick={handleParticipate}>
+                        <AlertDialogAction disabled={loading} onClick={isRegistered ? handleUnregister : handleParticipate}>
                             {loading
                                 ? <Loader2Icon className="w-5 animate-spin" />
                                 : "Continue"

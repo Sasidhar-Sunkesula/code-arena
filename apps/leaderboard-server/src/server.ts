@@ -29,17 +29,27 @@ let clients: Response[] = [];
 app.post("/api/leaderboard/:contestId", async (req, res: any) => {
     const { contestId } = req.params;
     const { type } = req.query;
-    if (!type || (type !== ActionType.New && type !== ActionType.Update)) {
+    if (!type || (type !== ActionType.New && type !== ActionType.Update && type !== ActionType.Remove)) {
         return res.status(400).json({ msg: "Invalid type parameter" });
     }
     try {
         const validBody = scoreSchema.parse(req.body);
         const { userId, score, country, userName } = validBody;
 
+        if (type === ActionType.Remove) {
+            // Remove the user ID and score from the sorted set for the contest
+            await client.zRem(`leaderboard:${contestId}`, userId);
+
+            // Remove the user details from Redis hash data structure
+            await client.hDel(`userDetails:${contestId}`, userId);
+
+            return res.json({ msg: "User removed from leaderboard successfully" });
+        }
+
         // Add the user ID and score to the sorted set for the contest
         await client.zAdd(`leaderboard:${contestId}`, { score, value: userId });
 
-        // Store the user details in redis hash data structure 
+        // Store the user details in Redis hash data structure 
         const userDetails = JSON.stringify({ userName, country });
         await client.hSet(`userDetails:${contestId}`, userId, userDetails);
 

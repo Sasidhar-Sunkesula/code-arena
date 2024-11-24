@@ -31,7 +31,7 @@ export function ContestCard({ id, startsOn, isRegistered, type, name, level, clo
                     </Link>
                 );
             } else if (type === "upcoming") {
-                return <ContestRegister contestId={id} />;
+                return <ContestRegister contestId={id} initialIsRegistered={isRegistered} />;
             }
         }
 
@@ -51,11 +51,7 @@ export function ContestCard({ id, startsOn, isRegistered, type, name, level, clo
                     </Button>
                 );
             case "upcoming":
-                return isRegistered ? (
-                    <Button disabled>Registered!</Button>
-                ) : (
-                    <ContestRegister contestId={id} />
-                );
+                return <ContestRegister contestId={id} initialIsRegistered={isRegistered} />;
             case "ended":
                 return (
                     <Link href={`/contest/${id}`}>
