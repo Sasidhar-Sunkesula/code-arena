@@ -8,7 +8,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { TestCaseResult, Submission, TestCase } from "@prisma/client";
 import { ResultDisplay } from './ResultDisplay'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/shad'
-import { Loader2Icon } from 'lucide-react'
+import { History, Loader2Icon } from 'lucide-react'
 import { ProblemSubmissions } from './ProblemSubmissions'
 import { SubmissionType } from '@repo/common/types'
 import { editorOptions } from './BoilerplateCodeForm'
@@ -38,14 +38,16 @@ export type SubmissionData = Submission & {
 }
 export type SubmissionPendingObj = { run: boolean, submit: boolean };
 
-export function CodeEditor({ userType, tempId, boilerPlates, contestId }: { userType?: string, tempId?: string, boilerPlates: BoilerPlateWithLanguage[], contestId?: string }) {
+export function CodeEditor({ userType, tempId, boilerPlates, contestId, problemId }: { userType?: string, tempId?: string, boilerPlates: BoilerPlateWithLanguage[], contestId?: string, problemId: number }) {
     const [selectedLanguage, setSelectedLanguage] = useState(boilerPlates[0]?.language.monacoName || "")
     const boilerPlateOfSelectedLang = boilerPlates.find((item) => item.language.monacoName === selectedLanguage)
     const [fullCode, setFullCode] = useState<string>(boilerPlateOfSelectedLang?.initialFunction || "")
     const [submissionPending, setSubmissionPending] = useState<SubmissionPendingObj>({ run: false, submit: false });
     const [submissionResults, setSubmissionResults] = useState<SubmissionData | null>(null);
     const [submitClicked, setSubmitClicked] = useState(false);
-    const [submissionsData, setSubmissionsData] = useState<{ memory: number; runTime: number }[] | null>(null);
+    const [submissionsData, setSubmissionsData] = useState<{ memory: number; runTime: number, runTimePercentage: number, memoryPercentage: number }[] | null>(null);
+    const [activeTab, setActiveTab] = useState("editor");
+    const [loadingStands, setLoadingStands] = useState(false);
 
     useEffect(() => {
         setFullCode(boilerPlateOfSelectedLang?.initialFunction || "")
@@ -54,18 +56,30 @@ export function CodeEditor({ userType, tempId, boilerPlates, contestId }: { user
     useEffect(() => {
         async function fetchSubmissionsData() {
             try {
-                const data = await getSubmissionStand(submissionResults!.problemId, contestId ? parseInt(contestId) : undefined);
-                if (!data.formattedData || data.msg) {
+                setLoadingStands(true);
+                const data = await getSubmissionStand(problemId, contestId ? parseInt(contestId) : undefined);
+                if (!data.runtimePercentage || !data.memoryPercentage || data.msg) {
                     throw new Error(data.msg)
                 }
-                console.log(data);
-                setSubmissionsData(data.formattedData);
+                const formattedData = data.runtimePercentage.map((item, index) => ({
+                    runTime: item.runTime,
+                    runTimePercentage: item.percentage,
+                    memory: data.memoryPercentage?.[index]?.memory ?? 0,
+                    memoryPercentage: data.memoryPercentage?.[index]?.percentage ?? 0,
+                }));
+                setSubmissionsData(formattedData);
             } catch (error) {
                 toast.error(error instanceof Error ? error.message : "Unable to fetch submissions data");
+            } finally {
+                setLoadingStands(false);
             }
         }
-        submissionResults && submitClicked && fetchSubmissionsData();
+        if (submissionResults && submissionResults.problemId && submissionResults.status === "Accepted") {
+            fetchSubmissionsData();
+            setActiveTab("lastSubmission");
+        }
     }, [submissionResults, submitClicked]);
+
     return (
         <div className='space-y-3'>
             <div className='flex items-center gap-x-3'>
@@ -76,11 +90,14 @@ export function CodeEditor({ userType, tempId, boilerPlates, contestId }: { user
                     setSelectedLanguage={setSelectedLanguage}
                 />
             </div>
-            <Tabs defaultValue="editor" className='space-y-3'>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className='space-y-3'>
                 <TabsList>
-                    <TabsTrigger value="editor" className='w-[125px]'>Editor</TabsTrigger>
-                    <TabsTrigger value="submissions" className='w-[125px]'>Submissions</TabsTrigger>
-                    {submissionResults && submissionsData && <TabsTrigger value="lastSubmission" className='w-[125px]'>Last Submission</TabsTrigger>}
+                    <TabsTrigger value="editor" className='md:w-[125px]'>Editor</TabsTrigger>
+                    <TabsTrigger value="submissions" className='md:w-[125px]'>Submissions</TabsTrigger>
+                    {submissionsData && <TabsTrigger value="lastSubmission">
+                        <History className='w-4 text-blue-500 mr-1' />
+                        Accepted
+                    </TabsTrigger>}
                 </TabsList>
                 <TabsContent value="editor">
                     <Editor
@@ -94,23 +111,25 @@ export function CodeEditor({ userType, tempId, boilerPlates, contestId }: { user
                     />
                 </TabsContent>
                 <TabsContent value="submissions">
-                    {
-                        boilerPlateOfSelectedLang?.problemId &&
-                        <ProblemSubmissions
-                            problemId={boilerPlateOfSelectedLang?.problemId}
-                            contestId={(contestId && !isNaN(parseInt(contestId))) ? parseInt(contestId) : undefined}
-                        />
+                    {boilerPlateOfSelectedLang && <ProblemSubmissions
+                        problemId={boilerPlateOfSelectedLang.problemId}
+                        contestId={(contestId && !isNaN(parseInt(contestId))) ? parseInt(contestId) : undefined}
+                    />
                     }
                 </TabsContent>
                 <TabsContent value='lastSubmission'>
                     {(() => {
-                        if (submissionsData && submissionResults) {
+                        if (!loadingStands && submissionsData && submissionResults) {
                             const runTime = formatRunTime(submissionResults.runTime);
                             const memory = formatMemory(submissionResults.memory);
                             return <SubmissionStand
                                 chartData={submissionsData}
                                 currentSubmission={{ runTime, memory }}
                             />
+                        } else {
+                            return <div className='min-h-[50vh] flex justify-center items-center'>
+                                <Loader2Icon className='w-4 animate-spin' />
+                            </div>
                         }
                     })()}
                 </TabsContent>

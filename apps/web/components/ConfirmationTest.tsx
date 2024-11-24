@@ -56,16 +56,14 @@ export function ConfirmationTest({ boilerplateCodes, testCases, languages, setAl
                 onValueChange={(value) => setSelectedLanguage(value)}
             >
                 <TabsList>
-                    {
-                        filteredBpc.map(bpc => (
-                            <TabsTrigger key={bpc.judge0Name} value={bpc.judge0Name}>
-                                {bpc.judge0Name}
-                                {submissionResults && submissionResults.status === "Accepted" && submissionResults.languageId === selectedLangInfo?.id && (
-                                    <CheckCircle2 className="w-5 text-green-500" />
-                                )}
-                            </TabsTrigger>
-                        ))
-                    }
+                    {filteredBpc.map(bpc => (
+                        <TabsTrigger key={bpc.judge0Name} value={bpc.judge0Name}>
+                            {bpc.judge0Name}
+                            {submissionResults && submissionResults.status === "Accepted" && submissionResults.languageId === selectedLangInfo?.id && (
+                                <CheckCircle2 className="w-5 text-green-500" />
+                            )}
+                        </TabsTrigger>
+                    ))}
                 </TabsList>
                 {
                     filteredBpc.map(bpc => (
@@ -108,29 +106,26 @@ export function ConfirmationTest({ boilerplateCodes, testCases, languages, setAl
                 }
             </Tabs>
             <div className="space-y-2">
-                {
-                    selectedLangInfo
-                        ? <div className="flex justify-end">
-                            <SubmitCode
-                                text="Run"
-                                testCases={testCases}
-                                type={SubmissionType.RUN}
-                                languageId={selectedLangInfo.id}
-                                fullCode={`${code.trim()}\n${filteredBpc.find(bpc => bpc.judge0Name === selectedLanguage)?.callerCode}`}
-                                submissionPending={submissionPending}
-                                setSubmissionPending={setSubmissionPending}
-                                setSubmissionResults={setSubmissionResults}
-                                setSubmitClicked={setSubmitClicked}
-                            />
-                        </div>
-                        : toast.error("Language not found, problem cannot be submitted")
+                {selectedLangInfo
+                    ? <div className="flex justify-end">
+                        <SubmitCode
+                            text="Run"
+                            testCases={testCases}
+                            type={SubmissionType.RUN}
+                            languageId={selectedLangInfo.id}
+                            fullCode={`${code.trim()}\n${filteredBpc.find(bpc => bpc.judge0Name === selectedLanguage)?.callerCode}`}
+                            submissionPending={submissionPending}
+                            setSubmissionPending={setSubmissionPending}
+                            setSubmissionResults={setSubmissionResults}
+                            setSubmitClicked={setSubmitClicked}
+                        />
+                    </div>
+                    : toast.error("Language not found, problem cannot be submitted")
                 }
-                {
-                    submitClicked && <ResultDisplay
-                        submissionPending={submissionPending}
-                        submissionResults={submissionResults}
-                    />
-                }
+                {submitClicked && <ResultDisplay
+                    submissionPending={submissionPending}
+                    submissionResults={submissionResults}
+                />}
             </div>
             <Toaster />
         </div>

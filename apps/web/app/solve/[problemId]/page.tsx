@@ -45,7 +45,13 @@ export default async function ProblemSolvingPage(
           <MarkdownRenderer content={problemData.content} />
         </div>
         <div>
-          <CodeEditor userType={searchParams.type} tempId={searchParams.tempId} boilerPlates={problemData.boilerPlate} contestId={searchParams?.contestId} />
+          <CodeEditor
+            userType={searchParams.type}
+            tempId={searchParams.tempId}
+            boilerPlates={problemData.boilerPlate}
+            contestId={searchParams?.contestId}
+            problemId={problemId}
+          />
         </div>
       </div>
     </div>

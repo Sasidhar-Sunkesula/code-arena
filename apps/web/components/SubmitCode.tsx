@@ -1,6 +1,5 @@
 "use client";
 
-import { Toaster } from 'react-hot-toast';
 import React from "react";
 import { SubmissionData, SubmissionPendingObj } from "./CodeEditor";
 import { SubmissionType } from "@repo/common/types";
@@ -59,7 +58,6 @@ export function SubmitCode({
     });
     return (
         <div className="flex items-center gap-3">
-            <Toaster />
             {type === SubmissionType.SUBMIT && !session.data?.user && userType !== "demo" && (
                 <Badge className="text-sm">You must be logged in to submit a problem</Badge>
             )}

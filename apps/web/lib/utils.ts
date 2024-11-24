@@ -2,7 +2,7 @@ export function formatRunTime(runTime?: number | null) {
     return parseInt(((runTime ?? 0) * 1000).toFixed(2))
 }
 export function formatMemory(memory: number | null) {
-    return parseInt(((memory ?? 0) / 1024).toFixed(1))
+    return parseFloat(((memory ?? 0) / 1024).toFixed(1))
 }
 export function getSuffix(type: "runTime" | "memory") {
     return type === "runTime" ? "ms" : "MB"
