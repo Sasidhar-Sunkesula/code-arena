@@ -113,6 +113,7 @@ export function useSubmitCode({
                         }
                     }
                 } catch (error) {
+                    clearInterval(intervalId);
                     setSubmissionPending({ run: false, submit: false })
                     toast.error(error instanceof Error ? error.message : "Error while fetching results");
                 }

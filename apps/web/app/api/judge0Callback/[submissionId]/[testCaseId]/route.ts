@@ -1,49 +1,10 @@
 import prisma from "@repo/db/client";
 import { NextRequest, NextResponse } from "next/server";
-import { SubmissionStatus } from "@prisma/client";
 import { calculatePoints } from "@/app/actions/calculatePoints";
-import { ActionType, ScoreSchema, SubmissionResult } from "@repo/common/types";
+import { SubmissionStatusEnum, ScoreSchema, SubmissionResult } from "@repo/common/types";
+import { SubmissionStatus } from "@prisma/client";
 
-export function mapStatusDescriptionToEnum(description: string): SubmissionStatus {
-    switch (description) {
-        case "In Queue":
-            return SubmissionStatus.InQueue;
-        case "Processing":
-            return SubmissionStatus.Processing;
-        case "Accepted":
-            return SubmissionStatus.Accepted;
-        case "Wrong Answer":
-            return SubmissionStatus.WrongAnswer;
-        case "Time Limit Exceeded":
-            return SubmissionStatus.TimeLimitExceeded;
-        case "Compilation Error":
-            return SubmissionStatus.CompilationError;
-        case "Runtime Error (SIGSEGV)":
-            return SubmissionStatus.RuntimeErrorSIGSEGV;
-        case "Runtime Error (SIGXFSZ)":
-            return SubmissionStatus.RuntimeErrorSIGXFSZ;
-        case "Runtime Error (SIGFPE)":
-            return SubmissionStatus.RuntimeErrorSIGFPE;
-        case "Runtime Error (SIGABRT)":
-            return SubmissionStatus.RuntimeErrorSIGABRT;
-        case "Runtime Error (NZEC)":
-            return SubmissionStatus.RuntimeErrorNZEC;
-        case "Runtime Error (Other)":
-            return SubmissionStatus.RuntimeErrorOther;
-        case "Internal Error":
-            return SubmissionStatus.InternalError;
-        case "Exec Format Error":
-            return SubmissionStatus.ExecFormatError;
-        default:
-            throw new Error(`Unknown status description: ${description}`);
-    }
-}
-
-export async function PUT(
-    req: NextRequest,
-    props: { params: Promise<{ submissionId: string, testCaseId: string }> }
-) {
-    const params = await props.params;
+export async function PUT(req: NextRequest, { params }: { params: { submissionId: string, testCaseId: string } }) {
     const body: SubmissionResult = await req.json();
     const submissionId = parseInt(params.submissionId);
     const testCaseId = parseInt(params.testCaseId);
@@ -58,7 +19,7 @@ export async function PUT(
         const decodedStdout = body.stdout ? Buffer.from(body.stdout, 'base64').toString('utf-8') : null;
         const decodedStderr = body.stderr ? Buffer.from(body.stderr, 'base64').toString('utf-8') : null;
         // Map status description to enum
-        const statusEnum = mapStatusDescriptionToEnum(body.status.description)
+        const statusEnum = SubmissionStatusEnum[body.status.description as keyof typeof SubmissionStatusEnum]
         // Insert a new test case result
         await prisma.testCaseResult.create({
             data: {
@@ -145,9 +106,9 @@ export async function PUT(
                     userId: userId,
                     score: points,
                     country: user.location || "Unknown",
-                    userName: user.username || "NA"
+                    userName: user.username
                 }
-                const response = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/${contestId}?type=${ActionType.Update}`, {
+                const response = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/update/${contestId}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

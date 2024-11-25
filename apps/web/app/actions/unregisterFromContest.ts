@@ -1,15 +1,26 @@
 "use server"
 
-import { ActionType, ScoreSchema } from "@repo/common/types";
+import { authOptions } from "@/lib/auth";
 import prisma from "@repo/db/client"
+import { getServerSession } from "next-auth";
 
-export async function unregisterFromContest(userId: string, contestId: number) {
+export async function unregisterFromContest(contestId: number) {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session || !session.user) {
+            return {
+                status: 400,
+                msg: "You need to be logged in to perform this action"
+            }
+        }
         const currentDate = new Date();
         const allowedToUnregister = await prisma.contest.findUnique({
             where: {
                 id: contestId,
                 closesOn: {
+                    gte: currentDate
+                },
+                startsOn: {
                     gte: currentDate
                 }
             }
@@ -20,27 +31,11 @@ export async function unregisterFromContest(userId: string, contestId: number) {
                 msg: "Un-registrations are not allowed for this contest.",
             };
         }
-        const user = await prisma.user.findUnique({
-            where: {
-                id: userId
-            }, select: {
-                username: true,
-                location: true
-            }
-        })
-        if (!user) throw new Error("Unable to get the user details")
-        const reqBody: ScoreSchema = {
-            userId: userId,
-            userName: user.username,
-            score: 0,
-            country: user.location || "NA"
-        }
-        const leaderboardResponse = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/${contestId}?type=${ActionType.New}`, {
-            method: "POST",
+        const leaderboardResponse = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/un-register/${contestId}/${session.user.id}`, {
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(reqBody)
         })
         if (!leaderboardResponse.ok) {
             const errorData = await leaderboardResponse.json();
@@ -49,18 +44,10 @@ export async function unregisterFromContest(userId: string, contestId: number) {
         await prisma.userContest.delete({
             where: {
                 userId_contestId: {
-                    userId,
+                    userId: session.user.id,
                     contestId
                 }
             }
-        })
-        // Remove the user from Redis
-        await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/${contestId}?type=${ActionType.Remove}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ userId })
         })
         return {
             status: 200,

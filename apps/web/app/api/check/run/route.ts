@@ -1,8 +1,7 @@
-import { SubmissionResult } from "@repo/common/types";
+import { SubmissionResult, SubmissionStatusEnum } from "@repo/common/types";
 import { checkStatusSchema } from "@repo/common/zod";
 import { NextRequest, NextResponse } from "next/server";
 import { SubmissionStatus } from "@prisma/client";
-import { mapStatusDescriptionToEnum } from "../../judge0Callback/[submissionId]/[testCaseId]/route";
 import prisma from "@repo/db/client";
 import { ZodError } from "zod";
 
@@ -51,7 +50,7 @@ export async function POST(req: NextRequest) {
                     ...testCases[index]
                 },
                 time: parseFloat(submission.time),
-                status: mapStatusDescriptionToEnum(submission.status.description)
+                status: SubmissionStatusEnum[submission.status.description as keyof typeof SubmissionStatusEnum]
             };
         });
         const totalMemory = formattedSubmissions.reduce((sum, curr) => sum + curr.memory, 0);

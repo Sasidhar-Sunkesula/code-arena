@@ -43,7 +43,7 @@ export function ContestRegister({ contestId, initialIsRegistered }: { contestId:
         try {
             setLoading(true);
             await checkProfile();
-            const response = await registerToContest(session.data.user.id, contestId);
+            const response = await registerToContest(contestId);
             if (response.status === 200) {
                 setIsRegistered(true);
                 toast.success(response.msg);
@@ -65,7 +65,7 @@ export function ContestRegister({ contestId, initialIsRegistered }: { contestId:
         }
         try {
             setLoading(true);
-            const response = await unregisterFromContest(session.data.user.id, contestId);
+            const response = await unregisterFromContest(contestId);
             if (response.status === 200) {
                 setIsRegistered(false);
                 toast.success(response.msg);
@@ -96,7 +96,7 @@ export function ContestRegister({ contestId, initialIsRegistered }: { contestId:
                             {isRegistered ? "Are you sure you want to unregister from the contest?" : "Are you sure you want to register for the contest?"}
                         </AlertDialogTitle>
                         <AlertDialogDescription>
-                            {isRegistered ? "If you change your mind, you can register again before the contest starts." : "If you change your mind, make sure to unregister to prevent loss of contest rating."}
+                            {isRegistered ? "If you change your mind, you can register again before the contest starts." : "If you change your mind, make sure to unregister."}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

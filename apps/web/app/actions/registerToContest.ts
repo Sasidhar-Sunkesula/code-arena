@@ -1,10 +1,20 @@
 "use server"
 
-import { ActionType, ScoreSchema } from "@repo/common/types";
+import { authOptions } from "@/lib/auth";
+import { ScoreSchema } from "@repo/common/types";
 import prisma from "@repo/db/client"
+import { getServerSession } from "next-auth";
 
-export async function registerToContest(userId: string, contestId: number) {
+export async function registerToContest(contestId: number) {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session || !session.user) {
+            return {
+                status: 400,
+                msg: "You need to be logged in to perform this action"
+            }
+        }
+        const userId = session.user.id;
         const currentDate = new Date();
         const isOpenToRegister = await prisma.contest.findUnique({
             where: {
@@ -35,7 +45,7 @@ export async function registerToContest(userId: string, contestId: number) {
             score: 0,
             country: user.location || "NA"
         }
-        const leaderboardResponse = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/${contestId}?type=${ActionType.New}`, {
+        const leaderboardResponse = await fetch(`${process.env.LEADERBOARD_SERVER_URL}/api/leaderboard/register/${contestId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

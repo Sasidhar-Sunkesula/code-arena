@@ -4,6 +4,8 @@ import { CodeBlock } from "./CodeBlock";
 import React from "react";
 import { Check, Cpu, Timer, X } from "lucide-react";
 import { formatMemory, formatRunTime } from "@/lib/utils";
+import { SubmissionStatus } from "@prisma/client";
+import { SubmissionStatusDisplay } from "@repo/common/types";
 
 export function TestCaseResults({ submissionResults }: { submissionResults: SubmissionData }) {
     const syntaxError = submissionResults.testCaseResults.find(result => result.stderr && result.stderr.includes('SyntaxError'));
@@ -12,7 +14,7 @@ export function TestCaseResults({ submissionResults }: { submissionResults: Subm
         return (
             <div className='flex flex-col gap-y-3'>
                 <div className='font-semibold text-xl'>{submissionResults.status}</div>
-                <div className="text-destructive bg-red-50 text-sm tracking-wider p-2">
+                <div className="text-destructive bg-red-50 dark:bg-red-500/15 dark:text-red-400 text-sm tracking-wider p-2">
                     {syntaxError.stderr}
                 </div>
             </div>
@@ -22,7 +24,9 @@ export function TestCaseResults({ submissionResults }: { submissionResults: Subm
     return (
         <div className='flex flex-col gap-y-3'>
             <div className="flex items-center justify-between py-1">
-                <div className={`font-semibold text-xl ${submissionResults.status === "Accepted" ? "text-green-600" : "text-red-600"}`}>{submissionResults.status}</div>
+                <div className={`font-semibold text-xl ${submissionResults.status === SubmissionStatus.Accepted ? "text-green-600" : "text-red-600"}`}>
+                    {SubmissionStatusDisplay[submissionResults.status]}
+                </div>
                 <div className="flex items-center gap-x-4">
                     <div className="text-sm flex items-center gap-x-1">
                         <Timer className="w-3" /> {formatRunTime(submissionResults.runTime)} ms
@@ -37,7 +41,7 @@ export function TestCaseResults({ submissionResults }: { submissionResults: Subm
                     {
                         submissionResults.testCaseResults.map((result, index) => (
                             <TabsTrigger key={index} value={index.toString()}>
-                                {result.status === "Accepted"
+                                {result.status === SubmissionStatus.Accepted
                                     ? <Check className="w-5 mr-1 text-green-500" />
                                     : <X className="w-5 mr-1" />}
                                 Case {index + 1}
@@ -50,8 +54,8 @@ export function TestCaseResults({ submissionResults }: { submissionResults: Subm
                         <TabsContent key={index} value={index.toString()} className="flex flex-col gap-y-3">
                             {result.stderr && result.status !== "Accepted" ? (
                                 <>
-                                    <CodeBlock title="Status" content={result.status} />
-                                    <div className="text-destructive bg-red-50 text-sm tracking-wider p-2">
+                                    <CodeBlock title="Status" content={SubmissionStatusDisplay[result.status]} />
+                                    <div className="text-destructive bg-red-50 dark:bg-red-500/15 dark:text-red-400 rounded-sm text-sm tracking-wider p-2">
                                         {result.stderr}
                                     </div>
                                 </>

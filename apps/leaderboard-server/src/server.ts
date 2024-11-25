@@ -3,7 +3,6 @@ import cors from "cors"
 import { createClient } from "redis";
 import { ZodError } from "zod";
 import { scoreSchema } from "@repo/common/zod";
-import { ActionType } from "@repo/common/types";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -26,25 +25,37 @@ client.connect();
 
 let clients: Response[] = [];
 
-app.post("/api/leaderboard/:contestId", async (req, res: any) => {
+app.delete("/api/leaderboard/un-register/:contestId/:userId", async (req, res: any) => {
+    const { contestId, userId } = req.params;
+    // Remove the user ID and score from the sorted set for the contest
+    await client.zRem(`leaderboard:${contestId}`, userId);
+
+    // Remove the user details from Redis hash data structure
+    await client.hDel(`userDetails:${contestId}`, userId);
+
+    return res.json({ msg: "User removed from leaderboard successfully" });
+});
+
+app.post("/api/leaderboard/register/:contestId", async (req, res: any) => {
     const { contestId } = req.params;
-    const { type } = req.query;
-    if (!type || (type !== ActionType.New && type !== ActionType.Update && type !== ActionType.Remove)) {
-        return res.status(400).json({ msg: "Invalid type parameter" });
-    }
+    const validBody = scoreSchema.parse(req.body);
+    const { userId, score, country, userName } = validBody;
+
+    // Add the user ID and score to the sorted set for the contest
+    await client.zAdd(`leaderboard:${contestId}`, { score, value: userId });
+
+    // Store the user details in Redis hash data structure 
+    const userDetails = JSON.stringify({ userName, country });
+    await client.hSet(`userDetails:${contestId}`, userId, userDetails);
+
+    return res.json({ msg: "User added successfully" });
+});
+
+app.post("/api/leaderboard/update/:contestId", async (req, res: any) => {
+    const { contestId } = req.params;
     try {
         const validBody = scoreSchema.parse(req.body);
         const { userId, score, country, userName } = validBody;
-
-        if (type === ActionType.Remove) {
-            // Remove the user ID and score from the sorted set for the contest
-            await client.zRem(`leaderboard:${contestId}`, userId);
-
-            // Remove the user details from Redis hash data structure
-            await client.hDel(`userDetails:${contestId}`, userId);
-
-            return res.json({ msg: "User removed from leaderboard successfully" });
-        }
 
         // Add the user ID and score to the sorted set for the contest
         await client.zAdd(`leaderboard:${contestId}`, { score, value: userId });
@@ -54,13 +65,9 @@ app.post("/api/leaderboard/:contestId", async (req, res: any) => {
         await client.hSet(`userDetails:${contestId}`, userId, userDetails);
 
         // Broadcast the updated leaderboard to all the connected clients, only if the action is 'update'
-        if (type === ActionType.Update) {
-            const leaderboard = await getLeaderboardWithDetails(parseInt(contestId));
-            sendEvent(leaderboard);
-            return res.json({ msg: "Leaderboard updated successfully" });
-        }
-
-        return res.json({ msg: "Score added successfully" });
+        const leaderboard = await getLeaderboardWithDetails(parseInt(contestId));
+        sendEvent(leaderboard);
+        return res.json({ msg: "Leaderboard updated successfully" });
     } catch (err) {
         if (err instanceof ZodError) {
             return res.status(400).json({
