@@ -10,7 +10,7 @@ import { Language, SubmissionData, SubmissionPendingObj } from "./CodeEditor";
 import { ResultDisplay } from "./ResultDisplay";
 import toast, { Toaster } from "react-hot-toast";
 import { Boilerplate } from "./ProblemContributionForm";
-import { editorOptions } from "./BoilerplateCodeForm";
+import { editorOptions } from "@/lib/utils";
 
 interface ConfirmationTestProps {
     boilerplateCodes: Boilerplate[];
@@ -20,7 +20,7 @@ interface ConfirmationTestProps {
 }
 
 export function ConfirmationTest({ boilerplateCodes, testCases, languages, setAllDone }: ConfirmationTestProps) {
-    const filteredBpc = useMemo(() => boilerplateCodes.filter(bpc => bpc.callerCode.length > 50 && bpc.initialFunction.length > 50), [boilerplateCodes]);
+    const filteredBpc = useMemo(() => boilerplateCodes.filter(bpc => bpc.callerCode.length > 50 && bpc.initialFunction.length > 20), [boilerplateCodes]);
     const [selectedLanguage, setSelectedLanguage] = useState<string>(filteredBpc[0]?.judge0Name!);
     const [code, setCode] = useState<string>(filteredBpc[0]?.initialFunction ?? "");
     const [submissionPending, setSubmissionPending] = useState<SubmissionPendingObj>({ run: false, submit: false });

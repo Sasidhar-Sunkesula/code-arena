@@ -11,10 +11,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/shad'
 import { History, Loader2Icon } from 'lucide-react'
 import { ProblemSubmissions } from './ProblemSubmissions'
 import { SubmissionType } from '@repo/common/types'
-import { editorOptions } from './BoilerplateCodeForm'
 import { SubmissionStand } from './SubmissionStand'
 import { getSubmissionStand } from '@/app/actions/getSubmissionStand'
-import { formatMemory, formatRunTime } from '@/lib/utils'
+import { editorOptions, formatMemory, formatRunTime } from '@/lib/utils'
 
 export interface Language {
     id: number;

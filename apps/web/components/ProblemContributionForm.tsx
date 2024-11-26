@@ -17,6 +17,7 @@ import { ConfirmationTest } from "./ConfirmationTest";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 import { getLanguages } from "@/app/actions/getLanguages";
 import { Language } from "./CodeEditor";
+import { useSession } from "next-auth/react";
 
 interface ProblemContributionFormProps {
     step: number;
@@ -27,13 +28,11 @@ export interface Boilerplate {
     initialFunction: string;
     callerCode: string;
 }
-export function ProblemContributionForm({
-    step,
-    setStep,
-}: ProblemContributionFormProps) {
+export function ProblemContributionForm({ step, setStep }: ProblemContributionFormProps) {
     const [allDone, setAllDone] = useState(false);
     const [loading, setLoading] = useState(false);
     const [languages, setLanguages] = useState<Language[]>([]);
+    const session = useSession();
 
     useEffect(() => {
         async function fetchLanguages() {
@@ -52,7 +51,7 @@ export function ProblemContributionForm({
     const form = useForm<z.infer<typeof problemFormSchema>>({
         resolver: zodResolver(problemFormSchema),
         defaultValues: {
-            userName: '',
+            userName: session.data?.user.fullName || '',
             problemName: '',
             content: '',
             boilerplateCodes: [],
@@ -102,13 +101,14 @@ export function ProblemContributionForm({
                     </div>
                 )}
                 {step === 2 && (
-                    <div className="flex gap-x-4">
-                        <BoilerplateCodeForm
-                            control={form.control}
-                            languages={languages}
-                        />
-                        <div>
-                            <Label>Problem Description</Label>
+                    <div className="gap-8 grid grid-cols-4 justify-between">
+                        <div className="col-span-3">
+                            <BoilerplateCodeForm
+                                control={form.control}
+                                languages={languages}
+                            />
+                        </div>
+                        <div className="md:h-[80vh] col-span-1 overflow-hidden hover:overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
                             <MarkdownRenderer content={content} />
                         </div>
                     </div>

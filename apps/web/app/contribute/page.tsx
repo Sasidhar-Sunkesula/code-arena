@@ -14,7 +14,7 @@ export default async function Contribute(props: { searchParams: Promise<{ type: 
         )
     }
     return (
-        <div className="px-8 py-6 space-y-5 w-full">
+        <div className="px-8 pt-6 space-y-5 w-full">
             <h2 className="text-xl font-medium">Contribute a {searchParams.type}</h2>
             {
                 result.data.type === "problem"

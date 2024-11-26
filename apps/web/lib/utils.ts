@@ -1,3 +1,5 @@
+import { editor } from 'monaco-editor';
+
 export function formatRunTime(runTime?: number | null) {
     return parseInt(((runTime ?? 0) * 1000).toFixed(2))
 }
@@ -26,3 +28,20 @@ export const formatDateToIST = (date: Date) => {
 
     return `${formattedDate} ${formattedTime} IST`;
 };
+export const editorOptions = {
+    minimap: { enabled: false },
+    fontSize: 17,
+    padding: {
+        top: 6,
+        bottom: 4
+    },
+    smoothScrolling: true,
+    lineNumbers: 'on',
+    cursorWidth: 3,
+    roundedSelection: false,
+    scrollBeyondLastLine: false,
+    automaticLayout: true,
+    cursorBlinking: "expand",
+    cursorSmoothCaretAnimation: "on",
+    selectOnLineNumbers: true,
+} satisfies editor.IStandaloneEditorConstructionOptions;

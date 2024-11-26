@@ -3,14 +3,14 @@ import { ContestLevel, DifficultyLevel, SubmissionType } from "../types";
 
 export const problemFormSchema = z.object({
     problemName: z.string()
-        .min(3, { message: "Problem name must be at least 3 characters." })
+        .min(5, { message: "Problem name must be at least 5 characters." })
         .max(50, { message: "Problem name must be at most 50 characters." }),
     userName: z.string()
         .min(3, { message: "User name must be at least 3 characters." })
         .max(50, { message: "User name must be at most 50 characters." }),
     content: z.string()
-        .min(50, { message: "Content must be at least 50 characters." })
-        .max(750, { message: "Content must be at most 750 characters." }),
+        .min(250, { message: "Content must be at least 250 characters." })
+        .max(2000, { message: "Content must be at most 2000 characters." }),
     boilerplateCodes: z.array(z.object({
         judge0Name: z.string(),
         initialFunction: z.string(),

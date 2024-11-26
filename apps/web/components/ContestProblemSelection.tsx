@@ -61,7 +61,7 @@ export function ContestProblemSelection({ control, setSelectedProblems }: Contes
                                 searchResults.map(result => {
                                     const isAdded = field.value.includes(result.id)
                                     return (
-                                        <div className="px-8 py-1 flex items-center border justify-between">
+                                        <div key={result.id} className="px-8 py-1 flex items-center border justify-between">
                                             <span className="text-sm">{result.name}</span>
                                             <Button
                                                 disabled={isAdded}

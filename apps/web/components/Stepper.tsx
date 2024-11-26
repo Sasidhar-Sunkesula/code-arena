@@ -29,7 +29,7 @@ export function Stepper({ step }: { step: number }) {
                     {step > 4 ? <Check className="w-5 text-green-500" /> : <PackageCheck className="w-5" />}
                 </span>
                 <h3 className="font-medium leading-tight">Confirmation</h3>
-                <p className="text-sm">Check if the code runs with the given details</p>
+                <p className="text-sm">Check if the code runs for you</p>
             </li>
         </ol>
     )
