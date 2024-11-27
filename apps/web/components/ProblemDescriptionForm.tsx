@@ -1,9 +1,9 @@
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@repo/ui/shad";
-import rehypeSanitize from "rehype-sanitize";
-import MDEditor from '@uiw/react-md-editor';
-import { Control } from "react-hook-form";
 import { ProblemFormType } from "@repo/common/types";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@repo/ui/shad";
+import MDEditor from '@uiw/react-md-editor';
 import { useTheme } from "next-themes";
+import { Control } from "react-hook-form";
+import rehypeSanitize from "rehype-sanitize";
 
 interface ProblemDescriptionFormProps {
     control: Control<ProblemFormType, any>;
@@ -11,7 +11,7 @@ interface ProblemDescriptionFormProps {
 
 export function ProblemDescriptionForm({ control }: ProblemDescriptionFormProps) {
     const { resolvedTheme } = useTheme();
-
+    
     return (
         <FormField
             control={control}
@@ -33,6 +33,7 @@ export function ProblemDescriptionForm({ control }: ProblemDescriptionFormProps)
                     <div className="h-3"></div>
                     <FormControl>
                         <MDEditor
+                            suppressHydrationWarning
                             value={field.value}
                             onChange={field.onChange}
                             previewOptions={{
@@ -44,7 +45,7 @@ export function ProblemDescriptionForm({ control }: ProblemDescriptionFormProps)
                             }}
                             height={300}
                             visibleDragbar={false}
-                            data-color-mode={resolvedTheme ? resolvedTheme as "light" || "dark" : "light"}
+                            data-color-mode={resolvedTheme === "system" ? "light" : (resolvedTheme as "light" || "dark")}
                         />
                     </FormControl>
                     <FormMessage />

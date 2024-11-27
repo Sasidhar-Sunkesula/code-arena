@@ -1,8 +1,8 @@
+import { calculatePoints } from "@/app/actions/calculatePoints";
+import { SubmissionStatus } from "@prisma/client";
+import { ScoreSchema, SubmissionResult, SubmissionStatusEnum } from "@repo/common/types";
 import prisma from "@repo/db/client";
 import { NextRequest, NextResponse } from "next/server";
-import { calculatePoints } from "@/app/actions/calculatePoints";
-import { SubmissionStatusEnum, ScoreSchema, SubmissionResult } from "@repo/common/types";
-import { SubmissionStatus } from "@prisma/client";
 
 export async function PUT(req: NextRequest, { params }: { params: { submissionId: string, testCaseId: string } }) {
     const body: SubmissionResult = await req.json();

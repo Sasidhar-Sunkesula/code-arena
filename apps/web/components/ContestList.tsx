@@ -1,5 +1,5 @@
-import { ContestCard } from "./ContestCard"
 import { ContestLevel } from "@prisma/client";
+import { ContestCard } from "./ContestCard";
 
 interface Contest {
   id: number;

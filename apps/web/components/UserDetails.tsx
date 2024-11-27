@@ -4,9 +4,9 @@ import { editProfile } from "@/app/actions/editProfile";
 import { Button, Input, Label } from "@repo/ui/shad";
 import { CalendarCheck2, Check, CloudUpload, MapPin, Signature, User } from "lucide-react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import Image from "next/image";
 
 export function UserDetails({ id, createdAt, username, fullName, image, location }: {
     id: string;

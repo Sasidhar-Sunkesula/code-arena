@@ -1,11 +1,11 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/shad";
-import { SubmissionData } from "./CodeEditor";
-import { CodeBlock } from "./CodeBlock";
-import React from "react";
-import { Check, Cpu, Timer, X } from "lucide-react";
 import { formatMemory, formatRunTime } from "@/lib/utils";
 import { SubmissionStatus } from "@prisma/client";
 import { SubmissionStatusDisplay } from "@repo/common/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/shad";
+import { Check, Cpu, Timer, X } from "lucide-react";
+import React from "react";
+import { CodeBlock } from "./CodeBlock";
+import { SubmissionData } from "./CodeEditor";
 
 export function TestCaseResults({ submissionResults }: { submissionResults: SubmissionData }) {
     const syntaxError = submissionResults.testCaseResults.find(result => result.stderr && result.stderr.includes('SyntaxError'));

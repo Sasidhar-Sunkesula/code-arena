@@ -1,12 +1,12 @@
 "use client";
 
 import { getSubmissions } from "@/app/actions/getSubmissions";
+import { SubmissionStatus } from "@prisma/client";
 import { Loader2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from 'react-hot-toast';
-import { SubmissionStatus } from "@prisma/client";
 import SubmissionInfoCard from "./SubmissionInfoCard";
-import { useSession } from "next-auth/react";
 
 export type Submission = {
     id: number;

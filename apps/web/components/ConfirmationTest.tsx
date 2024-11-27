@@ -1,16 +1,16 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Label, Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/shad";
-import { Editor } from "@monaco-editor/react";
-import { CheckCircle2, Loader2Icon } from "lucide-react";
-import { SubmitCode } from "./SubmitCode";
-import { SubmissionType } from "@repo/common/types";
-import { Language, SubmissionData, SubmissionPendingObj } from "./CodeEditor";
-import { ResultDisplay } from "./ResultDisplay";
-import toast, { Toaster } from "react-hot-toast";
-import { Boilerplate } from "./ProblemContributionForm";
 import { editorOptions } from "@/lib/utils";
+import { Editor } from "@monaco-editor/react";
+import { SubmissionType } from "@repo/common/types";
+import { Label, Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/shad";
+import { CheckCircle2, Loader2Icon } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import { Language, SubmissionData, SubmissionPendingObj } from "./CodeEditor";
+import { Boilerplate } from "./ProblemContributionForm";
+import { ResultDisplay } from "./ResultDisplay";
+import { SubmitCode } from "./SubmitCode";
 
 interface ConfirmationTestProps {
     boilerplateCodes: Boilerplate[];

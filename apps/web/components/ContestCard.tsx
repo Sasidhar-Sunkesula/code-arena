@@ -1,9 +1,9 @@
+import { formatDateToIST } from "@/lib/utils";
+import { ContestLevel } from "@prisma/client";
 import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "@repo/ui/shad";
 import { ArrowUpRight, ClockArrowDown, ClockArrowUp, Frown, HashIcon, LayersIcon } from "lucide-react";
-import { ContestLevel } from "@prisma/client";
-import { ContestRegister } from "./ContestRegister";
 import Link from "next/link";
-import { formatDateToIST } from "@/lib/utils";
+import { ContestRegister } from "./ContestRegister";
 
 interface ContestCardProps {
     id: number;

@@ -1,8 +1,8 @@
-import { ProblemList } from "@/components/ProblemList"
-import { ContestDetails } from "@/components/ContestDetails"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { ContestDetails } from "@/components/ContestDetails";
+import { ProblemList } from "@/components/ProblemList";
+import { authOptions } from "@/lib/auth";
 import prisma from "@repo/db/client";
+import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 export default async function ContestInfo(props: { params: Promise<{ contestId: string }> }) {

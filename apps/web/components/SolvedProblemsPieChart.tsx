@@ -1,13 +1,13 @@
 "use client"
 
-import { Label, Pie, PieChart } from "recharts"
+import { ChartData } from "@/app/user/[userName]/page";
 import {
     ChartConfig,
     ChartContainer,
     ChartTooltip,
     ChartTooltipContent,
-} from "@repo/ui/shad"
-import { ChartData } from "@/app/user/[userName]/page";
+} from "@repo/ui/shad";
+import { Label, Pie, PieChart } from "recharts";
 
 const chartConfig: {
     [key: string]: {

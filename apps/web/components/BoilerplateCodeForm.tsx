@@ -1,13 +1,13 @@
+import { editorOptions } from "@/lib/utils";
 import { Editor } from "@monaco-editor/react";
 import { ProblemFormType } from "@repo/common/types";
-import { Button, Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Popover, PopoverContent, PopoverTrigger } from "@repo/ui/shad";
+import { Button, Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Label, Popover, PopoverContent, PopoverTrigger } from "@repo/ui/shad";
 import { cn } from "@repo/ui/utils";
 import { Check, ChevronsUpDown, Loader2Icon, Trash } from "lucide-react";
 import { useState } from "react";
 import { Control } from "react-hook-form";
 import { Language } from "./CodeEditor";
 import { Boilerplate } from "./ProblemContributionForm";
-import { editorOptions } from "@/lib/utils";
 
 interface BoilerplateCodeFormProps {
     control: Control<ProblemFormType, any>;
@@ -22,8 +22,8 @@ export function BoilerplateCodeForm({ control, languages }: BoilerplateCodeFormP
             control={control}
             name="boilerplateCodes"
             render={({ field }) => (
-                <FormItem className="space-y-4 flex">
-                    <div>
+                <FormItem className="flex gap-x-1">
+                    <div className="space-y-4">
                         <div className="space-y-2 space-x-2">
                             <FormLabel>Select Language</FormLabel>
                             <FormControl>
@@ -94,7 +94,7 @@ export function BoilerplateCodeForm({ control, languages }: BoilerplateCodeFormP
                             <FormControl>
                                 <Editor
                                     height={"20vh"}
-                                    width={"40vw"}
+                                    width={"35vw"}
                                     language={selectedLanguageIndex !== null ? languages[selectedLanguageIndex]?.monacoName : ""}
                                     value={selectedLanguageIndex !== null ? field.value.find(bpc => bpc.judge0Name === languages[selectedLanguageIndex]?.judge0Name)?.initialFunction : ""}
                                     onChange={(value) => {
@@ -126,7 +126,7 @@ export function BoilerplateCodeForm({ control, languages }: BoilerplateCodeFormP
                             <FormControl>
                                 <Editor
                                     height={"35vh"}
-                                    width={"40vw"}
+                                    width={"35vw"}
                                     language={selectedLanguageIndex !== null ? languages[selectedLanguageIndex]?.monacoName : ""}
                                     value={selectedLanguageIndex !== null ? field.value.find((bpc) => bpc.judge0Name === languages[selectedLanguageIndex]?.judge0Name)?.callerCode : ""}
                                     onChange={(value) => {
@@ -155,27 +155,28 @@ export function BoilerplateCodeForm({ control, languages }: BoilerplateCodeFormP
                             <FormMessage />
                         </div>
                     </div>
-                    <div className="space-y-2">
-                        <FormLabel>Chosen Boilerplates</FormLabel>
-                        <div className="flex flex-wrap gap-2">
+                    <div className="space-y-6 px-2 flex-grow">
+                        <Label className="text-center w-full inline-block">Chosen Boilerplates</Label>
+                        <div className="space-y-2">
                             {field.value.length > 0 ?
                                 field.value.map((bpc, index) => (
-                                    <div key={bpc.judge0Name} className="grid grid-cols-2 items-center gap-2">
+                                    <div key={bpc.judge0Name} className="flex items-center gap-2">
                                         <Button
+                                            className="flex-grow max-w-52 text-ellipsis whitespace-nowrap"
                                             type="button"
                                             variant="outline"
-                                            className="col-span-1"
                                             onClick={() => {
                                                 const languageIndex = languages.findIndex(lang => lang.judge0Name === bpc.judge0Name);
                                                 setSelectedLanguageIndex(languageIndex);
                                             }}
                                         >
-                                            {bpc.judge0Name}
+                                            {bpc.judge0Name.length > 25 ? bpc.judge0Name.slice(0, 20) + "..." : bpc.judge0Name}
                                         </Button>
                                         <Button
-                                            variant="destructive"
-                                            className="col-span-1"
                                             size={"icon"}
+                                            className="flex-shrink-0"
+                                            variant="destructive"
+                                            type="button"
                                             onClick={() => {
                                                 const updatedBoilerPlates = field.value.filter((_, i) => i !== index);
                                                 field.onChange(updatedBoilerPlates);
@@ -188,7 +189,9 @@ export function BoilerplateCodeForm({ control, languages }: BoilerplateCodeFormP
                                         </Button>
                                     </div>
                                 ))
-                                : <div className="text-destructive py-4 text-sm">No boilerplates given</div>
+                                : <div className="text-destructive px-1 h-80 flex justify-center items-center text-sm">
+                                    <div>No boilerplates given</div>
+                                </div>
                             }
                         </div>
                     </div>

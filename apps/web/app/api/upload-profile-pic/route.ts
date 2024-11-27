@@ -1,7 +1,7 @@
 import { authOptions } from '@/lib/auth';
 import prisma from '@repo/db/client';
-import { v2 as cloudinary } from 'cloudinary';
 import type { UploadApiResponse } from 'cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
 import { getServerSession } from 'next-auth';
 
 export async function POST(request: Request) {

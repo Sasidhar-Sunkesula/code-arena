@@ -1,8 +1,8 @@
+import { SubmissionStatus } from "@prisma/client";
 import { SubmissionResult, SubmissionStatusEnum } from "@repo/common/types";
 import { checkStatusSchema } from "@repo/common/zod";
-import { NextRequest, NextResponse } from "next/server";
-import { SubmissionStatus } from "@prisma/client";
 import prisma from "@repo/db/client";
+import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 
 export async function POST(req: NextRequest) {

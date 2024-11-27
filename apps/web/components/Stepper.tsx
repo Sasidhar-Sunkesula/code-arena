@@ -1,4 +1,4 @@
-import { Code, FileInput, PackageCheck, ReceiptText, Check } from "lucide-react"
+import { Check, Code, FileInput, PackageCheck, ReceiptText } from "lucide-react"
 
 export function Stepper({ step }: { step: number }) {
     return (

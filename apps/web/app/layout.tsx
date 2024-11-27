@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "./globals.css";
-import { Providers } from "../components/Providers";
-import NextTopLoader from "nextjs-toploader";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import AppBar from "@/components/AppBar";
+import { authOptions } from "@/lib/auth";
+import type { Metadata } from "next";
+import { getServerSession } from "next-auth";
+import localFont from "next/font/local";
+import NextTopLoader from "nextjs-toploader";
+import { Providers } from "../components/Providers";
+import "./globals.css";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

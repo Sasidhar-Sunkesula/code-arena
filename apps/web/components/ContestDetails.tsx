@@ -1,9 +1,8 @@
-import { Badge, Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "@repo/ui/shad";
-import { Progress } from "@repo/ui/shad";
 import { Timer } from "@/components/Timer";
 import { SubmissionStatus } from "@prisma/client";
-import Link from "next/link";
+import { Badge, Button, Card, CardContent, CardFooter, CardHeader, CardTitle, Progress } from "@repo/ui/shad";
 import { TrophyIcon } from "lucide-react";
+import Link from "next/link";
 
 interface ContestDetailsProps {
     name: string;

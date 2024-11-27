@@ -1,9 +1,9 @@
 import { HeroSection } from "@/components/HeroSection";
-import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+import Link from "next/link";
 import { getUpcomingContests } from "./actions/getUpcomingContests";
 import { renderContestSection } from "./contests/page";
-import Link from "next/link";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);

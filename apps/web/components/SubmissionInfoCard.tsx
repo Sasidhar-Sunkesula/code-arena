@@ -1,15 +1,14 @@
-import { Button } from "@repo/ui/shad";
-import { Submission } from "./ProblemSubmissions";
-import { CircleDollarSign, Cpu, Timer } from "lucide-react";
 import {
-    Dialog,
+    Button, Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
+    DialogTrigger
 } from "@repo/ui/shad";
 import { format } from "date-fns";
+import { CircleDollarSign, Cpu, Timer } from "lucide-react";
+import { Submission } from "./ProblemSubmissions";
 
 type SubmissionInfoProps = Omit<Submission, "id">;
 

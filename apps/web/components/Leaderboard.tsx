@@ -1,6 +1,6 @@
 "use client"
 
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@repo/ui/shad";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@repo/ui/shad";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";

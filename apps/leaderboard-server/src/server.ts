@@ -1,9 +1,9 @@
-import express, { Response } from "express"
-import cors from "cors"
+import { scoreSchema } from "@repo/common/zod";
+import cors from "cors";
+import dotenv from "dotenv";
+import express, { Response } from "express";
 import { createClient } from "redis";
 import { ZodError } from "zod";
-import { scoreSchema } from "@repo/common/zod";
-import dotenv from "dotenv";
 
 dotenv.config();
 const app = express();

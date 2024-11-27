@@ -1,20 +1,17 @@
 "use client"
 
-import Link from "next/link"
-import { Button } from "@repo/ui/shad"
 import {
-    Card,
+    Button, Card,
     CardContent,
     CardHeader,
-    CardTitle,
+    CardTitle, Input, Label
 } from "@repo/ui/shad"
-import { Input } from "@repo/ui/shad"
-import { Label } from "@repo/ui/shad"
-import { Icons } from "./Icons"
-import { useState } from "react"
 import { signIn } from "next-auth/react"
+import Link from "next/link"
+import { useState } from "react"
 import toast, { Toaster } from "react-hot-toast"
-import { TogglePasswordVisibility } from "./TogglePasswordVisibility";
+import { Icons } from "./Icons"
+import { TogglePasswordVisibility } from "./TogglePasswordVisibility"
 
 export default function LoginForm() {
     const [email, setEmail] = useState("");

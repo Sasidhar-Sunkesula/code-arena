@@ -1,15 +1,15 @@
 "use client"
 
-import * as React from "react"
+import { ChartData } from "@/app/user/[userName]/page"
 import {
     Card,
     CardContent,
     CardHeader,
     CardTitle,
 } from "@repo/ui/shad"
-import { SolvedProblemsPieChart } from "./SolvedProblemsPieChart"
+import * as React from "react"
 import { SolvedProblemsByLevel } from "./SolvedProblemsByLevel"
-import { ChartData } from "@/app/user/[userName]/page"
+import { SolvedProblemsPieChart } from "./SolvedProblemsPieChart"
 
 export function SolvedProblemsChart({ chartData, solved, totalProblems }: { chartData: ChartData[], solved: number, totalProblems: number }) {
     return (

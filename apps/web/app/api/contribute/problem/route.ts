@@ -1,7 +1,7 @@
+import { problemFormSchema } from "@repo/common/zod";
+import prisma from "@repo/db/client";
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
-import { problemFormSchema } from "@repo/common/zod"
-import prisma from "@repo/db/client";
 
 export async function POST(req: NextRequest) {
     try {

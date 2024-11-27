@@ -2,7 +2,7 @@ import { ContestFormType } from "@repo/common/types";
 import { Button, Input, Label } from "@repo/ui/shad";
 import { CircleX } from "lucide-react";
 import { useState } from "react";
-import { UseFormWatch, UseFormSetValue } from "react-hook-form";
+import { UseFormSetValue, UseFormWatch } from "react-hook-form";
 
 interface ContestSelectedProblemsProps {
     watch: UseFormWatch<ContestFormType>;

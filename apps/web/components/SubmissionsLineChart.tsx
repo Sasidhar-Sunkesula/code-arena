@@ -7,8 +7,6 @@ import {
     CardContent,
     CardHeader,
     CardTitle,
-} from "@repo/ui/shad"
-import {
     ChartConfig,
     ChartContainer,
     ChartTooltip,

@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
-import { SubmissionData, SubmissionPendingObj } from "./CodeEditor";
+import { useSubmitCode } from "@/app/hooks/useSubmitCode";
 import { SubmissionType } from "@repo/common/types";
 import { Badge, Button } from "@repo/ui/shad";
-import { Play, ArrowRight } from "lucide-react";
-import { useSubmitCode } from "@/app/hooks/useSubmitCode";
+import { ArrowRight, Play } from "lucide-react";
 import { useSession } from 'next-auth/react';
+import React from "react";
+import { SubmissionData, SubmissionPendingObj } from "./CodeEditor";
 
 type SubmitCodeProps = {
     text: string;

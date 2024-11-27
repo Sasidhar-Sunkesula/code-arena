@@ -1,6 +1,6 @@
 "use client"
 
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Card, CardHeader, CardTitle, CardContent } from "@repo/ui/shad";
+import { Card, CardContent, CardHeader, CardTitle, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@repo/ui/shad";
 import { format } from "date-fns";
 import Link from "next/link";
 

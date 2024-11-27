@@ -1,6 +1,6 @@
 "use client"
 
-import { EyeIcon, EyeOffIcon } from "lucide-react"
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 export function TogglePasswordVisibility({ isPasswordVisible, setIsPasswordVisible }: {
     isPasswordVisible: boolean;

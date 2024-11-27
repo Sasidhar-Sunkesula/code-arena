@@ -1,19 +1,19 @@
 "use client"
 
-import { useEffect, useState } from 'react'
-import Editor from '@monaco-editor/react'
-import { LanguageSelector } from './LanguageSelector'
-import { SubmitCode } from './SubmitCode'
-import toast, { Toaster } from 'react-hot-toast';
-import { TestCaseResult, Submission, TestCase } from "@prisma/client";
-import { ResultDisplay } from './ResultDisplay'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/shad'
-import { History, Loader2Icon } from 'lucide-react'
-import { ProblemSubmissions } from './ProblemSubmissions'
-import { SubmissionType } from '@repo/common/types'
-import { SubmissionStand } from './SubmissionStand'
 import { getSubmissionStand } from '@/app/actions/getSubmissionStand'
 import { editorOptions, formatMemory, formatRunTime } from '@/lib/utils'
+import Editor from '@monaco-editor/react'
+import { Submission, TestCase, TestCaseResult } from "@prisma/client"
+import { SubmissionType } from '@repo/common/types'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/shad'
+import { History, Loader2Icon } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
+import { LanguageSelector } from './LanguageSelector'
+import { ProblemSubmissions } from './ProblemSubmissions'
+import { ResultDisplay } from './ResultDisplay'
+import { SubmissionStand } from './SubmissionStand'
+import { SubmitCode } from './SubmitCode'
 
 export interface Language {
     id: number;

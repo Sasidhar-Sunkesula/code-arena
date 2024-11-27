@@ -1,16 +1,12 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage, Button, ModeToggle } from "@repo/ui/shad"
 import {
-    DropdownMenu,
+    Avatar, AvatarFallback, AvatarImage, Button, DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@repo/ui/shad";
-import {
-    NavigationMenu,
+    DropdownMenuTrigger, ModeToggle, NavigationMenu,
     NavigationMenuContent,
     NavigationMenuItem,
     NavigationMenuLink,
@@ -18,12 +14,12 @@ import {
     NavigationMenuTrigger,
     navigationMenuTriggerStyle
 } from "@repo/ui/shad";
-import { useState } from "react"
 import { LogOut, Menu, Settings, User } from "lucide-react";
-import { Logo } from "./Logo";
-import { signIn, signOut } from "next-auth/react";
 import { Session } from "next-auth";
+import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
+import { useState } from "react";
+import { Logo } from "./Logo";
 
 export default function AppBar({ session }: { session: Session | null }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);

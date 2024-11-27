@@ -1,6 +1,6 @@
-import { MarkdownRenderer } from "@/components/MarkdownRenderer"
-import { CodeEditor } from "@/components/CodeEditor"
-import prisma from "@repo/db/client"
+import { CodeEditor } from "@/components/CodeEditor";
+import { MarkdownRenderer } from "@/components/MarkdownRenderer";
+import prisma from "@repo/db/client";
 import { Badge } from "@repo/ui/shad";
 import Link from "next/link";
 

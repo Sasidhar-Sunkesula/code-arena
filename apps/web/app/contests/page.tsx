@@ -1,11 +1,11 @@
 import { ContestList } from "@/components/ContestList";
-import { getUpcomingContests } from "../actions/getUpcomingContests";
-import { getServerSession, Session } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { LockKeyhole } from "lucide-react";
+import { getServerSession, Session } from "next-auth";
+import toast, { Toaster } from "react-hot-toast";
 import { getCurrentContests } from "../actions/getCurrentContests";
 import { getEndedContests } from "../actions/getEndedContests";
-import toast, { Toaster } from "react-hot-toast";
-import { LockKeyhole } from "lucide-react";
+import { getUpcomingContests } from "../actions/getUpcomingContests";
 
 export const renderContestSection = (session: Session | null, title: string, contests: any[], type: "current" | "upcoming" | "ended") => {
     if (contests.length > 0) {

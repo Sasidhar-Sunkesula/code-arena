@@ -1,16 +1,16 @@
 "use client"
 
-import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts"
+import { getSuffix } from "@/lib/utils";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
+    ChartContainer,
 } from "@repo/ui/shad";
-import { ChartContainer } from "@repo/ui/shad";
-import { getSuffix } from "@/lib/utils";
 import { useState } from "react";
+import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
 
 interface ChartConfig {
     runTime: {

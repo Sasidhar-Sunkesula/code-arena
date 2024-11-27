@@ -1,6 +1,5 @@
 import { ContestFormType, ContestLevel } from "@repo/common/types";
-import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@repo/ui/shad";
-import { Input } from "@repo/ui/shad";
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui/shad";
 import { Control } from "react-hook-form";
 
 interface ContestBasicDetailsProps {

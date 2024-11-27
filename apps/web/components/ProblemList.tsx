@@ -1,8 +1,8 @@
-import * as React from "react";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Badge } from "@repo/ui/shad";
 import { DifficultyLevel, SubmissionStatus } from "@prisma/client";
-import Link from "next/link";
+import { Badge, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@repo/ui/shad";
 import { Check, CircleAlert } from "lucide-react";
+import Link from "next/link";
+import * as React from "react";
 
 export interface Problem {
     id: number;

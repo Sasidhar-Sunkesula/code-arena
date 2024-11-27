@@ -1,15 +1,13 @@
 import { ContestFormType } from "@repo/common/types";
-import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Button, TimePicker } from "@repo/ui/shad";
-import { Control, UseFormWatch } from "react-hook-form";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { cn } from "@repo/ui/utils";
-import { Calendar } from "@repo/ui/shad";
 import {
-    Popover,
+    Button, Calendar, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Popover,
     PopoverContent,
-    PopoverTrigger,
+    PopoverTrigger, TimePicker
 } from "@repo/ui/shad";
+import { cn } from "@repo/ui/utils";
 import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { Control, UseFormWatch } from "react-hook-form";
 
 interface ContestRangeFormProps {
     control: Control<ContestFormType, any>;

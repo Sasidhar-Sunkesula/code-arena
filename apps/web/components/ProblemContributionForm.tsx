@@ -1,23 +1,25 @@
 "use client";
 
-import { z } from "zod";
+import { getLanguages } from "@/app/actions/getLanguages";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
-import { Form, Label } from "@repo/ui/shad";
-import { ProblemBasicDetails } from "./ProblemBasicDetails";
-import { ProblemDescriptionForm } from "./ProblemDescriptionForm";
-import { BoilerplateCodeForm } from "./BoilerplateCodeForm";
-import { NavigationButtons } from "./NavigationButtons";
-import { TestCasesForm } from "./TestCasesForm";
-import { problemFormSchema } from "@repo/common/zod";
 import { DifficultyLevel } from "@repo/common/types";
+import { problemFormSchema } from "@repo/common/zod";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, Form, Label } from "@repo/ui/shad";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
+import { z } from "zod";
+import { BoilerplateCodeForm } from "./BoilerplateCodeForm";
+import { Language } from "./CodeEditor";
+import { Confetti } from "./Confetti";
 import { ConfirmationTest } from "./ConfirmationTest";
 import { MarkdownRenderer } from "./MarkdownRenderer";
-import { getLanguages } from "@/app/actions/getLanguages";
-import { Language } from "./CodeEditor";
-import { useSession } from "next-auth/react";
+import { NavigationButtons } from "./NavigationButtons";
+import { ProblemBasicDetails } from "./ProblemBasicDetails";
+import { ProblemDescriptionForm } from "./ProblemDescriptionForm";
+import { TestCasesForm } from "./TestCasesForm";
 
 interface ProblemContributionFormProps {
     step: number;
@@ -28,11 +30,17 @@ export interface Boilerplate {
     initialFunction: string;
     callerCode: string;
 }
+const LOCAL_STORAGE_KEY = "problemContribution";
+
 export function ProblemContributionForm({ step, setStep }: ProblemContributionFormProps) {
     const [allDone, setAllDone] = useState(false);
     const [loading, setLoading] = useState(false);
     const [languages, setLanguages] = useState<Language[]>([]);
+    const [success, setSuccess] = useState(false);
+    const [countdown, setCountdown] = useState(5);
+    const [showResumePrompt, setShowResumePrompt] = useState(false);
     const session = useSession();
+    const router = useRouter();
 
     useEffect(() => {
         async function fetchLanguages() {
@@ -51,7 +59,7 @@ export function ProblemContributionForm({ step, setStep }: ProblemContributionFo
     const form = useForm<z.infer<typeof problemFormSchema>>({
         resolver: zodResolver(problemFormSchema),
         defaultValues: {
-            userName: session.data?.user.fullName || '',
+            userName: session.data?.user.userName || '',
             problemName: '',
             content: '',
             boilerplateCodes: [],
@@ -64,6 +72,34 @@ export function ProblemContributionForm({ step, setStep }: ProblemContributionFo
             difficultyLevel: DifficultyLevel.EASY,
         },
     });
+    // Load saved form data from localStorage
+    useEffect(() => {
+        const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (savedData) {
+            setShowResumePrompt(true);
+        }
+    }, []);
+
+    // Save form data to localStorage
+    useEffect(() => {
+        const subscription = form.watch((values) => {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(values));
+        });
+        return () => subscription.unsubscribe();
+    }, [form]);
+
+    const handleResume = () => {
+        const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (savedData) {
+            form.reset(JSON.parse(savedData));
+        }
+        setShowResumePrompt(false);
+    };
+
+    const handleDiscard = () => {
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+        setShowResumePrompt(false);
+    };
 
     async function onSubmit(values: z.infer<typeof problemFormSchema>) {
         try {
@@ -80,7 +116,15 @@ export function ProblemContributionForm({ step, setStep }: ProblemContributionFo
                 const errorData = await response.json();
                 throw new Error(errorData.msg);
             }
-            toast.success("Problem added successfully. Thank you for your contribution!");
+            setSuccess(true);
+            toast.success(`Problem added successfully. Thank you for your contribution! You will be taken to the home page in ${countdown} seconds.`, {
+                style: {
+                    borderRadius: '10px',
+                    background: '#333',
+                    color: '#fff',
+                },
+                duration: 5000,
+            });
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "An error occurred while adding the problem.");
         } finally {
@@ -88,51 +132,84 @@ export function ProblemContributionForm({ step, setStep }: ProblemContributionFo
         }
     }
 
+    useEffect(() => {
+        if (success) {
+            const intervalId = setInterval(() => {
+                setCountdown((prev) => prev - 1);
+            }, 1000);
+
+            setTimeout(() => {
+                clearInterval(intervalId);
+                router.push('/');
+            }, 5000);
+
+            return () => clearInterval(intervalId);
+        }
+    }, [success, router]);
+
     // Retrieve the content value from the form state
     const content = form.watch("content");
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                {step === 1 && (
-                    <div className="space-y-10">
-                        <ProblemBasicDetails control={form.control} />
-                        <ProblemDescriptionForm control={form.control} />
-                    </div>
-                )}
-                {step === 2 && (
-                    <div className="gap-8 grid grid-cols-4 justify-between">
-                        <div className="col-span-3">
-                            <BoilerplateCodeForm
-                                control={form.control}
-                                languages={languages}
-                            />
+        <>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    {step === 1 && (
+                        <div className="space-y-10">
+                            <ProblemBasicDetails control={form.control} />
+                            <ProblemDescriptionForm control={form.control} />
                         </div>
-                        <div className="md:h-[80vh] col-span-1 overflow-hidden hover:overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
-                            <MarkdownRenderer content={content} />
+                    )}
+                    {step === 2 && (
+                        <div className="gap-8 grid grid-cols-3 justify-between">
+                            <div className="col-span-2">
+                                <BoilerplateCodeForm
+                                    control={form.control}
+                                    languages={languages}
+                                />
+                            </div>
+                            <div className="md:h-[80vh] col-span-1 overflow-hidden hover:overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
+                                <Label>Problem Description</Label>
+                                <MarkdownRenderer content={content} />
+                            </div>
                         </div>
-                    </div>
-                )}
-                {step === 3 && (
-                    <TestCasesForm control={form.control} />
-                )}
-                {step === 4 && (
-                    <ConfirmationTest
-                        languages={languages}
-                        boilerplateCodes={form.watch("boilerplateCodes")}
-                        setAllDone={setAllDone}
-                        testCases={form.watch("testCases")}
+                    )}
+                    {step === 3 && (
+                        <TestCasesForm control={form.control} />
+                    )}
+                    {step === 4 && (
+                        <ConfirmationTest
+                            languages={languages}
+                            boilerplateCodes={form.watch("boilerplateCodes")}
+                            setAllDone={setAllDone}
+                            testCases={form.watch("testCases")}
+                        />
+                    )}
+                    <NavigationButtons
+                        loading={loading}
+                        step={step}
+                        setStep={setStep}
+                        trigger={form.trigger}
+                        allDone={allDone}
                     />
-                )}
-                <NavigationButtons
-                    loading={loading}
-                    step={step}
-                    setStep={setStep}
-                    trigger={form.trigger}
-                    allDone={allDone}
-                />
-            </form>
-            <Toaster />
-        </Form>
+                </form>
+                <Toaster />
+            </Form>
+            {success && <Confetti />}
+            <AlertDialog open={showResumePrompt} onOpenChange={setShowResumePrompt}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Resume Previous Contribution</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            You have a previous contribution saved. Would you like to resume it?
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={handleDiscard}>Discard</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleResume}>Resume</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </>
     );
 }

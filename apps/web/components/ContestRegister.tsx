@@ -1,15 +1,15 @@
 "use client"
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, Button } from "@repo/ui/shad";
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation";
-import { ProfileUpdate } from "./ProfileUpdate";
 import { isProfileUpdated } from "@/app/actions/isProfileUpdated";
 import { registerToContest } from "@/app/actions/registerToContest";
-import { unregisterFromContest } from "@/app/actions/unregisterFromContest"
+import { unregisterFromContest } from "@/app/actions/unregisterFromContest";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, Button } from "@repo/ui/shad";
+import { ArrowRight, Loader2Icon } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { ArrowRight, Loader2Icon } from "lucide-react";
+import { ProfileUpdate } from "./ProfileUpdate";
 
 export function ContestRegister({ contestId, initialIsRegistered }: { contestId: number, initialIsRegistered: boolean }) {
     const session = useSession();
