@@ -1,6 +1,5 @@
 import { Button } from "@repo/ui/shad";
 import { ArrowLeft, ArrowRight, CheckCheck, Loader2 } from "lucide-react";
-import { useState } from "react";
 import { UseFormTrigger } from "react-hook-form";
 interface NavigationButtonsProps {
     step: number;
@@ -8,6 +7,7 @@ interface NavigationButtonsProps {
     loading: boolean;
     trigger: UseFormTrigger<any>;
     allDone: boolean;
+    success: boolean;
 }
 const getFieldsToValidate = (step: number) => {
     switch (step) {
@@ -21,8 +21,7 @@ const getFieldsToValidate = (step: number) => {
             return [];
     }
 };
-export function NavigationButtons({ step, setStep, loading, trigger, allDone }: NavigationButtonsProps) {
-    const [submitClicked, setSubmitClicked] = useState(false);
+export function NavigationButtons({ step, setStep, loading, trigger, allDone, success }: NavigationButtonsProps) {
 
     const handleNext = async () => {
         const fieldsToValidate = getFieldsToValidate(step);
@@ -43,7 +42,7 @@ export function NavigationButtons({ step, setStep, loading, trigger, allDone }: 
                     <ArrowRight className="w-5 ml-2" />
                 </Button>
             )}
-            {step === 4 && (<Button onClick={() => setSubmitClicked(true)} className="w-28" disabled={loading || !allDone || submitClicked} type="submit">
+            {step === 4 && (<Button className="w-28" disabled={loading || !allDone || success} type="submit">
                 {
                     loading
                         ? <Loader2 className="animate-spin" />

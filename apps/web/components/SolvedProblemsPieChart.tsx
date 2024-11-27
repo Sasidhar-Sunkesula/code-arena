@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { ChartData } from "@/app/user/[userName]/page";
 import {
@@ -35,7 +35,11 @@ export function SolvedProblemsPieChart({ chartData, solved, totalProblems }: { c
             ...data,
             fill: chartConfig[data.level]?.color
         }
-    })
+    });
+
+    // Add a placeholder data point if solved is 0
+    const displayData = solved === 0 ? [{ level: "NONE", solved: 1, fill: "hsl(var(--chart-1))" }] : chartDataWithFill;
+
     return (
         <ChartContainer
             config={chartConfig}
@@ -47,7 +51,7 @@ export function SolvedProblemsPieChart({ chartData, solved, totalProblems }: { c
                     content={<ChartTooltipContent />}
                 />
                 <Pie
-                    data={chartDataWithFill}
+                    data={displayData}
                     dataKey="solved"
                     nameKey="level"
                     innerRadius={85}

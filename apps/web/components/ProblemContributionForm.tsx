@@ -1,12 +1,12 @@
 "use client";
 
 import { getLanguages } from "@/app/actions/getLanguages";
+import { useSuccessRedirect } from "@/app/hooks/useSuccessRedirect";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DifficultyLevel } from "@repo/common/types";
 import { problemFormSchema } from "@repo/common/zod";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, Form, Label } from "@repo/ui/shad";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
@@ -36,11 +36,9 @@ export function ProblemContributionForm({ step, setStep }: ProblemContributionFo
     const [allDone, setAllDone] = useState(false);
     const [loading, setLoading] = useState(false);
     const [languages, setLanguages] = useState<Language[]>([]);
-    const [success, setSuccess] = useState(false);
-    const [countdown, setCountdown] = useState(5);
     const [showResumePrompt, setShowResumePrompt] = useState(false);
     const session = useSession();
-    const router = useRouter();
+    const { success, setSuccess } = useSuccessRedirect("Problem");
 
     useEffect(() => {
         async function fetchLanguages() {
@@ -117,35 +115,12 @@ export function ProblemContributionForm({ step, setStep }: ProblemContributionFo
                 throw new Error(errorData.msg);
             }
             setSuccess(true);
-            toast.success(`Problem added successfully. Thank you for your contribution! You will be taken to the home page in ${countdown} seconds.`, {
-                style: {
-                    borderRadius: '10px',
-                    background: '#333',
-                    color: '#fff',
-                },
-                duration: 5000,
-            });
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "An error occurred while adding the problem.");
         } finally {
             setLoading(false);
         }
     }
-
-    useEffect(() => {
-        if (success) {
-            const intervalId = setInterval(() => {
-                setCountdown((prev) => prev - 1);
-            }, 1000);
-
-            setTimeout(() => {
-                clearInterval(intervalId);
-                router.push('/');
-            }, 5000);
-
-            return () => clearInterval(intervalId);
-        }
-    }, [success, router]);
 
     // Retrieve the content value from the form state
     const content = form.watch("content");
@@ -191,10 +166,11 @@ export function ProblemContributionForm({ step, setStep }: ProblemContributionFo
                         setStep={setStep}
                         trigger={form.trigger}
                         allDone={allDone}
+                        success={success}
                     />
                 </form>
-                <Toaster />
             </Form>
+            <Toaster />
             {success && <Confetti />}
             <AlertDialog open={showResumePrompt} onOpenChange={setShowResumePrompt}>
                 <AlertDialogContent>

@@ -6,20 +6,16 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-    DropdownMenuTrigger, ModeToggle, NavigationMenu,
-    NavigationMenuContent,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    NavigationMenuTrigger,
-    navigationMenuTriggerStyle
+    DropdownMenuTrigger, ModeToggle
 } from "@repo/ui/shad";
-import { LogOut, Menu, Settings, User } from "lucide-react";
+import { LogOut, Menu, User } from "lucide-react";
 import { Session } from "next-auth";
-import { signIn, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
+import { Icons } from "./Icons";
 import { Logo } from "./Logo";
+import { NavMenu } from "./NavMenu";
 
 export default function AppBar({ session }: { session: Session | null }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -29,39 +25,9 @@ export default function AppBar({ session }: { session: Session | null }) {
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between h-14">
                     <Logo />
-                    <NavigationMenu>
-                        <NavigationMenuList>
-                            <NavigationMenuItem>
-                                <NavigationMenuTrigger>Contribute</NavigationMenuTrigger>
-                                <NavigationMenuContent className="p-2">
-                                    <Link href="/contribute?type=problem" legacyBehavior passHref>
-                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                            Problem
-                                        </NavigationMenuLink>
-                                    </Link>
-                                    <Link href="/contribute?type=contest" legacyBehavior passHref>
-                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                            Contest
-                                        </NavigationMenuLink>
-                                    </Link>
-                                </NavigationMenuContent>
-                            </NavigationMenuItem>
-                            <NavigationMenuItem>
-                                <Link href="/problems?page=1&limit=10" legacyBehavior passHref>
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        Problems
-                                    </NavigationMenuLink>
-                                </Link>
-                            </NavigationMenuItem>
-                            <NavigationMenuItem>
-                                <Link href="/contests" legacyBehavior passHref>
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        Contests
-                                    </NavigationMenuLink>
-                                </Link>
-                            </NavigationMenuItem>
-                        </NavigationMenuList>
-                    </NavigationMenu>
+                    <div className="hidden md:block">
+                        <NavMenu />
+                    </div>
                     <div className="flex items-center space-x-4">
                         <ModeToggle />
                         {session && session.user
@@ -72,28 +38,31 @@ export default function AppBar({ session }: { session: Session | null }) {
                                         <AvatarFallback>{session.user.userName.slice(0, 2).toUpperCase()}</AvatarFallback>
                                     </Avatar>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-40" align="end">
+                                <DropdownMenuContent className="w-44 space-y-1" align="end">
                                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
                                         <Link href={`/user/${session.user.userName}`} className="flex items-center gap-x-2 cursor-default">
                                             <User className="w-5" />
                                             <span>Profile</span>
                                         </Link>
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <Settings className="w-5 mr-2" />
-                                        <span>Settings</span>
+                                    <DropdownMenuItem asChild>
+                                        <Link href={`https://github.com/Sasidhar-Sunkesula/code-arena`} className="flex items-center gap-x-2 cursor-default">
+                                            <Icons.gitHub className="w-5" />
+                                            <span>GitHub</span>
+                                        </Link>
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        onClick={() => signOut()}>
+                                    <DropdownMenuItem onClick={() => signOut()}>
                                         <LogOut className="w-5 mr-2" />
                                         <span>Logout</span>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                             : <>
-                                <Button onClick={() => signIn()}>Sign In</Button>
+                                <Link href="/auth/signin">
+                                    <Button>Sign In</Button>
+                                </Link>
                                 <Link href="/auth/signup">
                                     <Button>Sign Up</Button>
                                 </Link>
@@ -111,18 +80,8 @@ export default function AppBar({ session }: { session: Session | null }) {
                 </div>
             </div>
             {isMenuOpen && (
-                <div className="md:hidden">
-                    <nav className="px-2 pt-2 pb-4 space-y-1 flex flex-col">
-                        <Link href={"/problems"}>
-                            <Button variant={"link"}>Problems</Button>
-                        </Link>
-                        <Link href={"/contests"}>
-                            <Button variant={"link"}>Contests</Button>
-                        </Link>
-                        <Link href={"/contribute"}>
-                            <Button variant={"link"}>Contribute</Button>
-                        </Link>
-                    </nav>
+                <div className="md:hidden px-2 pt-2 pb-4 flex justify-center">
+                    <NavMenu />
                 </div>
             )}
         </header>
