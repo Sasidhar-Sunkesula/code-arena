@@ -29,7 +29,7 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
   return (
     <html suppressHydrationWarning lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextTopLoader color="#2E78C7" />
         <Providers>
           <div className="flex flex-col space-y-14">
