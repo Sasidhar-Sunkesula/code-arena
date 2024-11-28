@@ -13,15 +13,28 @@ export default async function Home() {
     <div>
       <HeroSection />
       <section className="px-4 py-2 md:px-8 md:py-4">
-        {
-          upcomingContests.status !== 200 || !upcomingContests.contests
-            ? <div className="text-center text-lg font-medium">Unable to get upcoming contests</div>
-            : upcomingContests.contests.length === 0
-              ? <div className="text-center text-lg font-medium">
-                No upcoming contests. Contribute One? <Link className="underline text-blue-500" href={"/contribute?type=contest"}>Click here</Link>
-              </div>
-              : renderContestSection(session, "Upcoming Contests", upcomingContests.contests || [], "upcoming")
-        }
+        {upcomingContests.status !== 200 || !upcomingContests.contests ? (
+          <div className="text-center text-lg font-medium">
+            Unable to get upcoming contests
+          </div>
+        ) : upcomingContests.contests.length === 0 ? (
+          <div className="text-center text-lg font-medium">
+            No upcoming contests. Contribute One?{" "}
+            <Link
+              className="underline text-blue-500"
+              href={"/contribute?type=contest"}
+            >
+              Click here
+            </Link>
+          </div>
+        ) : (
+          renderContestSection(
+            session,
+            "Upcoming Contests",
+            upcomingContests.contests || [],
+            "upcoming",
+          )
+        )}
       </section>
     </div>
   );

@@ -9,9 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@repo/common": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "@repo/db": "workspace:*",
     "@monaco-editor/react": "^4.6.0",
-    "@repo/db": "*",
-    "@repo/ui": "*",
     "@uiw/react-md-editor": "^4.0.4",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.5.1",
@@ -19,7 +20,6 @@
     "lucide-react": "^0.439.0",
     "next": "^15.0.3",
     "next-auth": "^4.24.10",
-    "next-themes": "^0.3.0",
     "nextjs-toploader": "^3.6.15",
     "react": "18.3.1",
     "react-canvas-confetti": "^2.0.7",
@@ -27,12 +27,12 @@
     "react-hot-toast": "^2.4.1",
     "react-syntax-highlighter": "^15.5.0",
     "rehype-sanitize": "^6.0.0",
-    "remark-gfm": "^4.0.0"
+    "remark-gfm": "^4.0.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@repo/common": "*",
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@types/bcrypt": "^5.0.2",
     "@types/eventsource": "^1.1.15",
     "@types/node": "^20",

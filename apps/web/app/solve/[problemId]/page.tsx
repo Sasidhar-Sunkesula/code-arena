@@ -4,39 +4,48 @@ import prisma from "@repo/db/client";
 import { Badge } from "@repo/ui/shad";
 import Link from "next/link";
 
-export default async function ProblemSolvingPage(
-  props: { params: Promise<{ problemId: string }>, searchParams: Promise<{ contestId?: string, tempId?: string, type?: string }> }
-) {
+export default async function ProblemSolvingPage(props: {
+  params: Promise<{ problemId: string }>;
+  searchParams: Promise<{ contestId?: string; tempId?: string; type?: string }>;
+}) {
   const searchParams = await props.searchParams;
   const params = await props.params;
   const problemId = parseInt(params.problemId);
   const problemData = await prisma.problem.findUnique({
     where: {
-      id: problemId
+      id: problemId,
     },
     include: {
       boilerPlate: {
         include: {
-          language: true
-        }
-      }
-    }
-  })
+          language: true,
+        },
+      },
+    },
+  });
   if (!problemData) {
     return (
       <div className="min-h-screen flex justify-center items-center text-destructive font-medium text-xl">
         Problem with id - {problemId} not found
       </div>
-    )
+    );
   }
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-card rounded-lg prose">
           <div className="flex items-start gap-x-5">
-            <h1 className="text-xl font-medium mb-3 underline">{problemData.name}</h1>
-            <Link className="hover:scale-105" href={`/user/${problemData.contributedBy.toLowerCase()}`}>
-              <Badge variant={"outline"} className="px-3 py-2 hover:text-blue-700 dark:hover:text-blue-400 hover:underline">
+            <h1 className="text-xl font-medium mb-3 underline">
+              {problemData.name}
+            </h1>
+            <Link
+              className="hover:scale-105"
+              href={`/user/${problemData.contributedBy.toLowerCase()}`}
+            >
+              <Badge
+                variant={"outline"}
+                className="px-3 py-2 hover:text-blue-700 dark:hover:text-blue-400 hover:underline"
+              >
                 <span>Contributed by :</span>
                 <span>&nbsp;{problemData.contributedBy}</span>
               </Badge>
@@ -55,5 +64,5 @@ export default async function ProblemSolvingPage(
         </div>
       </div>
     </div>
-  )
+  );
 }
