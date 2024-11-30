@@ -10,8 +10,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { submissionId: string; testCaseId: string } },
+  props: { params: Promise<{ submissionId: string; testCaseId: string }> },
 ) {
+  const params = await props.params;
   const body: SubmissionResult = await req.json();
   const submissionId = parseInt(params.submissionId);
   const testCaseId = parseInt(params.testCaseId);
@@ -35,7 +36,7 @@ export async function PUT(
     // Map status description to enum
     const statusEnum =
       SubmissionStatusEnum[
-        body.status.description as keyof typeof SubmissionStatusEnum
+      body.status.description as keyof typeof SubmissionStatusEnum
       ];
     // Insert a new test case result
     await prisma.testCaseResult.create({

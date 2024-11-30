@@ -15,7 +15,7 @@ export async function updateProfile(name: string, location: string) {
         id: session.user.id,
       },
       data: {
-        name: name,
+        fullName: name,
         location: location,
       },
     });
