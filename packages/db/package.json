@@ -5,13 +5,16 @@
     "./client": "./prisma/client.ts"
   },
   "scripts": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "postinstall": "pnpm run generate-prisma-client",
+    "generate-prisma-client": "pnpm exec prisma generate --schema=./prisma/schema.prisma"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@prisma/client": "5.19.0",
     "prisma": "5.19.0"
   },
   "devDependencies": {
