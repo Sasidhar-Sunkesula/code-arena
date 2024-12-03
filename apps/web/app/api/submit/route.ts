@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
         validatedInput.languageId,
       );
       const inputForJudge: BatchItem[] = testCases.map((testCase) => {
-        const baseUrl = `http://host.docker.internal:3000/api/judge0Callback/${newSubmission.id}/${testCase.id}`;
+        const baseUrl = `${process.env.NODE_ENV === "development" ? "http://host.docker.internal:3000" : process.env.NEXT_PUBLIC_BASE_URL}/api/judge0Callback/${newSubmission.id}/${testCase.id}`;
         const queryParams = new URLSearchParams();
         if (validatedInput.contestId) {
           queryParams.append("contestId", validatedInput.contestId.toString());
