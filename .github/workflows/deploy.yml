@@ -1,0 +1,65 @@
+name: Build and Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v4
+
+      - name: Deploy to Azure VM
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            if [ -d "code-arena" ]; then
+              echo "Project exists, pulling latest changes..."
+              cd code-arena
+              git pull origin main
+            else
+              echo "Project does not exist, cloning repository..."
+              git clone https://github.com/Sasidhar-Sunkesula/code-arena.git
+              cd code-arena
+            fi
+              # Install dependencies and build the project
+              pnpm install
+              pnpm run build
+              
+              # Configure the environment file
+              cd apps/web
+              if [ ! -f ".env.production.local" ]; then
+                echo "Creating .env.production.local..."
+                sudo bash -c 'cat <<EOL > .env.production.local
+                NODE_ENV=production
+                NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+                GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+                GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+                CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
+                NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+                CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
+                CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
+                JUDGE0_URL=${{ secrets.JUDGE0_URL }}
+                LEADERBOARD_SERVER_URL=${{ secrets.LEADERBOARD_SERVER_URL }}
+                NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+                REDIS_HOST=${{ secrets.REDIS_HOST }}
+                REDIS_PORT=${{ secrets.REDIS_PORT }}
+                EOL'
+                
+                fi
+                # Configure the DATABASE_URL variable if not exists in packages/db
+                cd ../../packages/db
+                if ! grep -q "DATABASE_URL" .env; then
+                echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+                fi
+                # Restart the application with PM2
+                pm2 delete code-arena || true
+                pm2 start "pnpm start" --name code-arena
+                pm2 save   
+
