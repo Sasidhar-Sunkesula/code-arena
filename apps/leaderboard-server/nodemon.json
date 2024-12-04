@@ -1,7 +1,5 @@
 {
-    "watch": [
-        "src"
-    ],
-    "ext": "ts",
-    "exec": "npx esbuild ./src/server.ts --bundle --platform=node --outfile=./dist/server.js && node dist/server.js"
+  "watch": ["src"],
+  "ext": "ts",
+  "exec": "npx esbuild ./src/server.ts --bundle --platform=node --outfile=./dist/server.js && node dist/server.js"
 }

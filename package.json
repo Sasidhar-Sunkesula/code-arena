@@ -2,10 +2,12 @@
   "name": "code-arena",
   "private": true,
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format:fix": "prettier --write \"**/*.{ts,tsx,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,json}\""
   },
   "devDependencies": {
     "prettier": "^3.2.5",

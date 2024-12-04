@@ -1,0 +1,32 @@
+name: Linting and formatting on push and PR
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run linting check
+        run: cd apps/web && pnpm run lint:check
+
+      - name: Check formatting
+        run: pnpm run format:check
+
+      - name: Run Build
+        run: pnpm run build

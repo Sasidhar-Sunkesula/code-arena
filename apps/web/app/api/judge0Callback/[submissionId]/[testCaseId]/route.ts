@@ -36,7 +36,7 @@ export async function PUT(
     // Map status description to enum
     const statusEnum =
       SubmissionStatusEnum[
-      body.status.description as keyof typeof SubmissionStatusEnum
+        body.status.description as keyof typeof SubmissionStatusEnum
       ];
     // Insert a new test case result
     await prisma.testCaseResult.create({

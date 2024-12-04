@@ -76,7 +76,10 @@ export function TestCaseResults({
               </>
             ) : (
               <>
-                <CodeBlock title="Status" content={SubmissionStatusDisplay[submissionResults.status]} />
+                <CodeBlock
+                  title="Status"
+                  content={SubmissionStatusDisplay[submissionResults.status]}
+                />
                 <CodeBlock title="Input" content={result.testCase.input} />
                 <CodeBlock
                   title="Expected Output"

@@ -6,7 +6,8 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:check": "eslint --max-warnings 10 --config .eslintrc.js ."
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
