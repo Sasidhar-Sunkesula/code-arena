@@ -1,4 +1,4 @@
-name: Build and Deploy to EC2
+name: Build and Deploy
 
 on:
   push:
@@ -48,8 +48,6 @@ jobs:
                 JUDGE0_URL=${{ secrets.JUDGE0_URL }}
                 LEADERBOARD_SERVER_URL=${{ secrets.LEADERBOARD_SERVER_URL }}
                 NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
-                REDIS_HOST=${{ secrets.REDIS_HOST }}
-                REDIS_PORT=${{ secrets.REDIS_PORT }}
                 EOL'
                 
                 fi
@@ -58,8 +56,19 @@ jobs:
                 if ! grep -q "DATABASE_URL" .env; then
                 echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
                 fi
+
+                cd ../../apps/leaderboard-server
+                if [ ! -f ".env" ]; then
+                echo "Creating .env file for leaderboard-server..."
+                sudo bash -c 'cat <<EOL > .env
+                REDIS_HOST=${{ secrets.REDIS_HOST }}
+                REDIS_PORT=${{ secrets.REDIS_PORT }}
+                EOL'
+                fi
+
                 # Restart the application with PM2
                 pm2 delete code-arena || true
-                pm2 start "pnpm start" --name code-arena
-                pm2 save   
-
+                pm2 delete leaderboard-server || true
+                pm2 start "pnpm start" --name leaderboard-server
+                cd ../web pm2 start "pnpm start" --name code-arena-next
+                pm2 save
