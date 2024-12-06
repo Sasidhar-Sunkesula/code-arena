@@ -70,5 +70,5 @@ jobs:
                 pm2 delete code-arena || true
                 pm2 delete leaderboard-server || true
                 pm2 start "pnpm start" --name leaderboard-server
-                cd ../web pm2 start "pnpm start" --name code-arena-next
+                cd ../web && pm2 start "pnpm start" --name code-arena-next
                 pm2 save
