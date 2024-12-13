@@ -21,12 +21,11 @@ export function HeroSection() {
             </Button>
           </div>
         </div>
-        <div className="relative h-[400px] md:h-[450px]">
+        <div className="relative h-[420px]">
           <Image
-            src="https://g-gm9wqkgflk.vusercontent.net/placeholder.svg"
+            src="/hero.png"
             alt="Coding Challenge Platform"
             layout="fill"
-            objectFit="cover"
             loading="lazy"
             className="rounded-lg"
           />

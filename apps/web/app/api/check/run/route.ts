@@ -1,5 +1,9 @@
 import { SubmissionStatus } from "@prisma/client";
-import { SubmissionResult, SubmissionStatusDisplay, SubmissionStatusEnum } from "@repo/common/types";
+import {
+  SubmissionResult,
+  SubmissionStatusDisplay,
+  SubmissionStatusEnum,
+} from "@repo/common/types";
 import { checkStatusSchema } from "@repo/common/zod";
 import prisma from "@repo/db/client";
 import { NextRequest, NextResponse } from "next/server";
@@ -22,7 +26,7 @@ export async function POST(req: NextRequest) {
     const isAnySubmissionInQueue = batchSubmissions.submissions.some(
       (result) =>
         result.status.description === SubmissionStatusDisplay.Processing ||
-        result.status.description === SubmissionStatusDisplay.InQueue
+        result.status.description === SubmissionStatusDisplay.InQueue,
     );
     if (isAnySubmissionInQueue) {
       return NextResponse.json({

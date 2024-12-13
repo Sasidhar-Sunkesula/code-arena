@@ -61,8 +61,8 @@ export const SubmissionStatusDisplay: { [key in SubmissionStatus]: string } = {
 };
 export const SubmissionStatusEnum = {
   "In Queue": SubmissionStatus.InQueue,
-  "Processing": SubmissionStatus.Processing,
-  "Accepted": SubmissionStatus.Accepted,
+  Processing: SubmissionStatus.Processing,
+  Accepted: SubmissionStatus.Accepted,
   "Wrong Answer": SubmissionStatus.WrongAnswer,
   "Time Limit Exceeded": SubmissionStatus.TimeLimitExceeded,
   "Compilation Error": SubmissionStatus.CompilationError,
