@@ -23,6 +23,7 @@ export default async function ContestInfo(props: {
       },
     },
   });
+  // unregistered users can't access the Results page
   if (!isRegistered) {
     return (
       <div className="md:h-96 my-auto flex justify-center items-center font-medium">

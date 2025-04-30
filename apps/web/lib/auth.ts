@@ -3,7 +3,7 @@ import prisma from "@repo/db/client";
 import bcrypt from "bcrypt";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
 import { ZodError } from "zod";
 
 export const authOptions: NextAuthOptions = {
@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
           if (existingUser) {
             const passwordMatch = await bcrypt.compare(
               validatedCredentials.password,
-              existingUser.password,
+              existingUser.password
             );
             if (passwordMatch) {
               return {
@@ -53,10 +53,9 @@ export const authOptions: NextAuthOptions = {
         }
       },
     }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-      allowDangerousEmailAccountLinking: true, // Allows users to link multiple authentication methods to a single account.
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID || "",
+      clientSecret: process.env.GITHUB_SECRET || "",
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
@@ -101,5 +100,6 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: "/auth/signin",
+    error: "/auth-error", // Error code passed in query string as ?error=
   },
 } satisfies NextAuthOptions;

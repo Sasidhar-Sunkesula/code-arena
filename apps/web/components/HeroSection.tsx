@@ -1,4 +1,3 @@
-import { Button } from "@repo/ui/shad";
 import Image from "next/image";
 import { DemoButton } from "./DemoButton";
 
@@ -14,11 +13,8 @@ export function HeroSection() {
             Improve your coding skills with our diverse range of challenges.
             Practice, compete, and climb the leaderboard!
           </p>
-          <div className="space-x-4 space-y-2">
+          <div>
             <DemoButton />
-            <Button size="lg" variant="outline">
-              Learn More
-            </Button>
           </div>
         </div>
         <div className="relative h-[420px]">

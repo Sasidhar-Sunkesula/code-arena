@@ -29,10 +29,9 @@ export default async function Home() {
           </div>
         ) : (
           renderContestSection(
-            session,
             "Upcoming Contests",
             upcomingContests.contests || [],
-            "upcoming",
+            "upcoming"
           )
         )}
       </section>

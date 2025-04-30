@@ -12,63 +12,91 @@ jobs:
       - name: Check Out Repo
         uses: actions/checkout@v4
 
-      - name: Deploy to Azure VM
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+          run_install: false
+
+      # Configure environment files
+      - name: Configure Web Environment
+        run: |
+          mkdir -p apps/web
+          cat > apps/web/.env.production.local << EOL
+          NODE_ENV=production
+          NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+          CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+          CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
+          JUDGE0_URL=${{ secrets.JUDGE0_URL }}
+          LEADERBOARD_SERVER_URL=${{ secrets.LEADERBOARD_SERVER_URL }}
+          NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+          EOL
+
+      - name: Configure DB Environment
+        run: |
+          mkdir -p packages/db
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > packages/db/.env
+
+      - name: Configure Leaderboard Server Environment
+        run: |
+          mkdir -p apps/leaderboard-server
+          cat > apps/leaderboard-server/.env << EOL
+          REDIS_HOST=${{ secrets.REDIS_HOST }}
+          REDIS_PORT=${{ secrets.REDIS_PORT }}
+          EOL
+
+      # Install dependencies and build
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Build Project
+        run: pnpm run build
+
+      # Copy files to VM
+      - name: Copy Files to VM
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "."
+          target: "code-arena"
+          rm: true
+
+      # Start services on VM
+      - name: Start Services on VM
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            if [ -d "code-arena" ]; then
-              echo "Project exists, pulling latest changes..."
-              cd code-arena
-              git pull origin main
-            else
-              echo "Project does not exist, cloning repository..."
-              git clone https://github.com/Sasidhar-Sunkesula/code-arena.git
-              cd code-arena
-            fi
-              # Install dependencies and build the project
-              pnpm install
-              pnpm run build
-              
-              # Configure the environment file
-              cd apps/web
-              if [ ! -f ".env.production.local" ]; then
-                echo "Creating .env.production.local..."
-                sudo bash -c 'cat <<EOL > .env.production.local
-                NODE_ENV=production
-                NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
-                GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-                GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-                CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
-                NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
-                CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
-                CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
-                JUDGE0_URL=${{ secrets.JUDGE0_URL }}
-                LEADERBOARD_SERVER_URL=${{ secrets.LEADERBOARD_SERVER_URL }}
-                NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
-                EOL'
-                
-                fi
-                # Configure the DATABASE_URL variable if not exists in packages/db
-                cd ../../packages/db
-                if ! grep -q "DATABASE_URL" .env; then
-                echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
-                fi
-
-                cd ../../apps/leaderboard-server
-                if [ ! -f ".env" ]; then
-                echo "Creating .env file for leaderboard-server..."
-                sudo bash -c 'cat <<EOL > .env
-                REDIS_HOST=${{ secrets.REDIS_HOST }}
-                REDIS_PORT=${{ secrets.REDIS_PORT }}
-                EOL'
-                fi
-
-                # Restart the application with PM2
-                pm2 delete code-arena || true
-                pm2 delete leaderboard-server || true
-                pm2 start "pnpm start" --name leaderboard-server
-                cd ../web && pm2 start "pnpm start" --name code-arena-next
-                pm2 save
+            cd code-arena
+            
+            # Install PM2 if not already installed
+            npm install -g pm2
+            
+            # Restart the application with PM2
+            pm2 delete code-arena-next || true
+            pm2 delete leaderboard-server || true
+            
+            # Start leaderboard server
+            cd apps/leaderboard-server
+            pm2 start "pnpm start" --name leaderboard-server
+            
+            # Start web application
+            cd ../web
+            pm2 start "pnpm start" --name code-arena-next
+            
+            # Save PM2 configuration
+            pm2 save

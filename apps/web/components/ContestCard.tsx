@@ -30,7 +30,6 @@ interface ContestCardProps {
   };
   isRegistered: boolean;
   type: "current" | "upcoming" | "ended";
-  isLoggedIn: boolean;
 }
 export function ContestCard({
   id,
@@ -41,26 +40,8 @@ export function ContestCard({
   level,
   closesOn,
   _count,
-  isLoggedIn,
 }: ContestCardProps) {
   const renderActionButton = () => {
-    if (!isLoggedIn) {
-      if (type === "current") {
-        return (
-          <Link href={`/contest/${id}`}>
-            <Button>
-              Participate
-              <ArrowUpRight className="w-5 ml-1" />
-            </Button>
-          </Link>
-        );
-      } else if (type === "upcoming") {
-        return (
-          <ContestRegister contestId={id} initialIsRegistered={isRegistered} />
-        );
-      }
-    }
-
     switch (type) {
       case "current":
         return isRegistered ? (

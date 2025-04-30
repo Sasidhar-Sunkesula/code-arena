@@ -120,13 +120,13 @@ export default function LoginForm() {
         </form>
         <Button
           onClick={async () => {
-            await signIn("google");
+            await signIn("github");
           }}
           variant="outline"
           className="w-full"
         >
-          <Icons.google className="mr-2 h-4 w-4" />
-          Login with Google
+          <Icons.gitHub className="mr-2 h-4 w-4" />
+          Login with GitHub
         </Button>
         <div className="mt-4 text-center text-sm">
           Don&apos;t have an account?{" "}

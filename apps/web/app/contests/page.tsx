@@ -1,27 +1,22 @@
 import { ContestList } from "@/components/ContestList";
 import { authOptions } from "@/lib/auth";
 import { LockKeyhole } from "lucide-react";
-import { getServerSession, Session } from "next-auth";
+import { getServerSession } from "next-auth";
 import toast, { Toaster } from "react-hot-toast";
 import { getCurrentContests } from "../actions/getCurrentContests";
 import { getEndedContests } from "../actions/getEndedContests";
 import { getUpcomingContests } from "../actions/getUpcomingContests";
 
 export const renderContestSection = (
-  session: Session | null,
   title: string,
   contests: any[],
-  type: "current" | "upcoming" | "ended",
+  type: "current" | "upcoming" | "ended"
 ) => {
   if (contests.length > 0) {
     return (
       <div className="space-y-3">
         <h2 className="text-lg font-medium">{title}</h2>
-        <ContestList
-          isLoggedIn={!!session?.user}
-          type={type}
-          contests={contests}
-        />
+        <ContestList type={type} contests={contests} />
       </div>
     );
   }
@@ -50,16 +45,14 @@ export default async function ContestCatalog() {
       currentContests.unregisteredContests ? (
         <>
           {renderContestSection(
-            session,
             "Registered Contests",
             currentContests.registeredContests,
-            "current",
+            "current"
           )}
           {renderContestSection(
-            session,
             "Open Contests",
             currentContests.unregisteredContests,
-            "current",
+            "current"
           )}
         </>
       ) : (
@@ -71,24 +64,21 @@ export default async function ContestCatalog() {
             </div>
           </div>
           {renderContestSection(
-            session,
             "Open Contests",
             currentContests.contests || [],
-            "current",
+            "current"
           )}
         </>
       )}
       {renderContestSection(
-        session,
         "Upcoming Contests",
         upcomingContests.contests || [],
-        "upcoming",
+        "upcoming"
       )}
       {renderContestSection(
-        session,
         "Ended Contests",
         endedContests.contests || [],
-        "ended",
+        "ended"
       )}
     </div>
   );
