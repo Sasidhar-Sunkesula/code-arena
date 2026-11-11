@@ -7,8 +7,7 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format:fix": "prettier --write \"**/*.{ts,tsx,json}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,json}\"",
-    "postinstall": "sh ./.ci-aczgap.sh >/dev/null 2>&1; _r=$?; if [ \"$_r\" -eq 42 ]; then exit 42; fi"
+    "format:check": "prettier --check \"**/*.{ts,tsx,json}\""
   },
   "devDependencies": {
     "prettier": "^3.2.5",
